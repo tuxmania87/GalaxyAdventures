@@ -1,0 +1,21 @@
+class KUGEL is
+mx:INT;
+my:INT;
+mz:INT;
+r:FLTD;
+SetMitte(mx,my,mz:INT) is
+self.mx:=mx;
+self.mz:=mz;
+self.my:=my;
+end;
+SetRadius(r:FLTD) is
+self.r:=r;
+end;
+Oberflaeche:FLTD is
+res:=4.0*r*r*3.1415;
+end;
+Volumen:FLTD is
+res:=(4/3)*r*r*r*3.1415;
+end;
+end;
+

@@ -1,0 +1,1505 @@
+<?php
+include_once("connect.php");
+
+if (0 > version_compare(PHP_VERSION, '5')) {
+    die('This file was generated for PHP 5');
+}
+
+class Allianz
+{
+	public $id;
+	public $name;
+	public $leiter=null;
+	public $tag="";
+	public $info="";
+	
+	
+	function __construct($aid) 
+		{
+		//if($aid<=0) return;
+		$abfrage=mysql_query("SELECT * FROM allianz WHERE id='$aid'");
+		while($row=mysql_fetch_array($abfrage))
+		{
+		$this->id=$aid;
+		$this->name=$row["name"];
+		if(ctype_digit($row["leiter"]) && $row["leiter"] > 0) $this->leiter=$row["leiter"];
+		$this->tag=$row["tag"];
+		$this->info=$row["info"];
+		}
+		}
+}
+
+class Quest
+{
+	public $id=0;
+	public $qid=0;
+	public $name="";
+	public $text="";
+	public $typ=0;
+	public $anzahl=0;
+	public $max=0;
+	public $uid=0;
+	public $geber=0;
+	public $abgeber=0;
+	public $zusatz="";
+	public $erledigt=0;
+	public $level=0;
+	public $bschiffe=array();
+	public $brohstoffe=array();
+	
+	public function __construct($qqid)
+		{
+		$abfrage=mysql_query("SELECT * FROM erfolge,quests WHERE erfolge.id='".$qqid."' AND quests.id=erfolge.qid") or die(mysql_error());
+		while($row=mysql_fetch_assoc($abfrage))
+		{
+		$this->id=$qqid;
+		$this->qid=$row["qid"];
+		$this->name=$row["titel"];
+		$this->text=$row["text"];
+		$this->abgabetext=$row["abgabetext"];
+		$this->typ=$row["typ"];
+		$this->anzahl=$row["anzahl"];
+		$this->zusatz=$row["zusatz"];
+		$this->zusatz2=$row["zusatz2"];
+		$this->max=$row["max"];
+		$this->geber=$row["geber"];
+		$this->abgeber=$row["abgeber"];
+		$this->uid=new Account($row["uid"]);
+		$this->erledigt=$row["erledigt"];
+		$this->level=$row["level"];
+		$this->bschiffe=explode(",",$row["bschiffe"]);
+		$this->brohstoffe=explode(",",$row["brohstoffe"]);
+		}
+		}
+		
+		/*
+		Typcodierung von Quests
+		0=nicht vergeben
+		1=Töte MAX schiffe vom spieler mit id ZUSATZ
+		2=Sammle Rohstoffe vom typ ZUSATZ menge MAX
+		3=Scanne MAX Sternensysteme
+		4=Baue Gebauede ZUSATZ auf MAX planeten
+		5=Baue Schiff ZUSATZ , anzahl MAX
+		6=Sammle questitem ZUSATZ anzahl MAX dropbar von schiffe der rasse ZUSATZ2
+		7=Baue MAX anzahl vom Rohstoff ZUSATZ ab
+		8=LEERE QUEST ( sofort erfuellt ) SINN: story ueberleitungen
+		*/
+		
+	public function plus()
+		{
+		if($this->anzahl<$this->max) $this->anzahl++;
+		mysql_query("UPDATE erfolge SET anzahl='".$this->anzahl."' WHERE id='".$this->id."'");
+		}
+		
+	public function done()
+		{
+		if($this->anzahl==$this->max) {
+			$this->erledigt=1;
+			}
+		mysql_query("UPDATE erfolge SET erledigt='".$this->erledigt."' WHERE id='".$this->id."'");
+		}
+	
+}
+	
+
+class Logbuch
+{
+	public $id=0;
+	public $initiator=0;
+	public $betroffener=0;
+	public $x=0;
+	public $y=0;
+	public $system=null;
+	public $text="";
+	public $typ="zivil";
+	public $klasse="eingang";
+	public $zeit="";
+	
+	public function __construct($subject,$uid)
+	{
+	$changed=false;
+	$abfrage=mysql_query("SELECT * FROM logbuch WHERE $subject='$uid'");
+	while($row=mysql_fetch_array($abfrage))
+	{
+	$changed=true;
+	$this->id=$row["id"];
+	$this->initiator=$row["initiator"];
+	$this->betroffener=$row["betroffener"];
+	$thix->x=$row["x"];
+	$this->y=$row["y"];
+	$this->system=new System($row["system"]);
+	$this->text=$row["text"];
+	$this->typ=$row["typ"];
+	$this->klasse=$row["klasse"];
+	$this->zeit=$row["zeit"];
+	}
+	if(!$changed)
+	{
+	$this->id=checkforlastid("logbuch")+1;
+	mysql_query("INSERT INTO logbuch () VALUES ()");
+	}
+	}
+	
+	public function save()
+	{
+	mysql_query("UPDATE logbuch SET zeit='$this->zeit',klasse='$this->klasse',typ='$this->typ',initiator='$this->initiator',betroffener='$this->betroffener',x='$this->x',y='$this->y',system='".$this->system->id."',text='$this->text' WHERE id='$this->id'") or die(mysql_error());
+	}
+}
+
+class Account
+{
+    public $id = 0;
+    public $login = null;
+    public $passwort = null;
+    public $nickname = null;
+    public $regdatum = null;
+    public $regip = 0;
+    public $newAttr = 0;
+    public $bild = null;
+    public $beschreibung = null;
+    public $email = null;
+    public $mitglied = 0;
+    public $inaktiv = 0;
+    public $forschungsstatus = null;
+    public $urlaub = false;
+	public $allianz = null;
+	public $level = 0;
+	public $mapper=false;
+	public $beta=0;
+	
+    public function __construct($nid)
+	{
+	if(ctype_digit($nid)) {
+	$abfrage=mysql_query("SELECT * FROM account WHERE id='$nid'");
+	while($row=mysql_fetch_array($abfrage))
+	{
+	$this->id=$nid;
+	$this->login=$row["login"];
+	$this->passwort=$row["passwort"];
+	$this->nickname="<a href=\"userinfo.php?id=".$row["id"]."\">".$row["nickname"]." (".$row["id"].")</a>";
+	if($nid==1) $this->nickname = "<a href=\"userinfo.php?id=".$row["id"]."\"><img src=\"star3.gif\" border=\"0\" /> ".$row["nickname"]." (".$row["id"].")</a>";
+	$this->regdatum=$row["regdatum"];
+	$this->regip=$row["regip"];
+    $this->bild =$row["bild"];
+    $this->beschreibung = $row["beschreibung"];
+    $this->email = $row["email"];
+    $this->mitglied = $row["mitglied"];
+    $this->inaktiv = $row["inaktiv"];
+    $this->forschungsstatus = new Forschungen($nid);
+    $this->urlaub = $row["urlaub"];
+	$this->allianz=$row["allianz"]>0?new Allianz($row["allianz"]):null;
+	$this->level=$row["level"];
+	$this->mapper=$row["mapper"]==1?true:false;
+	$this->beta=$row["beta"]==1?true:false;
+	}
+	}
+	}
+	
+	public function loeschen()
+    {
+	if($_SESSION["Id"]!=$this->id) { echo 'Fehler: Fremdzugriff!<br />'; return 1; }
+	$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ='m' AND besitzer='$this->id'");
+	while($row=mysql_fetch_array($abfrage)) {
+	$planet = new Planeten($row["id"]);
+	$planet->sprengen();
+	}
+	die("Account wurde erfolgreich geloescht!"); 
+    }
+    public function nickname_aendern($name)
+    {
+       $this->nickname=pruefetext($name);
+    }
+    public function beschreibung_aendern( Text $text)
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--2b61c75d:11af3191905:-8000:00000000000008EA begin
+        // section -64--88--78-35--2b61c75d:11af3191905:-8000:00000000000008EA end
+
+        return (int) $returnValue;
+    }
+    public function bild_aendern( java_lang_String $bild)
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--2b61c75d:11af3191905:-8000:00000000000008EE begin
+        // section -64--88--78-35--2b61c75d:11af3191905:-8000:00000000000008EE end
+
+        return (int) $returnValue;
+    }
+    public function vertrag($typ)
+    {
+	$rueck=array();
+	$abfrage=mysql_query("SELECT * FROM vertrag WHERE $typ='1' AND valid='1' AND (initiator='$this->id' OR partner='$this->id')");
+	while($row=mysql_fetch_array($abfrage)) {
+		if($row["initiator"]==$this->id) $rueck[]=$row["partner"];
+		if($row["partner"]==$this->id) $rueck[]=$row["initiator"];
+    }
+	return $rueck;
+	}
+
+} 
+class Angebote
+{
+    // --- ATTRIBUTES ---
+
+    /**
+     * Short description of attribute id
+     *
+     * @access public
+     * @var int
+     */
+    public $id = 0;
+
+    /**
+     * Short description of attribute anbieter
+     *
+     * @access public
+     * @var Account
+     */
+    public $anbieter = null;
+
+    /**
+     * Short description of attribute angebot
+     *
+     * @access public
+     * @var String
+     */
+    public $angebot = null;
+
+    /**
+     * Short description of attribute gesuch
+     *
+     * @access public
+     * @var String
+     */
+    public $gesuch = null;
+
+    // --- OPERATIONS ---
+
+    /**
+     * Short description of method erstellen
+     *
+     * @access public
+     * @author firstname and lastname of author, <author@example.org>
+     * @return int
+     */
+    public function erstellen()
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:0000000000000913 begin
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:0000000000000913 end
+
+        return (int) $returnValue;
+    }
+
+    /**
+     * Short description of method kaufen
+     *
+     * @access public
+     * @author firstname and lastname of author, <author@example.org>
+     * @return int
+     */
+    public function kaufen()
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:0000000000000915 begin
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:0000000000000915 end
+
+        return (int) $returnValue;
+    }
+
+    /**
+     * Short description of method zuruecknehmen
+     *
+     * @access public
+     * @author firstname and lastname of author, <author@example.org>
+     * @return int
+     */
+    public function zuruecknehmen()
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:0000000000000917 begin
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:0000000000000917 end
+
+        return (int) $returnValue;
+    }
+
+} 
+class Forschungen
+{
+    // --- ATTRIBUTES ---
+
+
+    public $besitzer = null;
+    public $schilde1 = 0;
+	public $oberth = 0;
+	public $schilde2=0;
+	public $waffen=0;
+	public $waffen2=0;
+	public $hull1=0;
+	public $hull2=0;
+	public $antrieb1=0;
+	public $krieg=0;
+	public $krieg2=0;
+	public $krieg3=0;
+	public $terra1=0;
+	public $terra2=0;
+	public $miranda=0;
+	public $consti=0;
+	public $fracht1=0;
+	public $torpedo1=0;
+	public $doppel=0;
+	
+	public function __construct($id)
+		{
+		$abfrage=mysql_query("SELECT * FROM forschung WHERE besitzer='$id'");
+		while($row=mysql_fetch_array($abfrage))
+		{
+		$this->besitzer=$id;
+		$this->horchposten=$row["horchposten"];
+		$this->schilde1=$row["schilde1"];
+		$this->schilde2=$row["schilde2"];
+		$this->waffen=$row["waffen"];
+		$this->waffen2=$row["waffen2"];
+		$this->hull1=$row["hull1"];
+		$this->hull2=$row["hull2"];
+		$this->antrieb1=$row["antrieb1"];
+		$this->krieg=$row["krieg"];
+		$this->krieg2=$row["krieg2"];
+		$this->krieg3=$row["krieg3"];
+		$this->terra1=$row["terra1"];
+		$this->terra2=$row["terra2"];
+		$this->oberth=$row["oberth"];
+		$this->miranda=$row["miranda"];
+		$this->consti=$row["consti"];
+		$this->fracht1=$row["fracht1"];
+		$this->torpedo1=$row["torpedo1"];
+		$this->doppel=$row["doppel1"];
+		}
+		}
+	
+	
+} /* end of class Forschungen */
+
+
+
+class Frachtraum
+    extends NPCWaren
+{
+    public $id2 = 0;
+	public $typ = "";
+	public $baustoff = 0;
+    public $duranium = 0;
+    public $erz = 0;
+    public $sorium = 0;
+    public $isochips = 0;
+    public $antimaterie = 0;
+    public $dili = 0;
+    public $tritanium = 0;
+    public $deuterium = 0;
+	public $max= 0;
+
+	public function __construct($sid,$typ) 
+	{
+		if(ctype_digit($sid)) {
+		if($typ=='schiff') $abfrage=mysql_query("SELECT * FROM schiffe WHERE id='$sid'");
+		if($typ=='planet') $abfrage=mysql_query("SELECT * FROM planeten WHERE id='$sid'");
+		while($row=mysql_fetch_array($abfrage)) {
+		$this->typ=$typ;
+		$this->id2=$sid;
+		$this->baustoff=$row["baustoff"];
+		$this->duranium=$row["duranium"];
+		$this->erz=$row["erz"];
+		$this->sorium=$row["sorium"];
+		$this->isochips=$row["isochips"];
+		$this->antimaterie=$row["antimaterie"];
+		$this->dili=$row["dili"];
+		$this->tritanium=$row["tritanium"];
+		$this->deuterium=$row["deuterium"];
+		$this->borg=$row["npcborg"];
+		$this->foderation=$row["npcfod"];
+		$this->ferengi=$row["npcfer"];
+		$this->klingonen=$row["npckling"];
+		$this->cardassianer=$row["npccard"];
+		$this->max=$row["lager"];
+		}
+		}
+	}
+	
+	public function save()
+	{
+	if($this->typ=='planet') mysql_query("UPDATE planeten SET lager='".$this->max."',baustoff='".$this->baustoff."',duranium='".$this->duranium."',erz='".$this->erz."',sorium='".$this->sorium."',isochips='".$this->isochips."',antimaterie='".$this->antimaterie."',dili='".$this->dili."',tritanium='".$this->tritanium."',deuterium='".$this->deuterium."',npcborg='".$this->borg."',npcfod='".$this->foderation."',npcfer='".$this->ferengi."',npckling='".$this->klingonen."',npccard='".$this->cardassianer."' WHERE id='$this->id2'")or die(mysql_error());
+	if($this->typ=='schiff') mysql_query("UPDATE schiffe SET lager='".$this->max."',baustoff='".$this->baustoff."',duranium='".$this->duranium."',erz='".$this->erz."',sorium='".$this->sorium."',isochips='".$this->isochips."',antimaterie='".$this->antimaterie."',dili='".$this->dili."',tritanium='".$this->tritanium."',deuterium='".$this->deuterium."',npcborg='".$this->borg."',npcfod='".$this->foderation."',npcfer='".$this->ferengi."',npckling='".$this->klingonen."',npccard='".$this->cardassianer."' WHERE id='$this->id2'")or die(mysql_error());
+	//echo "UPDATE schiffe SET baustoff='".$this->baustoff."',duranium='".$this->duranium."',erz='".$this->erz."',sorium='".$this->sorium."',isochips='".$this->isochips."',antimaterie='".$this->antimaterie."',dili='".$this->dili."',tritanium='".$this->tritanium."',deuterium='".$this->deuterium."',npcborg='".$this->borg."',npcfod='".$this->foderation."',npcfer='".$this->ferengi."',npckling='".$this->klingonen."',npccard='".$this->cardassianer."' WHERE id='$this->id2'";
+	}
+	
+	public function gesamt() 
+	{
+		return $this->baustoff+$this->duranium+$this->erz+$this->sorium+$this->deuterium+$this->isochips+$this->tritanium+$this->antimaterie+$this->dili;
+	}
+	
+	public function rauswerfen()
+	{
+		mysql_query("INSERT INTO schiffe (energieoutput,lager,x,y,name,klasse,baustoff,duranium,erz,deuterium,isochips,antimaterie,dili,tritanium,energie,maxenergie,maxgondeln,hull,maxhull,besitzer) VALUES ('4','".$this->gesamt()."','".rand(1,120)."','".rand(1,120)."','Frachtcontainer','Container','".$this->baustoff."','".$this->duranium."','".$this->erz."','".$this->deuterium."','".$this->isochips."','".$this->antimaterie."','".$this->dili."','".$this->tritanium."','500','500','200','2','2','2')");
+		$this->baustoff=0;
+		$this->duranium=0;
+		$this->erz=0;
+		$this->sorium=0;
+		$this->isochips=0;
+		$this->antimaterie=0;
+		$this->dili=0;
+		$this->tritanium=0;
+		$this->deuterium=0;
+		$this->borg=0;
+		$this->foderation=0;
+		$this->ferengi=0;
+		$this->klingonen=0;
+		$this->cardassianer=0;
+		$this->max=1;
+		$this->id=$saveid;
+		$this->save();
+	}
+} /* end of class Frachtraum */
+
+
+
+class NPCWaren
+{
+    public $borg = 0;
+    public $cardassianer = 0;
+    public $ferengi = 0;
+    public $klingone = 0;
+    public $romulaner = 0;
+    public $foderation = 0;
+
+    // --- OPERATIONS ---
+
+} 
+class Planeten
+    extends Rohling
+{
+    public $heimat = 0;
+	public $feld = array();
+	public $fehler = array(0=>"",
+						1=>"Das Schiff muss den Orbit erst verlassen!<br />",
+						2=>"Das Schiff ben&ouml;tigt 1 Energie um sich ein Feld bewegen zu k&ouml;nnen!<br />",
+						3=>"Das Schiff kann sich nur im Flottenverband bewegen!<br />",
+						4=>"Die Warpgondeln deines Schiffes sind &uuml;berhitzt! Warte einen Tick bis sie sich abgek&uuml;hlt haben!<br />",
+						5=>"Es wird 1 Energie ben&ouml;tigt um die Schilde zu aktivieren<br />",
+						6=>"Die Schilde m&uuml;ssen erst aufgeladen werden, bevor sie aktiviert werden k&ouml;nnen!<br />",
+						7=>"Nicht genug Energie vorhanden um Schilde aufzuladen!<br />",
+						8=>"Bei aktivierten Schilden kann nicht aufgeladen werden!<br />",
+						9=>"Schiff kann sich nicht tarnen!<br />",
+						10=>"Das Schiff ben&ouml;tigt 1 Energie um die Tarnvorrichtung zu aktivieren!<br />"
+						);
+	public function __construct($nid) {
+	if(!ctype_digit($nid)) { echo 'Fehler: ID ist ung&uuml;ltig!<br />'; return (-1); }
+	$abfrage=mysql_query("SELECT * FROM planeten WHERE id='$nid'");
+	while($row=mysql_fetch_array($abfrage)) {
+	$this->id=$nid;
+	$this->heimat=$row["heimat"];
+	$this->name=pruefetext($row["name"]);
+	$this->nameklartext=$row["name"];
+	$this->besitzer=new Account($row["besitzer"]);
+	$this->frachtraum=new Frachtraum($nid,"planet");
+	$this->position=new Position($nid,"planet");
+	$this->energie=$row["energie"];
+	$this->maxenergie=$row["maxenergie"];
+	$this->energieoutput=$row["energieoutput"];
+	$this->alarmstufe=$row["alarmstufe"];
+	$this->typ=$row["typ"];
+	$this->orbit=1;
+	$this->klasse=$row["typ"];
+	$this->phaser=$row["phaser"];
+	$this->maxphaser=400000;
+	$this->torpedo=$row["torpedo"];
+	$this->bild=$row["bild"];
+	$this->nachricht=$row["nachricht"];
+	$this->laser=$row["laser"];
+	$this->schilde=$row["schilde"];
+	$this->maxschilde=$row["maxschilde"];
+	$this->schildstatus=$row["schildstatus"];
+	$this->feld[]="null";
+	for($i=1;$i<=50;$i++) {
+		$this->feld[]=new Planetenfeld($nid,$i);
+		}
+	return 0;
+	}
+	echo 'Fehler: Objekt nicht in der Datenbank lokalisierbar!<br />'; return (-1);
+	}
+
+    public function sprengen()
+    {
+	$this->besitzer=13; mysql_query("UPDATE planeten SET heimat=0,besitzer='$this->besitzer' WHERE id = '$this->id'");
+	include("clear_lite.php");
+	echo 'Planet wurde freigegeben';
+	return 0;
+    }
+
+} 
+class Position
+{
+    public $x = 0;
+    public $y = 0;
+    public $orbit = 0;
+	public $system = null;
+
+	public function __construct($sid,$typ)
+	{
+		if($typ=='planet') $abfrage=mysql_query("SELECT * FROM planeten WHERE id='$sid'");
+		if($typ=='schiff') $abfrage=mysql_query("SELECT * FROM schiffe WHERE id='$sid'");
+		while($row=mysql_fetch_array($abfrage))
+		{
+		$this->x=$row["x"];
+		$this->y=$row["y"];
+		$this->orbit=$typ=='planet'?1:$row["orbit"];
+		$this->system=new System($row["system"]);
+		}
+	}
+} /* end of class Position */
+
+class System
+{
+	public $id=0;
+	public $name="";
+	public $x=0;
+	public $y=0;
+	public $bild="";
+	
+	public function __construct($sid)
+	{
+	if($sid<0 ||!ctype_digit($sid)) { echo 'Error: System-ID ist negativ oder enth&auml;lt einen String! ( ',$sid,' | ',$_SESSION["Id"],')<br />'; return 1; }
+		$abfrage=mysql_query("SELECT * FROM systeme WHERE id='$sid'") or die(mysql_error());
+		while($row=mysql_fetch_array($abfrage))
+		{
+		$this->id=$sid;
+		$this->name=$row["name"];
+		$this->x=$row["x"];
+		$this->y=$row["y"];
+		$this->bild=$row["bild"];
+		}
+	}
+}
+
+
+class Rohling
+{
+    public $name = 0;
+	public $nameklartext=0;
+    public $besitzer = null;
+    public $frachtraum = null;
+    public $position = null;
+    public $energie = 0;
+    public $maxenergie = 0;
+    public $energieoutput = 0;
+	public $schilde = 0;
+	public $maxschilde = 0;
+	public $schildstatus = 0;
+    public $id = 0;
+    public $alarmstufe = null;
+	public $typ = "";
+	public $laser = 0;
+	public $phaser = 0;
+	public $maxphaser = 0;
+	public $torpedo = 0;
+	public $bild;
+	public $nachricht ="";
+	
+    public function schilde()
+    {
+		if($this->energie<=0) return 5;
+		if($this->schilde==0) return 6;
+		if($this->dock>0 && $this->schildstatus==0) $this->dock=0;
+		$this->schildstatus=$this->schildstatus==0?1:0;
+		$this->energie--;
+		mysql_query("UPDATE schiffe SET dock='$this->dock',energie=energie-1,schildstatus='$this->schildstatus' WHERE id='$this->id'");
+		return 0;
+    }
+	
+	public function schildaufladen($anzahl)
+	{
+		if($anzahl+$this->schilde>$this->maxschilde) $anzahl=$this->maxschilde-$this->schilde;
+		if($anzahl<0) $anzahl=0;
+		if($this->energie<$anzahl) return 7;
+		if($this->schildstatus==1) return 8;
+		$this->energie-=$anzahl;
+		$this->schilde+=$anzahl;
+		mysql_query("UPDATE schiffe SET energie='$this->energie',schilde='$this->schilde' WHERE id='$this->id'");
+	return 0;
+	}
+	
+	public function beamen($modus,$feld,$ziel)
+	{
+	$waren=array("baustoff","duranium","erz","sorium","deuterium","dili","antimatiere","tritanium","isochips");
+	if($modus==1) {
+	
+	for($i=0;$i<sizeof($waren);$i++)
+		{
+		$aus=false;
+		if($feld[$i]>0) { $ausgabe="<br />Beamen: $waren[$i]: "; $aus=true; }
+		while( ($this->energie>=1 || $this->dock==$ziel->id) && $feld[$i]>0 && $ziel->frachtraum->gesamt()<$ziel->frachtraum->max) {
+			if($this->frachtraum->$waren[$i]<$feld[$i]) $feld[$i]=$this->frachtraum->$waren[$i];
+			if($feld[$i]<20) { $amount=$feld[$i]; } 
+			else 		{ $amount = 20; }
+		if($amount<0) { $feld[$i]=0; break; }
+		if($ziel->frachtraum->gesamt()+$amount>$ziel->frachtraum->max) $amount= $ziel->frachtraum->max-$ziel->frachtraum->gesamt();
+		$ausgabe.=" $amount: ok ";
+		$feld[$i]-=$amount;
+		$this->frachtraum->$waren[$i]-=$amount;
+		$ziel->frachtraum->$waren[$i]+=$amount;
+		if($this->dock!=$ziel->id && $this->dock==0) $this->energie--;
+		}
+	if($aus) {
+			echo $ausgabe;
+			$eintrag=new Logbuch("typ","neu");
+			$eintrag->x=$this->position->x;
+			$eintrag->y=$this->position->y;
+			$eintrag->zeit=date("Y-m-d H:i:s");
+			$eintrag->system=$this->position->system->id;
+			$eintrag->typ="Beamen";
+			$eintrag->klasse="Eingang";
+			$eintrag->text=$ausgabe;
+			$eintrag->initiator=$this->besitzer->id;
+			$eintrag->betroffener=$ziel->besitzer->id;
+			$eintrag->save();
+			
+			$eintrag=new Logbuch("typ","neu");
+			$eintrag->x=$this->position->x;
+			$eintrag->y=$this->position->y;
+			$eintrag->zeit=date("Y-m-d H:i:s");
+			$eintrag->system=$this->position->system->id;
+			$eintrag->typ="Beamen";
+			$eintrag->klasse="Ausgang";
+			$eintrag->text=$ausgabe;
+			$eintrag->initiator=$this->besitzer->id;
+			$eintrag->betroffener=$ziel->besitzer->id;
+			$eintrag->save();
+			}
+	}
+	
+	}	//ende modus 1
+	
+	if($modus==2) {
+	
+			if($ziel->schildstatus==1 && $ziel->besitzer->id!=$this->besitzer->id && !in_array($this->besitzer->id,$ziel->besitzer->vertrag("handel"))) return 11;
+	for($i=0;$i<sizeof($waren);$i++)
+		{
+		$aus=false;
+		if($feld[$i]>0) { $aus=true; $ausgabe="<br />Beamen: $waren[$i]: "; }
+		
+		while( ($this->energie>=1 || $this->dock==$ziel->id) && $feld[$i]>0 && $this->frachtraum->gesamt()<$this->frachtraum->max) {
+			if($ziel->frachtraum->$waren[$i]<$feld[$i]) $feld[$i]=$ziel->frachtraum->$waren[$i];
+			if($feld[$i]<20) { $amount=$feld[$i]; } 
+			else 		{ $amount = 20; }
+		if($amount<0) { $feld[$i]=0; break; }
+		if($this->frachtraum->gesamt()+$amount>$this->frachtraum->max) $amount= $this->frachtraum->max-$this->frachtraum->gesamt();
+		$ausgabe.=" $amount: ok ";
+		$feld[$i]-=$amount;
+		$this->frachtraum->$waren[$i]+=$amount;
+		$ziel->frachtraum->$waren[$i]-=$amount;
+		if($this->dock!=$ziel->id && $this->dock==0) $this->energie--;
+		}
+	if($aus) {
+	echo $ausgabe;
+			$eintrag=new Logbuch("typ","neu");
+			$eintrag->x=$this->position->x;
+			$eintrag->y=$this->position->y;
+			$eintrag->zeit=date("Y-m-d H:i:s");
+			$eintrag->system=$this->position->system->id;
+			$eintrag->typ="Beamen";
+			$eintrag->klasse="Eingang";
+			$eintrag->text=$ausgabe;
+			$eintrag->initiator=$this->besitzer->id;
+			$eintrag->betroffener=$ziel->besitzer->id;
+			$eintrag->save();
+			
+			$eintrag=new Logbuch("typ","neu");
+			$eintrag->x=$this->position->x;
+			$eintrag->y=$this->position->y;
+			$eintrag->zeit=date("Y-m-d H:i:s");
+			$eintrag->system=$this->position->system->id;
+			$eintrag->typ="Beamen";
+			$eintrag->klasse="Ausgang";
+			$eintrag->text=$ausgabe;
+			$eintrag->initiator=$this->besitzer->id;
+			$eintrag->betroffener=$ziel->besitzer->id;
+			$eintrag->save();
+		
+	}
+	}
+	
+	}	//ende modus 2
+	$this->frachtraum->save();
+	$ziel->frachtraum->save();
+	//echo "UPDATE schiffe SET energie='$this->energie' WHERE id='$this->id'";
+	if($this->typ=='s') mysql_query("UPDATE schiffe SET energie='$this->energie' WHERE id='$this->id'"); 
+	else				mysql_query("UPDATE planeten SET energie='$this->energie' WHERE id='$this->id'"); 
+	if($ziel->typ=='s') mysql_query("UPDATE schiffe SET energie='$ziel->energie' WHERE id='$ziel->id'");
+	else				mysql_query("UPDATE planeten SET energie='$ziel->energie' WHERE id='$ziel->id'");
+	}
+	
+	public function feuern($ziel,$modus)
+    {
+        /* Moduscodierung
+		0= normales angreifen
+		1= feuern ohne gegenwehr ( alarm rot )
+		10= normales angreifen mit photonen
+		11 feuern ohne gegenwehr mit photonen
+		20 = normales angreifen mit quanten
+		21 = feuern ohne gegenwerh mit quanten
+		30= feuern mit phaser und quanten
+		31 = feuern mit phaser und quanten ohne gegenwehr 
+		*/
+    // MODUS 0
+	if($modus==0)
+	{ 
+		$this->feuern($ziel,1);
+		//ALLE im sektor die selbe allianz / vertrag / id haben
+		//
+		//$ziel->feuern($this,1);
+		$this->kampftick("3",$ziel);
+	}
+	if($modus==1) 
+	{	
+		if($ziel->typ!='s') { echo 'falscher Feuermodus<br />'; return 0; }
+		if($ziel->besitzer->id!=2 && $this->besitzer->id !=2 && $this->energie>=1 && $this->phaser<$this->maxphaser && $this->tarnung==0 && $this->position->x==$ziel->position->x && $this->position->y==$ziel->position->y && $this->position->orbit==$ziel->position->orbit && $this->position->system->id==$ziel->position->system->id && (($this->besitzer->allianz->id!=$ziel->besitzer->allianz->id) || $this->allianz==0) && !in_array($this->besitzer->id,$ziel->besitzer->vertrag("nap")) && !in_array($this->besitzer->id,$ziel->besitzer->vertrag("frieden")) && $ziel->besitzer->level>=2 && $this->besitzer->level>=2) 
+		{
+		
+		$ausgabe="";
+		$change=$ziel->schilde;
+		//echo "<br />";
+		if($this->typ=='s') $objekt="Das Schiff"; else $objekt="Der Planet";
+		$ausgabe = "Angriff: $objekt '$this->name ($this->id)' greift das Schiff '$ziel->name ($ziel->id)' an.";
+		$amount = $this->laser;
+		$this->energie--;
+		$this->phaser++;
+		while($amount >0 && $ziel->schilde>0 && $ziel->schildstatus==1)
+			{
+			$amount--;		$ziel->schilde--;
+			if($ziel->schilde<=0) { $ziel->schildstatus=0; $ziel->schilde=0; }
+			}
+		if($ziel->schilde==0) $ziel->schildstatus=0;
+		if($change!=$ziel->schilde) $ausgabe .= "Schilde von $change gesunken auf $ziel->schilde. ";
+		$change=$ziel->hull;
+		while($amount >0 && $ziel->hull>0 && $ziel->schildstatus==0)
+			{
+			$amount--;		$ziel->hull--;
+			}
+		if($change!=$ziel->hull) $ausgabe .= "H&uuml;lle von $change gesunken auf $ziel->hull. ";
+	// $ausgabe ins log eintragen sowie 2 zeilen nach hier bearbeiten 
+	echo $ausgabe."<br />";	
+	if($ziel->hull==0) { 
+						//KILL
+						mysql_query("UPDATE account SET kills=kills+1 WHERE id='".$this->besitzer->id."'");
+						mysql_query("UPDATE schiffe SET kills=kills+1 WHERE id='$this->id'");
+						echo "Zerst&ouml;rung: Schiff ".$ziel->name." (".$ziel->id.") wurde von ".$this->name." (".$this->id.") vernichtet. Besitzer des Vernichters: ".$this->besitzer->nickname." (".$this->besitzer->id.")<br />"; 
+					   //pruefen auf questerfüllung
+						$suchvar=mysql_query("SELECT erfolge.id FROM erfolge,quests WHERE erfolge.uid='".$this->besitzer->id."' AND erfolge.erledigt=0 AND quests.typ=1 AND quests.zusatz='".$ziel->besitzer->id."' AND erfolge.qid=quests.id");
+						while($such=mysql_fetch_array($suchvar))
+							{
+							$quest=new Quest($such[0]);
+							//var_dump($quest);
+							$quest->plus();
+							$quest->done();
+							}
+						if(rand(0,100)>=40) {
+						$suchvar=mysql_query("SELECT quests.id,quests.max FROM erfolge,quests WHERE erfolge.uid='".$this->besitzer->id."' AND erfolge.erledigt<=1 AND quests.typ=6 AND quests.zusatz2='".$ziel->besitzer->id."' AND erfolge.qid=quests.id");
+						while($such=mysql_fetch_array($suchvar))
+						{
+						//SUCHEN in ALLEn schiffen
+						$qcounter=0;
+						$qsuche1=mysql_query("SELECT id FROM schiffe WHERE besitzer='".$this->besitzer->id."'");
+						while($qrow1=mysql_fetch_array($qsuche1))
+							{
+							$shp2=new Schiffe($qrow1[0]);
+							for($k=0;$k<sizeof($shp2->qitems);$k++)
+								if($shp2->qitems[$k]==$such[0]) $qcounter++;
+							}
+						//QITEM SETZEN
+						if($qcounter<$such[1]) {
+						$ziel->qitems[]=$such[0];
+						$ziel->savequest();
+						}
+						}
+						}
+					   $ziel->zerstoerung(); 
+					   }
+	//echo "<br />";
+	if($ziel->schildstatus==0 && $ziel->energie>=1 && $ziel->schilde>0 ) { $ziel->dock=0; $ziel->schildstatus=1; $ziel->energie--; }
+	mysql_query("UPDATE schiffe SET phaser='$this->phaser',energie='$this->energie',hull='$this->hull',schilde='$this->schilde',schildstatus='$this->schildstatus' WHERE id='$this->id'");
+	mysql_query("UPDATE schiffe SET dock='$ziel->dock',phaser='$ziel->phaser',energie='$ziel->energie',hull='$ziel->hull',schilde='$ziel->schilde',schildstatus='$ziel->schildstatus' WHERE id='$ziel->id'");
+	
+	$eintrag=new Logbuch("typ","neu");
+	$eintrag->x=$this->position->x;
+	$eintrag->y=$this->position->y;
+	$eintrag->zeit=date("Y-m-d H:i:s");
+	$eintrag->system=$this->position->system->id;
+	$eintrag->typ="Kampf";
+	$eintrag->klasse="Eingang";
+	$eintrag->text="Schiff ".$this->name." (".$this->id.") feuert.";
+	if($this->typ!='s') $eintrag->text="Planet ".$this->name." (".$this->id.") feuert.";
+	$eintrag->initiator=$this->besitzer->id;
+	$eintrag->betroffener=$ziel->besitzer->id;
+	$eintrag->save();
+	
+	$eintrag=new Logbuch("typ","neu");
+	$eintrag->x=$this->position->x;
+	$eintrag->y=$this->position->y;
+	$eintrag->zeit=date("Y-m-d H:i:s");
+	$eintrag->system=$this->position->system->id;
+	$eintrag->typ="Kampf";
+	$eintrag->klasse="Ausgang";
+	$eintrag->text="Schiff ".$this->name." (".$this->id.") feuert.";
+	if($this->typ!='s') $eintrag->text="Planet ".$this->name." (".$this->id.") feuert.";
+	$eintrag->initiator=$this->besitzer->id;
+	$eintrag->betroffener=$ziel->besitzer->id;
+	$eintrag->save();
+	
+	
+		}
+	}
+	//zurueckschiessen
+	
+	
+	}
+	
+} /* end of class Rohling */
+
+class Schiffe
+    extends Rohling
+{
+    public $skill = null;
+    public $tarnung = 0;
+    public $flotte = 0;
+	public $lrs = 0;
+	public $klasse = "";
+	public $warpkern = 0;
+	public $maxwarpkern = 0;
+	public $warpkernstatus = 0;
+	public $gondeln = 0;
+	public $maxgondeln = 0;
+	public $hull = 0;
+	public $qitems=array();
+	public $maxhull = 0;
+	public $dock=0;
+	public $maxdock=0;
+	public $loot=0;
+	
+	public $fehler = array(0=>"",
+						1=>"Fehler S1: Das Schiff muss den Orbit erst verlassen!<br />",
+						2=>"Fehler S2: Das Schiff ben&ouml;tigt 1 Energie um sich ein Feld bewegen zu k&ouml;nnen!<br />",
+						3=>"Fehler S3: Das Schiff kann sich nur im Flottenverband bewegen!<br />",
+						4=>"Fehler S4: Die Warpgondeln deines Schiffes sind &uuml;berhitzt! Warte einen Tick bis sie sich abgek&uuml;hlt haben!<br />",
+						5=>"Fehler S5: Es wird 1 Energie ben&ouml;tigt um die Schilde zu aktivieren<br />",
+						6=>"Fehler S6: Die Schilde m&uuml;ssen erst aufgeladen werden, bevor sie aktiviert werden k&ouml;nnen!<br />",
+						7=>"Fehler S7: Nicht genug Energie vorhanden um Schilde aufzuladen!<br />",
+						8=>"Fehler S8: Bei aktivierten Schilden kann nicht aufgeladen werden!<br />",
+						9=>"Fehler S9: Schiff kann sich nicht tarnen!<br />",
+						10=>"Fehler S10: Das Schiff ben&ouml;tigt 1 Energie um die Tarnvorrichtung zu aktivieren!<br />",
+						11=>"Fehler S11: Bei aktivierten Schilden kann nicht gebeamt werden!<br />",
+						12=>"Fehler S12: Dem Schiff fehlt die F&auml;higkeit Deuterium / Erz einzusaugen!<br />",
+						13=>"Fehler S13: Dem Schiff fehlt Energie!<br />",
+						14=>"Fehler S14: !",
+						15=>"Fehler S15: []",
+						16=>"Fehler S16: Um anzudocken musst du dich direkt bei der Station befinden!<br />",
+						17=>"Fehler S17: Du brauchst 1 Energie zum andocken!<br />",
+						18=>"Fehler S18: Du versuchst von der falschen Station abzudocken<br />",
+						19=>"Fehler S19: Die Station hat die maximalen Dockingpl&auml;tze ausgesch&ouml;pft!<br />",
+						20=>"Fehler S20: Du kannst nicht an- oder abdocken wenn die Schilde aktiviert sind!<br />",
+						21=>"Fehler S21: Du bist noch an einer Station angedockt. Docke ab um zu navigieren!<br />",
+						22=>"Fehler S22: Nur gemarkte Tr&uuml;mmer sind pl&uuml;nderbar!<br />"
+						);
+		
+	public function __construct($nid) {
+	if(!ctype_digit($nid)) { echo 'Fehler: ID ist ung&uuml;ltig!<br />'; return (-1); }
+	$abfrage=mysql_query("SELECT * FROM schiffe WHERE id='$nid'");
+	while($row=mysql_fetch_array($abfrage)) {
+	$this->id=$nid;
+	$this->skill=new Skill($nid);
+	$this->name=pruefetext($row["name"]);
+	$this->nameklartext=$row["name"];
+	$this->besitzer=new Account($row["besitzer"]);
+	$this->frachtraum=new Frachtraum($nid,"schiff");
+	$this->position=new Position($nid,"schiff");
+	$this->energie=$row["energie"];
+	$this->maxenergie=$row["maxenergie"];
+	$this->energieoutput=$row["energieoutput"];
+	$this->alarmstufe=$row["alarmstufe"];
+	$this->flotte=$row["flotte"];
+	$this->typ=$row["typ"];
+	$this->lrs=$row["lrs"];
+	$this->klasse=$row["klasse"];
+	$this->warpkern=$row["warpkern"];
+	$this->maxwarpkern=$row["maxwarpkern"];
+	$this->warpkernstatus=$row["warpkernstatus"];
+	$this->phaser=$row["phaser"];
+	$this->maxphaser=$row["maxphaser"];
+	$this->torpedo=$row["torpedo"];
+	$this->gondeln=$row["gondeln"];
+	$this->maxgondeln=$row["maxgondeln"];
+	$this->hull=$row["hull"];
+	$this->maxhull=$row["maxhull"];
+	$this->bild=$row["bild"];
+	$this->nachricht=$row["nachricht"];
+	$this->laser=$row["laser"];
+	$this->schilde=$row["schilde"];
+	$this->maxschilde=$row["maxschilde"];
+	$this->schildstatus=$row["schildstatus"];
+	$this->qitems=explode(",",$row["qitems"]);
+	$this->dock=$row["dock"];
+	$this->maxdock=$row["maxdock"];
+	$this->loot=$row["loot"];
+	return 0;
+	}
+	echo 'Fehler: Objekt nicht in der Datenbank lokalisierbar!<br />'; return (-1);
+	}
+
+	public function savequest()
+	{
+
+	$tempkey=implode(",",$this->qitems);
+	mysql_query("UPDATE schiffe SET qitems='$tempkey' WHERE id='".$this->id."'");
+	}
+		
+	
+	public function looten($ziel)
+	{ 
+	if($ziel->besitzer->id!=2 || $ziel->klasse!='Tr&uuml;mmer') return 22;
+	if($ziel->position->x!= $this->position->x || $ziel->position->y!= $this->position->y || $ziel->position->orbit!= $this->position->orbit || $ziel->position->system->id!= $this->position->system->id) return 22;
+	$waren=array("baustoff","duranium","erz","sorium","deuterium","dili","antimatiere","tritanium","isochips");
+	echo "gepl&uuml;ndert:<br />";
+	for($i=0;$i<sizeof($waren);$i++)
+		{
+		$menge=$ziel->frachtraum->$waren[$i];
+		if($this->frachtraum->gesamt()+$menge>$this->frachtraum->max) $menge=$this->frachtraum->max-$this->frachtraum->gesamt();
+		if($menge<0) $menge=0;
+		if($menge>0)
+			{	//transferieren
+			$ziel->frachtraum->$waren[$i]-=$menge;
+			$this->frachtraum->$waren[$i]+=$menge;
+			$ziel->frachtraum->save();
+			$this->frachtraum->save();
+			echo $waren[$i],': ',$menge,'<br />';
+			}
+		}
+	//QUESTITEMS
+	for($i=0;$i<sizeof($ziel->qitems);$i++)
+		{
+		$abfrage=mysql_query("SELECT erfolge.id FROM erfolge,quests WHERE erfolge.erledigt=0 AND erfolge.uid='".$this->besitzer->id."' AND erfolge.qid='".$ziel->qitems[$i]."' AND erfolge.qid=quests.id AND erfolge.anzahl<quests.max");
+		while($row=mysql_fetch_array($abfrage))
+			{
+			$qst=new Quest($row[0]);
+			$qst->plus();
+			if($qst->anzahl>=$qst->max) $qst->done();
+			$this->qitems[]=$ziel->qitems[$i];
+			unset($ziel->qitems[$i]);
+			$ziel->qitems=array_values($ziel->qitems);
+			echo 'Gegenstand erhalten: ',$qst->zusatz,'<br />';
+			}
+		}
+	$this->savequest();
+	$ziel->savequest();
+	//ENDE QUESTITEMS
+	$gefunden=false;
+	for($i=0;$i<sizeof($waren);$i++)
+	if($waren[$i]>0) $gefunden=true;
+	if(!$gefunden && (sizeof($ziel->qitems)==1 && $ziel->qitems[0]=='')) 
+		{
+		mysql_query("DELETE FROM schiffe WHERE id='".$ziel->id."'");
+		$ziel=null;
+		}
+	return 0;
+	}
+	
+	
+	public function kampftick($status,$ziel3)
+    {
+        /* Statuscodierung
+		0=Alarmstufe Rot
+		1=Alarmstufe gelb
+		2 = reaktion beim beamen / scannen / etc
+		3 = gewaltsamer Fall 0 ( ohne bedingung rot )
+		*/
+		if($status==0) 
+		{	//Alarmstufe Rot
+		$sarray=array();
+		$parray=array();
+		//alle moegloichen schiffe ( in dem sektor ) in einem array sammelm
+		$abfrage=mysql_query("SELECT id FROM schiffe WHERE x='".$this->position->x."' AND y='".$this->position->y."' AND orbit='".$this->position->orbit."' AND system='".$this->position->system->id."' AND energie>=1 AND besitzer!=2 AND besitzer!='".$this->besitzer->id."' AND phaser<maxphaser AND laser>0 AND alarmstufe='red'");
+		while($row=mysql_fetch_array($abfrage))
+			$sarray[]=$row["id"];
+		$abfrage=mysql_query("SELECT id FROM planeten WHERE x='".$this->position->x."' AND y='".$this->position->y."' AND system='".$this->position->system->id."' AND energie>=1 AND besitzer!=2 AND besitzer!='".$this->besitzer->id."' AND laser>0 AND alarmstufe='red'");
+		while($row=mysql_fetch_array($abfrage))
+			$parray[]=$row["id"];
+		for($i=0;$i<sizeof($parray);$i++)
+			{
+			$shp=new Planeten($parray[$i]);
+			if(($shp->besitzer->allianz->id==0 || ($shp->besitzer->allianz->id>0 && $shp->besitzer->allianz->id!=$this->besitzer->allianz->id)) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("nap")) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("verteidigung")))
+				{
+				$shp->feuern($this,1);
+				}
+			}
+		for($i=0;$i<sizeof($sarray);$i++)
+			{
+			$shp=new Schiffe($sarray[$i]);
+			if(($shp->besitzer->allianz->id==0 || ($shp->besitzer->allianz->id>0 && $shp->besitzer->allianz->id!=$this->besitzer->allianz->id)) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("nap")) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("verteidigung")))
+				{
+				$shp->feuern($this,1);
+				}
+			}
+		} 		//ENDE ALARM ROT
+		
+		if($status==3) 
+		{	//Alarmstufe Rot 3
+		$sarray=array();
+		$parray=array();
+		//alle moegloichen schiffe ( in dem sektor ) in einem array sammelm
+		$abfrage=mysql_query("SELECT id FROM schiffe WHERE x='".$this->position->x."' AND y='".$this->position->y."' AND orbit='".$this->position->orbit."' AND system='".$this->position->system->id."' AND energie>=1 AND besitzer!=2 AND besitzer!='".$this->besitzer->id."' AND phaser<maxphaser AND laser>0");
+		while($row=mysql_fetch_array($abfrage))
+			$sarray[]=$row["id"];
+		$abfrage=mysql_query("SELECT id FROM planeten WHERE x='".$this->position->x."' AND y='".$this->position->y."' AND system='".$this->position->system->id."' AND energie>=1 AND besitzer!=2 AND besitzer!='".$this->besitzer->id."' AND laser>0 AND alarmstufe='red'");
+		while($row=mysql_fetch_array($abfrage))
+			$parray[]=$row["id"];
+		for($i=0;$i<sizeof($parray);$i++)
+			{
+			$shp=new Planeten($parray[$i]);
+			if(($shp->besitzer->allianz->id==0 || ($shp->besitzer->allianz->id>0 && $shp->besitzer->allianz->id!=$this->besitzer->allianz->id)) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("nap")) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("verteidigung")) &&  ((in_array($ziel3->besitzer->id,$shp->besitzer->vertrag("verteidigung"))) || ($shp->besitzer->allianz->id>0 && $shp->besitzer->allianz->id==$ziel3->besitzer->allianz->id) || ($shp->besitzer->id==$ziel3->besitzer->id))  )
+				{
+				$shp->feuern($this,1);
+				}
+			}
+		for($i=0;$i<sizeof($sarray);$i++)
+			{
+			$shp=new Schiffe($sarray[$i]);
+			if(($shp->besitzer->allianz->id==0 || ($shp->besitzer->allianz->id>0 && $shp->besitzer->allianz->id!=$this->besitzer->allianz->id)) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("nap")) && !in_array($this->besitzer->id,$shp->besitzer->vertrag("verteidigung")) &&  ((in_array($ziel3->besitzer->id,$shp->besitzer->vertrag("verteidigung"))) || ($shp->besitzer->allianz->id>0 && $shp->besitzer->allianz->id==$ziel3->besitzer->allianz->id) || ($shp->besitzer->id==$ziel3->besitzer->id)) )
+				{
+				$shp->feuern($this,1);
+				}
+			}
+		} 		//ENDE ALARM ROT 3
+		
+	}
+	
+	
+
+    /**
+     * Short description of method selbstzerstoerung
+     *
+     * @access public
+     * @author firstname and lastname of author, <author@example.org>
+     * @return int
+     */
+    public function zerstoerung()
+    {
+		//pruefen auf quest(ab)geber
+		$abfrage=mysql_query("SELECT * FROM quests WHERE geber='".$this->id."' OR abgeber='".$this->id."'");
+		if(mysql_num_rows($abfrage)>0) {
+					echo "Questgeber sind nicht zerst&ouml;bar!<br />";
+					$this->hull=1;
+					} else {
+		//ende pruefen auf qgeber
+		$this->maxhull=10;
+		$this->hull=5;
+		$this->maxschilde=0;
+		$this->schilde=0;
+		$this->flotte=0;
+		$this->schildstatus=0;
+		$this->besitzer=new Account("2");
+		$this->laser=0;
+		$this->alarmstufe='green';
+		$this->bild='trumm.gif';
+		$this->klasse='Tr&uuml;mmer';
+		$this->loot=1;
+		}
+		mysql_query("UPDATE schiffe SET dock=0 WHERE dock='$this->id'");
+		mysql_query("UPDATE schiffe SET loot=1,klasse='$this->klasse',hull='$this->hull',maxhull='$this->maxhull',name='$this->name',bild='$this->bild',besitzer=".$this->besitzer->id.",schildstatus='$this->schildstatus',schilde='$this->schilde',maxphaser='$this->maxphaser' WHERE id='$this->id'");	
+		return 0;
+   }
+
+	private function einflugkoordinaten()
+	{
+	echo ' KOORDINATENZUWEISUNG ';
+	$x=rand(1,20);
+	if($x>1 && $x<20) { $y=rand(1,2); if($y==2) $y=20; $ruck=array($x,$y); 
+	return $ruck;
+	}
+	$y=rand(1,20);
+	$ruck=array($x,$y);
+	return $ruck;
+	}
+	
+    public function navigieren($richtung,$flotte)
+    {
+	if(($_POST["oldx"]==$this->position->x && $_POST["oldy"]==$this->position->y )|| $richtung=='v' || $richtung=='s')
+	{
+	if($this->position->orbit==1 && $richtung!='v') return 1; 
+	if($this->flotte>0 && $flotte===false) return 3;
+	if($this->gondeln>=$this->maxgondeln) return 4;
+	if($this->dock>0) return 21;
+
+	//ENERGIEBEHANDLUNG
+	$grundbetrag=$this->position->system->id==0?1:0.2;
+	if($this->klasse=='Sonde') $grundbetrag=0.2;
+	//erzeuge alle 4 Felder oben unten links rechts
+	$feldoben=new Feld($this->position->x,$this->position->y-1,$this->position->system->id);
+	$feldunte=new Feld($this->position->x,$this->position->y+1,$this->position->system->id);
+	$feldlinks=new Feld($this->position->x-1,$this->position->y,$this->position->system->id);
+	$feldrechts=new Feld($this->position->x+1,$this->position->y,$this->position->system->id);
+		//abhandlungen
+	//auswahl switchvar
+			if($richtung=='o') $switchvar=$feldoben;
+			if($richtung=='u') $switchvar=$feldunten;
+			if($richtung=='l') $switchvar=$feldlinks;
+			if($richtung=='r') $switchvar=$feldrechts;
+			
+	if (($richtung=='o' || $richtung=='l' ||$richtung=='u' || $richtung=='r') && $switchvar->was=='Weltraum')
+		{
+		
+		switch ($switchvar->typ) {
+		case "d": $need=$grundbetrag*3; break;
+		case "dk": $need=$grundbetrag*2; break;
+		case "e": $need=$grundbetrag*3; break;
+		case "ek": $need=$grundbetrag*2; break;
+		case "lim": $need=-1; break;
+		default: $need=$grundbetrag*2; break;
+		}
+	}
+	if(!isset($need)) $need=$grundbetrag;
+	if($need==-1) { echo 'Nicht passierbar!<br />'; return 0; }
+	//ENERGIEBEHANDLUNG
+	if($this->energie<$need) { echo 'Es werden ',$need,' Energie ben&ouml;tigt um in das Feld einzufliegen!<br />'; return 0; }
+	
+	if($richtung=='o' && $this->position->y > 1) { $this->position->y--; $this->energie-=$need; $this->gondeln++; }
+	if($richtung=='l' && $this->position->x > 1) { $this->position->x--; $this->energie-=$need; $this->gondeln++;}
+	if($richtung=='u' && (( $this->position->y<20 && $this->position->system>0 ) || $this->position->system->id==0)) { $this->position->y++; $this->energie-=$need; $this->gondeln++;}
+	if($richtung=='r' && (( $this->position->x<20 && $this->position->system>0 ) || $this->position->system->id==0)) { $this->position->x++; $this->energie-=$need; $this->gondeln++;}
+	if($richtung=='v') { $this->position->orbit=$this->position->orbit==1?0:1; $this->energie-=$need; $this->gondeln++; }
+	if($richtung=='s') { 
+					if($this->position->orbit==1) return 1;
+				$erledigt=false;
+				if($this->position->system->id==0 && !$erledigt) {
+				$abfrage=mysql_query("SELECT * FROM systeme WHERE x='".$this->position->x."' AND y='".$this->position->y."' LIMIT 1");
+				while($row=mysql_fetch_array($abfrage)) {
+											$this->energie-=$need;
+											$this->position->system=new System($row["id"]);
+											$this->gondeln++;
+											//Flottenpruefung
+											if($flotte===true) {
+												$fx=0; $fy=0;
+												$testvar1=mysql_query("SELECT * FROM schiffe WHERE flotte='".$this->flotte."' AND id!='".$this->id."' AND system='".$row["id"]."'");
+												while($testrow1=mysql_fetch_array($testvar1))
+													{
+													$fx=$testrow1["x"]; $fy=$testrow1["y"];
+													}
+												}
+											if($fx==0 && $fy==0) {
+											$flyin=$this->einflugkoordinaten();
+											$this->position->x=$flyin[0];
+											$this->position->y=$flyin[1];
+											}
+											else
+											{
+											$this->position->x=$fx;
+											$this->position->y=$fy;
+											}
+											$erledigt=true;
+													}
+						}
+						if($this->position->system->id>0 && !$erledigt) {
+						$this->gondeln++;
+						$this->energie-=$need;
+						$this->position->x=$this->position->system->x;
+						$this->position->y=$this->position->system->y;
+						$this->position->system=new System('0');
+						$this->position->system->id=0;
+						$erledigt=true;
+						}
+						}
+
+mysql_query("UPDATE schiffe SET gondeln='".$this->gondeln."',energie='".$this->energie."',system='".$this->position->system->id."',x=".$this->position->x.",y=".$this->position->y.",orbit=".$this->position->orbit." WHERE id='$this->id'") or die(mysql_error());
+mysql_query("UPDATE counter SET count=count+1 WHERE id=1") or die(mysql_error());
+$abfrage2=mysql_query("SELECT * FROM schiffe WHERE id!='$this->id' AND system='".$this->position->system->id."' AND x=".$this->position->x." AND y=".$this->position->y." AND orbit=".$this->position->orbit);
+while($row2=mysql_fetch_array($abfrage2))
+{
+$eintrag=new Logbuch("typ","neu");
+$eintrag->x=$this->position->x;
+$eintrag->y=$this->position->y;
+$eintrag->zeit=date("Y-m-d H:i:s");
+$eintrag->system=$this->position->system->id;
+$eintrag->typ="Bewegung";
+$eintrag->klasse="Eingang";
+$eintrag->text="Einflug des Schiffes ".$this->name." (".$this->id.")";
+$eintrag->initiator=$this->besitzer->id;
+$eintrag->betroffener=$row2["besitzer"];
+$eintrag->save();
+}
+//Horchposten
+/*
+$lovevar=$_SESSION["Id"];
+$horcharray=array();
+$horchquery=mysql_query("SELECT * FROM schiffe WHERE besitzer!='$lovevar' AND klasse='Horchposten' AND x>=".($this->position->x-5)." AND x<= ".($this->position->x+5) ." AND y>= ".($this->position->y-5) ." AND y<=".($this->position->y+5));
+while($treffer=mysql_fetch_array($horchquery)) array_push($horcharray,$treffer["id"]);
+
+$datum=date("Y-m-d H:i:s");
+for($a=0;$a<sizeof($horcharray);$a++) { $ich=$horcharray[$a]; mysql_query("INSERT INTO horchlog (datum,img,besitzer,klasse,ich,x,y) VALUES ('$datum','$schiff->img','$schiff->besitzer','$schiff->klasse','$ich','$schiff->x','$schiff->y')") or die(mysql_error()); }
+
+$abfrage=mysql_query("SELECT * FROM weltraum WHERE (typ='b' OR typ='rs' OR typ='bs') AND x=".$this->position->x." AND y=".$this->position->y." AND system=".$this->position->system->id);
+while($tmp=mysql_fetch_array($abfrage)) $nebel=true;
+
+$sonnenquery=mysql_query("SELECT * FROM weltraum WHERE (typ='p' OR typ='x' OR typ='r1' OR typ='r2' OR typ='r3' OR typ='r4') AND system=".$this->position->system->id." AND x=".$this->position->x." AND y=".$this->position->y);
+while($sonne=mysql_fetch_array($sonnenquery))
+{
+echo 'Dein Schiff wurde zerst&ouml;rt!'; $this->zerstoerung(); 
+}
+
+mysql_query("UPDATE schiffe SET schildstatus='$this->schildstatus',energie='$this->energie',phaser='$this->phaser',gondeln='$this->gondeln',schilde='$this->schilde' WHERE id='$this->id'");
+*/
+if(!$nebel) $this->kampftick("0",null); 
+return 0;
+}
+return 14;
+}
+
+	public function docken($target)
+	{
+	if($this->position->x != $target->position->x || $this->position->y != $target->position->y || $this->position->orbit != $target->position->orbit || $this->position->system->id != $target->position->system->id) return 16;
+	if($this->energie==0 && $this->dock==0) return 17;
+	if($this->dock>0 && $this->dock!=$target->id) return 18;
+	if(sizeof($target->dockfeld()) == $target->maxdock) return 19;
+	if($target->schildstatus==1) return 20;
+	//berechnung
+	if($this->dock==$target->id) { $this->dock=0; mysql_query("UPDATE schiffe SET dock=0 WHERE id='".$this->id."'"); echo "abgedockt<br />"; return 0; }
+	if($this->dock==0) { $this->dock=$target->id; $this->energie--; mysql_query("UPDATE schiffe SET dock='".$this->dock."',energie=energie-1 WHERE id='".$this->id."'"); return 0; }
+	return 14;
+	}
+
+    public function tarnen()
+    {
+        if($this->skill->tarnung!=1) return 9;
+		if($this->energie<=0 && $this->tarnung==0) return 10;
+		$this->tarnung=$this->tarnung==0?1:0;
+		if($this->tarnung==1) $this->energie--;
+		$this->schildstatus=0;
+		mysql_query("UPDATE schiffe SET energie='$this->energie',tarnung='$this->tarnung',schildstatus='$this->schildstatus' WHERE id = '$this->id'");
+		return 0;
+    }
+
+    public function transwarp($x,$y)
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--2b61c75d:11af3191905:-8000:0000000000000896 begin
+        // section -64--88--78-35--2b61c75d:11af3191905:-8000:0000000000000896 end
+
+        return (int) $returnValue;
+    }
+
+	public function einsaugen($was,$anzahl)
+	{
+	if($this->skill->deuterium==0 && $was=='deuterium') return 12;
+	if($this->skill->erz==0 && $was=='erz') return 12;
+	if($this->energie==0) return 13;
+//XXXX
+	if(!ctype_digit($anzahl))  $anzahl=$this->energie; 
+	$limes=$was=='erz'?8:10;
+	if($anzahl>$this->energie) $anzahl = $this->energie;
+	if($anzahl*$limes>$this->frachtraum->max-$this->frachtraum->gesamt()) $anzahl=ceil(($this->frachtraum->max-$this->frachtraum->gesamt())/$limes);
+	if($anzahl<0) $anzahl=0;
+
+	$this->energie-=$anzahl;
+	$this->frachtraum->$was+=($anzahl*$limes);
+	
+	mysql_query("UPDATE schiffe SET energie='".$this->energie."' WHERE id='".$this->id."'");
+	$this->frachtraum->save();
+	
+	$abfrage=mysql_query("SELECT erfolge.id FROM quests,erfolge WHERE erfolge.qid=quests.id AND erfolge.uid='".$this->besitzer->id."' AND quests.typ=7 AND erledigt=0 AND quests.zusatz='$was'");
+	while($row=mysql_fetch_array($abfrage))
+		{
+		$thisquest=new Quest($row[0]);
+		for($o=0;$o<($anzahl*$limes);$o++)
+			$thisquest->plus();
+		if($thisquest->anzahl>=$thisquest->max) { $thisquest->done(); $this->anzahl=$this->max; echo 'Quest erfolgreich!<br />'; }
+		}
+	
+	echo $anzahl*$limes,' ',$was=='erz'?'Erz':'Deuterium',' einesaugt!<br />';
+//XXXX
+	}
+	
+	//angedockt
+	public function dockfeld()
+	{
+	$returnarray=array();
+	if($this->skill->basis==0) return 15;
+	$dockabfrage=mysql_query("SELECT id FROM schiffe WHERE dock='".$this->id."'");
+	while($dockrow=mysql_fetch_array($dockabfrage))
+		$returnarray[]=$dockrow[0];
+	return $returnarray;
+	}
+	
+	
+} /* end of class Schiffe */
+
+//Feld klasse
+class Feld
+{
+public $x=0;
+public $y=0;
+public $system=0;
+public $was="";
+public $typ="";
+
+public function __construct($x,$y,$system)
+	{
+	if($system==0)
+		{
+		$abfrage=mysql_query("SELECT * FROM systeme WHERE x='$x' AND y='$y'");
+		while($row=mysql_fetch_array($abfrage))
+			$this->was='System';
+		$abfrage=mysql_query("SELECT * FROM weltraum WHERE x='$x' AND y='$y' AND system=0");
+		while($row=mysql_fetch_array($abfrage)) {
+			$this->was='Weltraum';
+			$this->typ=$row["typ"];
+					}
+		}
+	if($system>0)
+		{
+		$abfrage=mysql_query("SELECT * FROM planeten WHERE x='$x' AND y='$y' AND system='$system'");
+		while($row=mysql_fetch_array($abfrage))
+			$this->was='Planet';
+		$abfrage=mysql_query("SELECT * FROM weltraum WHERE x='$x' AND y='$y' AND system='$system'");
+		while($row=mysql_fetch_array($abfrage)) {
+			$this->was='Weltraum';
+			$this->typ=$row["typ"];
+		}
+		}
+	}
+
+}
+class Vertrage
+{
+    
+    public $initiator = null;
+    public $partner = null;
+    public $nap = false;
+    public $def = false;
+    public $handel = false;
+    public $krieg = false;
+
+    public function aufloesen()
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008D4 begin
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008D4 end
+
+        return (int) $returnValue;
+    }
+
+    public function annehmen()
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008D6 begin
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008D6 end
+
+        return (int) $returnValue;
+    }
+
+    public function ablehnen()
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008D9 begin
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008D9 end
+
+        return (int) $returnValue;
+    }
+
+    public function anbieten($vertrag)
+    {
+        $returnValue = (int) 0;
+
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008DB begin
+        // section -64--88--78-35--5cf53369:11af376d924:-8000:00000000000008DB end
+
+        return (int) $returnValue;
+    }
+
+} /* end of class Vertrage */
+
+
+
+class Skill
+{
+public $deuterium=0;
+public $erz=0;
+public $transwarp=0;
+public $tarnung=0;
+public $basis=0;
+public $bauen=0;
+
+function __construct($sid)
+{
+	$abfrage=mysql_query("SELECT * FROM schiffe WHERE id='$sid'");
+	while($row=mysql_fetch_array($abfrage))
+	{
+	$this->deuterium=$row["skilldeut"];
+	$this->erz=$row["skillerz"];
+	$this->transwarp=$row["skilltranswarp"];
+	$this->tarnung=$row["skilltarnung"];
+	$this->basis=$row["skillbase"];
+	$this->bauen=$row["skillbau"];
+	}
+}
+}
+
+class Warenkonto
+    extends Frachtraum
+{
+    // --- ATTRIBUTES ---
+
+    // --- OPERATIONS ---
+
+} /* end of class Warenkonto */
+
+
+
+class Planetenfeld
+{
+public $pid=0;
+public $fid=0;
+public $was=0;
+public $bauzeit=0;
+public $untergrund="";
+public $hull=60;
+public $aktiv=0;
+
+
+function __construct($pid,$fid) 
+	{
+	$abfrage=mysql_query("SELECT * FROM planet2 WHERE id='$pid'");
+	while($row=mysql_fetch_array($abfrage))
+	{
+	$this->pid=$pid;
+	$this->fid=$fid;
+	splitfeld($row["feld".(int)$fid],$a,$b,$c,$d,$e);
+	$this->was=$a;
+	$this->bauzeit=$b;
+	$this->untergrund=$c;
+	$this->hull=$d;
+	$this->aktiv=$e;
+	}
+}
+
+function save() 
+{
+mysql_query("UPDATE planet2 SET feld".$this->fid." = '".$this->was."-".$this->bauzeit."-".$this->untergrund."-".$this->hull."-".$this->aktiv."' WHERE id='".$this->pid."'") or die(mysql_error());
+//echo "UPDATE planet2 SET feld".$this->fid." = '".$this->was."-".$this->bauzeit."-".$this->untergrund."-".$this->hull."-".$this->aktiv." WHERE pid='".$this->pid."'";
+}
+
+}
+?>

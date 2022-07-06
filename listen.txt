@@ -1,0 +1,38 @@
+class LISTE is
+readonly head:INT;
+readonly tail:LISTE;
+create:LISTE is 
+res:=#LISTE; end;
+cons(a:INT):LISTE is
+l:LISTE:=copy;
+head:=a;
+tail:=l;
+res:=self;
+end;
+isEmpty:BOOL is
+res:=tail=void;
+end;
+
+foldr(f:procedure(INT,INT):INT;z:INT) is
+if isEmpty=true then <<z<<"\n"; return; end;
+z:=f(head,z);
+tail.foldr(f,z);
+end;
+end;
+
+class TEST is
+add(a,b:INT):INT is
+res:=a+b;
+end;
+
+main:INT is
+wert:INT;
+neu:LISTE:=#LISTE;
+neu:=neu.cons(2);
+neu:=neu.cons(3);
+neu:=neu.cons(4);
+wert:=0;
+neu.foldr(bind add(,),wert);
+--<<neu.head<<" "<<neu.tail.head<<" "<<neu.tail.tail.head<<"\n";
+end;
+end;

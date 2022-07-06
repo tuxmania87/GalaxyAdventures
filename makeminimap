@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for i in {0..24}
+do
+  echo bearbeite Sektor $i
+  php createBigMap.php $i > minimap/bild$i.png
+done
+echo setze Teile zusammen
+php assembleMapParts.php > minimap/minimap.png

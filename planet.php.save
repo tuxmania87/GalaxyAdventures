@@ -1,0 +1,308 @@
+<?php
+function getmitglied($var1)
+{
+$lk=mysql_query("SELECT mitglied FROM account WHERE id='$var1'");
+$lk1=mysql_fetch_array($lk);
+$tmp1=$lk1["mitglied"];
+return $tmp1;
+}
+
+include("head.php");
+include("navlogged.php");
+include_once("connect.php");
+
+$photprod=0; $quantprod=0;
+$pid=$_GET["pid"];
+if(ctype_digit($pid)) {
+$planet=new schiff($pid);
+
+}
+//CHEATSCHUTZ ANFANG
+
+
+$betray=false;
+$testid=$_GET["sid"];
+if(!isset($testid)) $testid=$_GET["pid"];
+if(!ctype_digit($testid)) $betray=true;
+if(!isset($_SESSION["Id"])) $betray=true;
+if($planet->typ!='m' && $planet->typ!='l' && $planet->typ!='i') $betray=true;
+if(!$betray) {
+$tmp=mysql_query("SELECT besitzer FROM schiffe WHERE id='$testid'");
+while($testtmp=mysql_fetch_array($tmp))
+if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
+}
+if($betray) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
+
+//CHEATSCHUTZ ENDE
+
+if($do==1337 && $planet->besitzer==$_SESSION["Id"]) {
+$savetext=$_POST["message2"];
+changeit($savetext);
+$planet->nachricht=$savetext;
+$planet->setData();
+
+}
+
+if($_SESSION["Id"]<10) $faktor=2; else $faktor=1;
+
+
+//allgemeine Berechnung 1
+$addarray=array("0","0","0","0","0","0","0","0");
+$energie=0;
+$energiealt=$planet->energie;
+$abfrage=mysql_query("SELECT * FROM planet2 WHERE pid='$pid'");
+while($row=mysql_fetch_array($abfrage)) {
+//Runde 1 Energie
+for($i=1;$i<=50;$i++)
+{
+$tempfeld='feld'.$i;
+$a=""; $b=""; $c="";
+splitfeld($row[$tempfeld],$a,$b,$c,$d,$e);
+if($a==3 && $b==0 && $e==1) { $energie+=15; }
+if($a==7 && $b==0 && $e==1) { $energie+=10; }
+if($a==13 && $b==0 && $e==1) {$energie+=10; }
+if($a==24 && $b==0 && $planet->deuterium>=20 && $e==1) {$energie+=20; $addarray[8]-=20 ; }
+if($a==25 && $b==0 && $e==1) { $energie+=40; }
+}
+//Runde 2 BM und AM und SOrium und ERZ
+$energiealt+=$energie;
+for($i=1;$i<=50;$i++)
+{
+$tempfeld='feld'.$i;
+$a=""; $b=""; $c="";
+splitfeld($row[$tempfeld],$a,$b,$c,$d,$e);
+if($a==1 && $b==0 && $energiealt>=5 && $e==1) { $addarray[0]+=(5*$faktor); $energie-=5; $energiealt-=5; }
+if($a==8 && $b==0 && $energiealt>=3 && $e==1) { $addarray[2]+=(4*$faktor); $energie-=3; $energiealt-=3;  }
+if($a==14 && $b==0 && $energiealt>=10 && $e==1) { $addarray[3]+=(1*$faktor); $energie-=10; $energiealt-=10;  }
+if($a==21 && $b==0 && $energiealt>=10 && $e==1) { $addarray[7]+=(1*$faktor); $energie-=10;  $energiealt-=10; }
+if($a==26 && $b==0 && $energiealt>=20 && $e==1) { $addarray[7]+=(2*$faktor); $energie-=20;  $energiealt-=20; }
+if($a==23 && $b==0 && $c=='im' && $energiealt>=50 && $e==1) { $addarray[6]+=(2*$faktor); $energie-=50;  $energiealt-=50; }
+if($a==23 && $b==0 && $c=='m' && $energiealt>=50 && $e==1) { $addarray[6]+=(1*$faktor); $energie-=50;  $energiealt-=50; }
+}
+//Runde 3 Duranium
+for($i=1;$i<=50;$i++)
+{
+$tempfeld='feld'.$i;
+$a=""; $b=""; $c="";
+splitfeld($row[$tempfeld],$a,$b,$c,$d,$e);
+if($a==9 && $b==0  && $e==1 && $energiealt>=6 && $addarray[2]+$planet->rohstoffc>=8) { $addarray[1]+=(5*$faktor); $addarray[2]-=8; $energie-=6;  $energiealt-=6; }
+}
+//Runde 4 Isochips && Tritanium
+for($i=1;$i<=50;$i++)
+{
+$tempfeld='feld'.$i;
+$a=""; $b=""; $c="";
+splitfeld($row[$tempfeld],$a,$b,$c,$d,$e);
+if($a==10 && $b==0 && $e==1 && $energiealt>=10 && $addarray[0]+$planet->rohstoffa>=10 && $addarray[7]+$planet->antimaterie>=2 && $addarray[8]+$planet->deuterium>=15&& $addarray[6]+$planet->dili>=1) { $addarray[0]-=10; $addarray[4]+=(1*$faktor); $addarray[7]-=2; $addarray[8]-=15; $addarray[6]-=1; $energie-=10;  $energiealt-=10; }
+if($a==22 && $b==0 && $e==1 && $energiealt>=60 && $addarray[1]+$planet->rohstoffb>=10 && $addarray[2]+$planet->rohstoffc>=12) { $addarray[1]-=10; $addarray[2]-=12; $addarray[5]+=(1*$faktor);  $energie-=60;  $energiealt-=60; }
+}
+//Torpedos
+for($i=1;$i<=50;$i++)
+{
+$tempfeld='feld'.$i;
+$a=""; $b=""; $c="";
+splitfeld($row[$tempfeld],$a,$b,$c,$d,$e);
+if($a==27 && $b==0 && $e==1 && $energiealt>=4 && $addarray[0]+$planet->rohstoffa>=5 && $addarray[7]+$planet->antimaterie>=2 && $addarray[8]+$planet->deuterium>=2&& $addarray[1]+$planet->rohstoffb>=3) { $addarray[0]-=5;  $photprod++; $addarray[7]-=2; $addarray[8]-=2; $addarray[1]-=3; $energie-=4;  $energiealt-=4; }
+if($a==27 && $b==0 && $e==2 && $energiealt>=4 && $addarray[0]+$planet->rohstoffa>=5 && $addarray[3]+$planet->rohstoffd>=3 && $addarray[5]+$planet->tritanium>=3 && $addarray[7]+$planet->antimaterie>=2 && $addarray[8]+$planet->deuterium>=2&& $addarray[1]+$planet->rohstoffb>=3) { $quantprod++; $addarray[0]-=5; $addarray[3]-=3; $addarray[5]-=3; $addarray[7]-=2; $addarray[8]-=2; $addarray[1]-=3; $energie-=4;  $energiealt-=4; }
+}
+
+
+}
+
+
+$planet->energieoutput=$energie; $planet->setData(); 
+//ENERGIE!! ENDE
+
+$pid=$_GET["pid"];
+$target=$_POST["target"];
+$planet=new schiff($pid);
+
+
+if(isset($_POST["newname"])) { $planet->name=pruefetext($_POST["newname"]); $planet->setData();  }
+
+
+
+
+echo '<hr />Name des Planeten: ',$planet->name,'<br />Energie: ',$planet->energie,'/',$planet->maxenergie,$planet->energieoutput>=0?'<span style="color:green;">+'.$planet->energieoutput.'</span>':'<span style="color:red;">'.$planet->energieoutput.'</span>','&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Schilde: ',$planet->schildstatus==0?'<span>':'<span style="color:yellow;">',' ',$planet->schilde,'/',$planet->maxschilde,'</span>';
+echo '<br />Alarmstufe: <font color="',$planet->alarmustufe,'">',$planet->alarmstufe,'</font>&nbsp;&nbsp;
+
+$datum=date("Y-m-d H:i:s");
+$betreff="Aushilfe bei deinem Planeten: $planet->name ($planet->id)";
+$inhalt="Hallo\n\nDa du noch neu in dieser Galaxis bist und wir bemerkt haben, dass du dringend Energie ben&ouml;tigst haben wir mit einem unserer Helferschiffen deinen Planeten wieder mit Energie beladen!\nAdmiral Miller - von der <b><font color=\"white\">F&ouml;deration</font></b>";
+if(getmitglied($planet->besitzer)<=15 && $planet->energie==0) {
+echo '<br /><br /><span style="color:red;">Achtung!! Du hast keine Energie mehr. Achte darauf unbedingt <b>Solaranlangen</b> auf W&uuml;sten zu bauen um Energie zu produzieren!</span><br /><span style="color:yellow;font-weight:bold;">Hinweis:</span>Du hast neue <a href="mail.php">Nachrichten</a>';
+mysql_query("INSERT INTO mail (datum,empfaenger,absender,neu,betreff,inhalt) VALUES ('$datum','$planet->besitzer','5','1','$betreff','$inhalt')");
+$planet->energie=$planet->maxenergie; $planet->setData(); 
+}
+if(getmitglied($planet->besitzer)<=15 && $planet->energieoutput<0 && $planet->energie<$planet->maxenergie) {
+echo '<br /><br /><span style="color:red;">Achtung!! Du produzierst weniger Energie als du ben&ouml;tist!!. Achte darauf unbedingt <b>Solaranlangen</b> auf W&uuml;sten zu bauen um Energie zu produzieren!</span>';
+}
+
+echo '<hr /><table class="bordered">';
+//Reihe1
+$abfrage=mysql_query("SELECT * FROM planet2 WHERE pid='$pid'");
+while($row=mysql_fetch_array($abfrage)) {
+for($i=1;$i<=50;$i++)
+{
+$tempfeld='feld'.$i;
+$a=""; $b=""; $c="";
+splitfeld($row[$tempfeld],$a,$b,$c,$d,$e);
+$bild='desert.gif';
+//tr test
+if($i==1 || $i==21 || $i==31 || $i==41 || $i==11) echo '<tr>';
+if($c=='f' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="forest.png" border="0" onmouseover="Tip(\'<b>Wald</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='g' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="grass.png" border="0" onmouseover="Tip(\'<b>Wiese</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='w' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="water.png" border="0" onmouseover="Tip(\'<b>Wasser</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='m' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="mountain.png" border="0" onmouseover="Tip(\'<b>Gebirge</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='d' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="desert.png" border="0" onmouseover="Tip(\'<b>W&uuml;ste</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='i' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="ice.png" border="0" onmouseover="Tip(\'<b>Eis</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='l' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="lava.png" border="0" onmouseover="Tip(\'<b>Lava</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='v' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="vulkan.png" border="0" onmouseover="Tip(\'<b>Vulkan</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='s' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="gestein.png" border="0" onmouseover="Tip(\'<b>Lavagestein</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='im' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="icem.png" border="0" onmouseover="Tip(\'<b>Eisberg</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='fl' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="frozen.png" border="0" onmouseover="Tip(\'<b>gefrorener See</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='dm' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="dmountain.png" border="0" onmouseover="Tip(\'<b>W&uuml;stengebirge</b>\')" onmouseout="UnTip()" /></a></td>';
+if($c=='is' && $a==0) echo '<td><a href="build.php?pid=',$pid,'&fid=',$i,'"><img src="ispalte.png" border="0" onmouseover="Tip(\'<b>Kernspalte</b>\')" onmouseout="UnTip()" /></a></td>';
+
+if($a=='1' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="bm.gif" border="0" onmouseover="Tip(',$e==1?'baustoffonline':'baustoffoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='2' && $b==0 && $c=='g') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="lager.gif" border="0" onmouseover="Tip(lageronline)" onmouseout="UnTip()" /></a></td>';
+if($a=='2' && $b==0 && $c=='d') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="lagerwueste.png" border="0" onmouseover="Tip(lageronline)" onmouseout="UnTip()" /></a></td>';
+if($a=='2' && $b==0 && $c=='i') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="lagereis.png" border="0" onmouseover="Tip(lageronline)" onmouseout="UnTip()" /></a></td>';
+if($a=='3' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="solar.gif" border="0" onmouseover="Tip(',$e==1?'solaronline':'solaroffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='4' && $b==0) echo '<td><a href="createship.php?pid=',$pid,'&fid=',$i,'"><img src="werft.gif" border="0" onmouseover="Tip(werftonline)" onmouseout="UnTip()" /></a></td>';
+if($a=='5' && $b==0 && $c=='i') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="plasma.gif" border="0" onmouseover="Tip(plasmaonline)" onmouseout="UnTip()" /></a></td>';
+if($a=='5' && $b==0 && $c=='d') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="kanonewueste.png" border="0" onmouseover="Tip(plasmaonline)" onmouseout="UnTip()" /></a></td>';
+if($a=='6' && $b==0 && $c=='i') echo '<td><a href="schilde.php?pid=',$pid,'&fid=',$i,'"><img src="schild.gif" border="0" onmouseover="Tip(schildeonline)" onmouseout="UnTip()" /></a></td>';
+if($a=='6' && $b==0 && $c=='d') echo '<td><a href="schilde.php?pid=',$pid,'&fid=',$i,'"><img src="schildturmwueste.png" border="0" onmouseover="Tip(schildeonline)" onmouseout="UnTip()" /></a></td>';
+if($a=='7' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="wasserkraft.gif" border="0" onmouseover="Tip(',$e==1?'wasseronline':'wasseroffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='8' && $b==0 && $c=='m') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="mine.gif" border="0" onmouseover="Tip(',$e==1?'mineonline':'mineoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='8' && $b==0 && $c=='dm') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="minewuestengebirge.png" border="0" onmouseover="Tip(',$e==1?'mineonline':'mineoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='9' && $b==0 && $c=='i') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="dura.gif" border="0" onmouseover="Tip(',$e==1?'duraniumonline':'duraniumoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='9' && $b==0 && $c=='d') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="duraniumwueste.png" border="0" onmouseover="Tip(',$e==1?'duraniumonline':'duraniumoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='10' && $b==0) echo '<td><a href="flab.php?pid=',$pid,'&fid=',$i,'"><img src="forschung.gif" border="0" onmouseover="Tip(',$e==1?'forschungonline':'forschungoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='12' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="flager.gif" border="0" title="Lagerh&ouml;hle" /></a></td>';
+if($a=='13' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="lavawerk.gif" border="0" title="Hitzekraftwerk" /></a></td>';
+if($a=='14' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="sorium.gif" border="0" onmouseover="Tip(',$e==1?'soriumonline':'soriumoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='16' && $b==0) echo '<td><a href="schilde.php?pid=',$pid,'&fid=',$i,'"><img src="schildturmgestein.png" border="0" onmouseover="Tip(schildeonline)" onmouseout="UnTip()" /></a></td>';
+if($a=='17' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="kanonelava.png" border="0" onmouseover="Tip(plasmaonline)" onmouseout="UnTip()" /></a></td>';
+if($a=='21' && $b==0 && $c=='g') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="teilchen.png" border="0" onmouseover="Tip(',$e==1?'antimaterieonline':'antimaterieoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='21' && $b==0 && $c=='i') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="beschleunigereis.png" border="0" onmouseover="Tip(',$e==1?'antimaterieonline':'antimaterieoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='21' && $b==0 && $c=='d') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="beschleunigerwueste.png" border="0" onmouseover="Tip(',$e==1?'antimaterieonline':'antimaterieoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='26' && $b==0 && $c=='g') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="doppel.png" border="0" onmouseover="Tip(',$e==1?'doppelonline':'doppeloffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='26' && $b==0 && $c=='i') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="doppeleis.png" border="0" onmouseover="Tip(',$e==1?'doppelonline':'doppeloffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='26' && $b==0 && $c=='d') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="doppelwueste.png" border="0" onmouseover="Tip(',$e==1?'doppelonline':'doppeloffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='22' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="tritanium.png" border="0" onmouseover="Tip(',$e==1?'tritaniumonline':'tritaniumoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='23' && $b==0 && $c=='im') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="dilimineeis.png" border="0" onmouseover="Tip(',$e==1?'dilimineonline':'dilimineoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='23' && $b==0 && $c=='m') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="dilimine.png" border="0" onmouseover="Tip(',$e==1?'dilimineonline':'dilimineoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='24' && $b==0 && $c=='g') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="fusion.png" border="0" onmouseover="Tip(',$e==1?'fusiononline':'fusionoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='24' && $b==0 && $c=='i') echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="fusioneis.png" border="0" onmouseover="Tip(',$e==1?'fusiononline':'fusionoffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='25' && $b==0) echo '<td><a href="destroy.php?pid=',$pid,'&fid=',$i,'"><img src="geokraftwerk.png" border="0" onmouseover="Tip(',$e==1?'geoonline':'geooffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b==0 && $c=='g') echo '<td><a href="torpedo.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrik.png" border="0" onmouseover="Tip(',$e>0?'torpedoonline':'torpedooffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b==0 && $c=='i') echo '<td><a href="torpedo.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrikeis.png" border="0" onmouseover="Tip(',$e>0?'torpedoonline':'torpedooffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b==0 && $c=='d') echo '<td><a href="torpedo.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrikwueste.png" border="0" onmouseover="Tip(',$e>0?'torpedoonline':'torpedooffline',')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b==0 && $c=='s') echo '<td><a href="torpedo.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrikgestein.png" border="0" onmouseover="Tip(',$e>0?'torpedoonline':'torpedooffline',')" onmouseout="UnTip()" /></a></td>';
+
+if($a=='1' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="bm.gif" border="0" onmouseover="Tip(\'Baustofffabrik | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='2' && $b>0 && $c=='g') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="lager.gif" border="0" onmouseover="Tip(\'Lager | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='2' && $b>0 && $c=='d') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="lagerwueste.png" border="0" onmouseover="Tip(\'Lager | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='2' && $b>0 && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="lagereis.png" border="0" onmouseover="Tip(\'Lager | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='3' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="solar.gif" border="0" onmouseover="Tip(\'Solaranlage | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='4' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="weft.gif" border="0" onmouseover="Tip(\'Werft | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='5' && $b>0 && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="plasma.gif" border="0" onmouseover="Tip(\'Plasmakanonne | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='5' && $b>0 && $c=='d') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="kanonewueste.png" border="0" onmouseover="Tip(\'Plasmakanonne | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='6' && $b>0 && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="schild.gif" border="0" onmouseover="Tip(\'Schildturm | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='6' && $b>0 && $c=='d') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="schildturmwueste.png" border="0" onmouseover="Tip(\'Schildturm | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='7' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="wasserkraft.gif" border="0" onmouseover="Tip(\'Wasserkraftwerk | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='8' && $b>0 && $c=='m') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="mine.gif" border="0" onmouseover="Tip(\'Mine | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='8' && $b>0 && $c=='dm') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="minewuestengebirge.png" border="0" onmouseover="Tip(\'Mine | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='9' && $b>0 && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="dura.gif" border="0" onmouseover="Tip(\'Duraniumanlage | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='9' && $b>0 && $c=='d') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="duraniumwueste.png" border="0" onmouseover="Tip(\'Duraniumanlage | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='10' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="forschung.gif" border="0" onmouseover="Tip(\'Forschungsstation | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='11' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="terra1.gif" border="0" onmouseover="Tip(\'Terraform I (Wiese) | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='12' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="flager.gif" border="0" onmouseover="Tip(\'Lagerh&ouml;hle | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='13' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="lavawerk.gif" border="0" onmouseover="Tip(\'Hitzekraftwerk | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='14' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="sorium.gif" border="0" onmouseover="Tip(\'Soriumfabrik | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='15' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="terra2.gif" border="0" onmouseover="Tip(\'Terraform II (Wasser) | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='16' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="schildturmgestein.png" border="0" onmouseover="Tip(\'Schildturm | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='17' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="kanonelava.png" border="0" onmouseover="Tip(\'Plasmakanone | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='18' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="terra18.gif" border="0" onmouseover="Tip(\'Eisberg erschaffen | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='19' && $b>0) echo '<td><img src="terra19.gif" border="0" onmouseover="Tip(\'Eis abtragen | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='21' && $b>0 && $c=='g') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="teilchen.png" border="0" onmouseover="Tip(\'Teilchenbeschleuniger | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='21' && $b>0 && $c=='d') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="beschleunigerwueste.png" border="0" onmouseover="Tip(\'Tritaniumanlage | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='21' && $b>0 && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="beschleunigereis.png" border="0" onmouseover="Tip(\'Tritaniumanlage | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='26' && $b>0 && $c=='g') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="teilchen.png" border="0" onmouseover="Tip(\'Doppelbeschleuniger | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='26' && $b>0 && $c=='d') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="doppelwueste.png" border="0" onmouseover="Tip(\'Doppelbeschleuniger | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='26' && $b>0 && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="doppeleis.png" border="0" onmouseover="Tip(\'Doppelbeschleuniger | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='22' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="tritanium.png" border="0" onmouseover="Tip(\'Tritaniumanlage | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='23' && $b>0 && $c=='im') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="dilimineeis.png" border="0" onmouseover="Tip(\'Dilitiummine | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='23' && $b>0 && $c=='m') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="dilimine.png" border="0" onmouseover="Tip(\'Dilitiummine | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='24' && $b>0 && $c=='g') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="fusion.png" border="0" onmouseover="Tip(\'Fusionsreaktor | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='24' && $b>0  && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="fusioneis.png" border="0" onmouseover="Tip(\'Fusionsreaktor | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='25' && $b>0) echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="geokraftwerk.png" border="0" onmouseover="Tip(\'geothermales Kraftwerk | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b>0 && $c=='g') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrik.png" border="0" onmouseover="Tip(\'Torpedofabrik | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b>0 && $c=='i') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrikeis.png" border="0" onmouseover="Tip(\'Torpedofabrik | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b>0 && $c=='d') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrikwueste.png" border="0" onmouseover="Tip(\'Torpedofabrik | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+if($a=='27' && $b>0 && $c=='s') echo '<td><a href="baustop.php?pid=',$pid,'&fid=',$i,'"><img src="torpedofabrikgestein.png" border="0" onmouseover="Tip(\'Torpedofabrik | Fertig in ',$b,' Ticks \')" onmouseout="UnTip()" /></a></td>';
+
+if($i%10==0) echo '</tr>';
+}
+}
+echo '</table><hr />';
+echo '<table class="bordered"><tr><form action="planet.php?pid=',$planet->id,'" method="post"><td><select name="target">';
+$sio=mysql_query("SELECT * FROM schiffe WHERE typ='s' AND orbit=1 AND x='$planet->x' AND y='$planet->y' AND tarnung=0");
+while($ship=mysql_fetch_array($sio))
+echo '<option value="',$ship["id"],'">',$ship["name"],'(',$ship["id"],') Energie: ',$ship["energie"],'/',$ship["maxenergie"],'</option>';
+echo '</select></td><td><input type="submit" value="Ziel einstellen!"></td></form>';
+
+if($target!='') { // Ziel erfasst)
+$schiff=new schiff($target);
+
+echo '<td>',$schiff->besitzer==$_SESSION["Id"]?'<a href="schiffe.php?sid='.$schiff->id.'">':'','<img src="',$schiff->img,'" border="0" />',$schiff->besitzer==$_SESSION["Id"]?'</a>':'','</td><td>',$schiff->name,'(',$schiff->id,')</td><td>S:',$schiff->schildstatus==0?'<span>':'<span style="color:yellow;">',$schiff->schilde,'/',$schiff->maxschilde,'</span></td><td><a href="energie.php?from=',$planet->id,'&to=',$schiff->id,'"><img src="energie.gif" border="0" title="Energie senden" /></a></td><td><a href="beamto.php?from=',$planet->id,'&to=',$schiff->id,'"><img src="hbeam.gif" border="0" /></a></td><td><a href="beamfrom.php?to=',$planet->id,'&from=',$schiff->id,'"><img src="wbeamen.gif" border="0" /></td>';
+}
+echo '</tr></table><hr /><h4>Lagerraum</h4><table class="bordered4">';
+//lager anzeige
+$inhalt=array("rohstoffa","rohstoffb","rohstoffc","rohstoffd","isochips","tritanium","dili","antimaterie","deuterium","npcborg","npcrom","npcfer","npcfod","npckling","npccard");
+$inhaltcap=array("Baustoff","Duranium","Erz","Sorium","Isochips","Tritanium","Dilithium","Antimaterie","Deuterium","Vinkulum","Ale","Latinum","Château Picard","Blutwein","Taspar Eier");
+$inhaltimg=array("baustoff.png","duranium.png","erz.png","sorium.png","isochips.png","tritanium.png","dili.png","antimaterie.png","deuterium.png","vinkulum.png","ale.png","latinum.png","chateau.png","blutwein.png","eier.png");
+for($i=0;$i<sizeof($inhalt);$i++) {
+$balken="";
+$rest=$planet->$inhalt[$i]%100;
+$hundert=floor(($planet->$inhalt[$i]-$rest)/100);
+$tausend=floor(($planet->$inhalt[$i]-$rest)/1000);
+$tmprest=floor(($planet->$inhalt[$i]-$tausend*1000)/100);
+//gesamt
+$gesamt=0;
+for($p=0;$p<sizeof($inhalt);$p++) $gesamt+=$planet->$inhalt[$p];
+//volle
+for($o=1;$o<=$tausend;$o++) {
+$balken.="<img src=\"tausend.jpg\" style=\"border:1px solid white;margin-left:1px;\"  width=\"27\" height=\"15\"/>";
+}
+//volle hundert
+for($o=1;$o<=$tmprest;$o++)
+$balken.="<img src=\"hundert.jpg\" style=\"border:1px solid white;margin-left:1px;\"  width=\"27\" height=\"15\"/>";
+
+
+$add="";
+$addbalken="";
+if($addarray[$i]>0) { $add='<span style="color:green;font-weight:bold;">+'.$addarray[$i].'</span>'; $addbalken='<img src="add.jpg" height="15" width="'.(2*$addarray[$i]).'" style="border:1px solid white;margin-left:1px;border-left:none;" />'; }
+if($addarray[$i]<0) $add='<span style="color:red;font-weight:bold;">'.$addarray[$i].'</span>';
+
+if($rest>0 && $addarray[$i]>0) $balken.='<img src="balken.jpg" border="0" width="'.($rest*2).'" height="15" style="border:1px solid white;margin-left:1px;border-right:none;" />';
+if($rest>0 && $addarray[$i]<=0) $balken.='<img src="balken.jpg" border="0" width="'.($rest*2).'" height="15" style="border:1px solid white;margin-left:1px;" />';
+
+
+echo $planet->$inhalt[$i]!=0||$addarray[$i]!=0?"<tr><td>".$inhaltcap[$i]."</td><td><img src=\"images/".$inhaltimg[$i]."\" border=\"0\" /></td><td width=\"70%\">".$balken.$addbalken."</td><td>".$planet->$inhalt[$i].$add."</td></tr>":"";
+}
+splitintwo($planet->torpedo,$phot,$quant);
+if($phot>0 || $photprod>0) echo '<tr><td>Photonentorpedos</td><td><img src="photonen.png" border="0" /></td><td>',$phot,$photprod>0?'+'.$photprod:'','</td></tr>';
+if($quant>0 || $quantprod>0) echo '<tr><td>Quantentorpedos</td><td><img src="quanten.png" border="0" /></td><td>',$quant,$quantprod>0?'+'.$quantprod:'','</td></tr>';
+echo '</table>';
+echo '<table class="bordered4"><tr><td>belegt</td><td width="200"><img src="balken.jpg" style="border:1px solid white;margin-left:1px;" height="15" width="',2*ceil(($gesamt/$planet->lager)*100),'" /></td><td>',$gesamt,'/',$planet->lager,' (',ceil(($gesamt/$planet->lager)*100),'%)</td></tr></table>';
+
+//notiz setzen
+echo '<hr />Planetennachricht: <br /><form action="planet.php?pid=',$planet->id,'" method="post"><input type="hidden" name="do" value="1337"><textarea rows=6 cols=23 name="message2">',$planet->nachricht,'</textarea><br /><input type="submit" value="Nachricht erstellen"></form>';
+
+echo '<hr /><form action="planet.php?pid=',$planet->id,'" method="post"><input type="text" name="newname" value="',$planet->name,'"><input type="submit" value="Name &auml;ndern"></form>';
+}
+include("foot.php");
+?>

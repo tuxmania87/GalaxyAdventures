@@ -1,0 +1,36 @@
+<?php
+
+session_start();
+include("klassen.php");
+$id = $_SESSION["Id"];
+$checked = false;
+$pid = $_GET["pid"];
+$planetx = new Planeten($pid);
+echo $id;
+$abfrage = mysql_query("SELECT * FROM `planeten` WHERE besitzer='$id' AND typ='m'");
+while ($planet = mysql_fetch_array($abfrage)) {
+    $checked = true;
+}
+if (!$checked) {
+    mysql_query("UPDATE `planeten` SET heimat=1,besitzer='$id' WHERE id='$pid'");
+    mysql_query("UPDATE planeten SET frachtraum='150',besitzer='$id',name='noname' WHERE id='$pid'") or die(mysql_error());
+    $sond = new Bauplan_Schiffe("Sonde");
+    mysql_query("INSERT INTO schiffe (klasse,warpkern,typ,x,y,system,besitzer,energie,hull,alarmstufe) VALUES ('Sonde','".$sond->maxwarpkern."','s','" . $planetx->position->x . "','" . $planetx->position->y . "','" . $planetx->position->system->id . "','$id','".$sond->maxenergie."','".$sond->maxhull."','green')");
+
+    $wiesen = array();
+    
+    for($i=0; $i<sizeof($planetx->feld);$i++) {
+        if($planetx->feld[$i]->untergrund->id==2)
+            $wiesen[] = $i;
+    }
+    
+    $index = rand(0,sizeof($wiesen));
+    
+    $planetx->feld[$index]->bau = new Bauplan_Gebaude("18");
+    $planetx->feld[$index]->aktiv = 1;
+    $planetx->feld[$index]->rest_bauzeit = 0;
+    $planetx->feld[$index]->save();
+
+    echo '<META HTTP-EQUIV="refresh" content="0;URL=planet.php?pid=', $pid, '">';
+}
+?>

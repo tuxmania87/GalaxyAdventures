@@ -1,0 +1,12 @@
+<?php
+$getvar=$_GET["id"];
+include("klassen.php");
+$schiff=new Planeten("97");
+var_dump($schiff->feld);
+//echo '<br />',$schiff->feld[2]->untergrund;
+//$feld=array();
+//$object=new Account("1");
+//$feld[]=new Account("1");
+//echo $feld[0]->nickname;
+//echo $object->nickname;
+?>

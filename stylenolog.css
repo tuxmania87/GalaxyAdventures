@@ -1,0 +1,88 @@
+body {
+     	background:#000000;
+    
+    color:#cccccc;
+    font-size:12;
+    font-family:"Arial";}
+.bordered tr td
+ {
+
+	text-align:left;	
+border:1px solid #300000;
+}
+
+.bordered2 tr td 
+{
+
+	text-align:left;
+	border:1px solid #300000;
+}
+
+
+.bordered3 tr td
+ {
+
+	text-align:left;	
+border:none;
+}
+
+
+.bordered4 tr td
+ {
+
+	text-align:left;	
+border:1px solid #300000;
+}
+
+td          {font-size:12;border: 1px solid #300000;}
+input[type=text], input[type=password] {
+
+	border:0px;
+	color:300000;	
+background-color:cccccc;	
+}
+
+a:visited 
+{
+
+	text-decoration:none;
+color:#CCCCCC;
+}
+
+a:link 
+{
+
+	text-decoration:none;
+color:#CCCCCC;
+}
+
+a:hover
+ {
+
+	text-decoration:underline;
+color:#ffffaa;
+}
+a.deact	{
+	color:#999999;text-decoration:none;}
+
+
+a.general:visited
+ {
+
+	text-decoration:none;
+color:#CCCCCC;
+}
+
+a.general:link 
+{
+
+	text-decoration:none;
+color:#CCCCCC;
+}
+
+a.general:hover 
+{
+
+	text-decoration:none;
+color:#ffcc00;
+}

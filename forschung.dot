@@ -1,0 +1,58 @@
+digraph G {
+node [shape=box];
+1 [label="Vorbereitung"]
+6 [label="Gebäudeforschung"]
+7 [label="allgemeine Forschungen"]
+8 [label="Waffenforschung"]
+9 [label="Schiffsforschung"]
+10 [label="Doppelbeschleuniger"]
+11 [label="höhere Physik"]
+12 [label="Projektilwaffen"]
+13 [label="Weltraumbau"]
+14 [label="Materie/Antimaterie Grundlagen"]
+15 [label="Torpedofabrik"]
+16 [label="Depotstation"]
+17 [label="Modulforschung"]
+18 [label="Orbitalbau"]
+19 [label="Jupiterstation"]
+20 [label="Torpedoplattform"]
+21 [label="Quantentorpedos"]
+22 [label="allgemeine Subraumforschung"]
+23 [label="Flottenverwaltung"]
+24 [label="erweiterte Flottenverwaltung"]
+25 [label="Flagschiffgrundlagen"]
+26 [label="Wurmlochgrundlagen"]
+27 [label="Subraumportal"]
+1 -> 6
+1 -> 7
+1 -> 8
+1 -> 9
+6 -> 10
+11 -> 10
+7 -> 11
+8 -> 12
+6 -> 13
+9 -> 13
+11 -> 14
+6 -> 15
+12 -> 15
+14 -> 15
+13 -> 16
+8 -> 17
+9 -> 17
+13 -> 18
+18 -> 19
+15 -> 20
+18 -> 20
+15 -> 21
+14 -> 22
+7 -> 23
+23 -> 24
+20 -> 25
+21 -> 25
+24 -> 25
+6 -> 26
+22 -> 26
+26 -> 27
+18 -> 27
+}

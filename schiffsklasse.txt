@@ -1,0 +1,118 @@
+class schiff {
+public $id;
+public $x;
+public $y;
+public $name;
+public $alarmstufe;
+public $hull;
+public $schilde;
+public $laser;
+public $phaser;
+public $maxphaser;
+public $besitzer;
+public $energie;
+public $maxenergie;
+public $img;
+public $flotte;
+public $lrs;
+public $energieoutput;
+public $maxhull;
+public $maxschilde;
+public $schildestatus;
+public $gondeln;
+public $maxgondeln;
+public $rohstoffa;
+public $rohstoffb;
+public $rohstoffc;
+public $rohstoffd;
+public $tritanium;
+public $isochips;
+public $dili;
+public $antimaterie;
+public $deuterium;
+public $npcfod;
+public $npcrom;
+public $npcborg;
+public $npcfer;
+public $npckling;
+public $npccard;
+public $typ;
+public $lager;
+public $orbit;
+public $skillenergie;
+public $skillbau;
+public $skillbase;
+public $skilldeut;
+public $skillerz;
+public $skilltarnung;
+public $klasse;
+public $quest;
+public $tarnung;
+public $skilltranswarp;
+public $nachricht;
+
+function __construct($sid) {
+$t1=mysql_query("SELECT * FROM schiffe WHERE id='$sid'");
+while($t=mysql_fetch_array($t1))
+{
+$this->id=$t["id"];
+$this->x=$t["x"];
+$this->y=$t["y"];
+$this->name=mysql_real_escape_string($t["name"]);
+$this->alarmstufe=$t["alarmstufe"];
+$this->hull=$t["hull"];
+$this->schilde=$t["schilde"];
+$this->laser=$t["laser"];
+$this->phaser=$t["phaser"];
+$this->maxphaser=$t["maxphaser"];
+$this->besitzer=$t["besitzer"];
+$this->energie=$t["energie"];
+$this->img=$t["img"];
+$this->maxenergie=$t["maxenergie"];
+$this->lrs=$t["lrs"];
+$this->energieoutput=$t["energieoutput"];
+$this->maxhull=$t["maxhull"];
+$this->maxschilde=$t["maxschilde"];
+$this->schildstatus=$t["schildstatus"];
+$this->gondeln=$t["gondeln"];
+$this->maxgondeln=$t["maxgondeln"];
+$this->rohstoffa=$t["rohstoffa"];
+$this->rohstoffb=$t["rohstoffb"];
+$this->rohstoffc=$t["rohstoffc"];
+$this->rohstoffd=$t["rohstoffd"];
+$this->tritanium=$t["tritanium"];
+$this->isochips=$t["isochips"];
+$this->antimaterie=$t["antimaterie"];
+$this->dili=$t["dili"];
+$this->npcborg=$t["npcborg"];
+$this->npcfod=$t["npcfod"];
+$this->npcfer=$t["npcfer"];
+$this->npcrom=$t["npcrom"];
+$this->npckling=$t["npckling"];
+$this->npccard=$t["npccard"];
+$this->deuterium=$t["deuterium"];
+$this->typ=$t["typ"];
+$this->lager=$t["lager"];
+$this->orbit=$t["orbit"];
+$this->skillenergie=$t["skillenergie"];
+$this->skillbau=$t["skillbau"];
+$this->skillbase=$t["skillbase"];
+$this->skilldeut=$t["skilldeut"];
+$this->skillerz=$t["skillerz"];
+$this->flotte=$t["flotte"];
+$this->klasse=$t["klasse"];
+$this->quest=$t["quest"];
+$this->skilltarnung=$t["skilltarnung"];
+$this->tarnung=$t["tarnung"];
+$this->skilltranswarp=$t["skilltranswarp"];
+$this->nachricht=$t["nachricht"];
+}
+}
+
+function setData() {
+mysql_query("UPDATE schiffe SET
+npckling='$this->npckling',npccard='$this->npccard',phaser='$this->phaser',maxphaser='$this->maxphaser',gondeln='$this->gondeln',maxgondeln='$this->maxgondeln',nachricht='$this->nachricht',tritanium='$this->tritanium',dili='$this->dili',antimaterie='$this->antimaterie',isochips='$this->isochips',skilltranswarp='$this->skilltranswarp',npcfer='$this->npcfer',npcfod='$this->npcfod',npcrom='$this->npcrom',npcborg='$this->npcborg',tarnung='$this->tarnung',skilltarnung='$this->skilltarnung',quest='$this->quest',klasse='$this->klasse',skillerz='$this->skillerz',skilldeut='$this->skilldeut',skillbase='$this->skillbase',flotte='$this->flotte',skillbau='$this->skillbau',skillenergie='$this->skillenergie',orbit='$this->orbit',lager='$this->lager',deuterium='$this->deuterium',rohstoffd='$this->rohstoffd',rohstoffc='$this->rohstoffc',rohstoffb='$this->rohstoffb',rohstoffa='$this->rohstoffa',schildstatus='$this->schildstatus',maxschilde='$this->maxschilde',maxhull='$this->maxhull',energieoutput='$this->energieoutput',maxenergie='$this->maxenergie',img='$this->img',energie='$this->energie',besitzer='$this->besitzer',x='$this->x',y='$this->y',name='$this->name',alarmstufe='$this->alarmstufe',hull='$this->hull',schilde='$this->schilde',laser='$this->laser'
+WHERE id = '$this->id'") or die(mysql_error());
+}
+}
+

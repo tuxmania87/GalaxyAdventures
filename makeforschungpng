@@ -1,0 +1,4 @@
+#!/bin/bash
+
+php forschung2dot.php > forschung.dot
+dot -Tpng -oforschung.png forschung.dot

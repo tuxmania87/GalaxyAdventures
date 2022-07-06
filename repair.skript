@@ -1,0 +1,14 @@
+<?php
+
+include("connect.php);
+
+//$q = mysql_query("select * from planet2");
+//while($r = mysql_fetch_array($q)) {
+//	for($i=1;$i<51;$i++) {
+//		if(strpos($r["feld".$i], "-") === FALSE) {
+//			echo "Y";
+//		}
+//	}
+//}
+?>
+

@@ -1,0 +1,11 @@
+Flottenverwaltung
+Quests
+Schiffsversteigerung
+Planetenreset
+Maptool System
+Orbit
+Torpedo feuern - kampfscript
+Torpedofabrik
+Siedlerschiffe implementieren 
+testen testen testen
+noob system überarbeiten

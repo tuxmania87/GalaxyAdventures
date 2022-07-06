@@ -1,0 +1,77 @@
+class IndexList is
+	wert : FLTD ;
+	index : INT ;
+	next : IndexList ;
+end ;
+
+class SORT is
+
+bubblesort_tauschen(anf:IndexList):IndexList is
+h:FLTD;
+vertauscht:BOOL;
+anker:IndexList;
+helper:IndexList;
+vertauscht:=true;
+anker:=#IndexList;
+anker.next:=anf;
+helper:=#IndexList;
+while vertauscht=true loop  -- Solange vertauscht wurden do loop
+vertauscht:=false;		-- reseten von vertauscht
+helper:=anker.next;		-- anfang der liste in helper laden
+	while helper.next/=anf loop		--gehe liste in loop durch
+	if helper.wert>helper.next.wert then	-- wenn getuascht werden muss
+		h:=helper.next.wert;		--werte vertauschen
+		helper.next.wert:=helper.wert;
+		helper.wert:=h;
+		vertauscht:=true;		--vertauscht bool ist true
+	end;
+	helper:=helper.next;		--auf naechstes element setzen
+	end;
+end;
+res:=anf;	--am ende listenanfang zurueckgeben
+end;
+
+bubblesort_verschieben(anf:IndexList):IndexList is
+h:IndexList;
+vertauscht:BOOL;
+anker:IndexList;
+helper:IndexList;
+helper2:IndexList;
+anker:=#IndexList;
+vertauscht:=true;
+anker.next:=anf;		--Anker auf erstes elemnt setzen
+helper:=#IndexList;
+while vertauscht=true loop		--solange getauscht wurde do loop
+	vertauscht:=false;		-- reseten von vertauscht
+	helper:=anker.next;		--helper auf anfang setzen
+	if helper.wert>helper.next.wert then 	--wenn erster wert groesser als zweiter wet
+		h:=#IndexList;		--Hilfszeiger h
+		helper2:=#IndexList;
+		helper2:=anker.next;
+		while helper2.next/=anf loop	--suche ende der liste und
+			helper2:=helper2.next;
+		end;
+		helper2.next:=anker.next.next;	--setze zeiger richtig auf
+		h.next:=helper.next.next;
+		helper.next.next:=anker.next;
+		anker.next:=helper.next;	--vertauschte ersten zwei elemente
+		anker.next.next.next:=h.next;
+		helper:=anker.next;
+		anf:=anker.next;	--neusetzen von anker und anfang da 1. element getauscht
+	end;
+	while helper.next/=anf and helper.next.next/=anf loop		--pruefe restelemente
+		if helper.next.wert>helper.next.next.wert then
+			h:=#IndexList;
+			h.next:=helper.next.next.next;		--und tausche bei bedarf zeiger aus
+			helper.next.next.next:=helper.next;
+			helper.next:=helper.next.next;
+			helper.next.next.next:=h.next;
+			vertauscht:=true;
+		end;
+	helper:=helper.next;	--helper eins wieter setzen
+	end;
+end;
+anf:=anker.next;
+res:=anf;		--neuen anfang zuruckgeben
+end;
+end;

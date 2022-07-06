@@ -1,0 +1,190 @@
+body
+{
+background-image:url(sterne.jpg);
+color:white;
+font-family:Arial, sans-serif;
+font-size:12pt;
+margin:0px;
+padding:0px;
+font-size:11pt;
+}
+table
+{
+font-size:11pt;
+}
+li, ul
+{
+list-style-type:none;
+margin:0px;
+padding-left:11px;
+}
+
+div#main
+{
+min-height:400px;
+height:auto !important;
+height:400px;
+position:absolute;
+left:200px;
+top:80px;
+right:50px;
+width:780px;
+}
+div#nav
+{
+width:180px;
+
+position:absolute;
+top:80px;
+left:15px;
+}
+a:visited
+{
+text-decoration:none;
+color:#CCCCCC;
+}
+a:link
+{
+text-decoration:none;
+color:#CCCCCC;
+}
+a:hover
+{
+text-decoration:underline;
+color:#FF4800;
+}
+
+
+a.general:visited
+{
+text-decoration:none;
+color:#CCCCCC;
+}
+a.general:link
+{
+text-decoration:none;
+color:#CCCCCC;
+}
+a.general:hover
+{
+text-decoration:underline;
+color:#FF4800;
+}
+
+
+.mailheader a:link
+{
+text-decoration:none;
+color:black;
+font-weight:bold;
+background-color:#2e2e37;
+}
+.mailheader a:visited
+{
+text-decoration:none;
+color:black;
+font-weight:bold;
+background-color:#2e2e37;
+}
+
+.mailheader a:hover
+{
+text-decoration:underline;
+color:silver;
+font-weight:bold;
+}
+
+
+a.mail:link
+{
+text-decoration:none;
+color:#ababbf;
+font-weight:bold;
+background-color:#2e2e37;
+border:solid 2px #cacad8;
+padding:4px;
+}
+
+a.mail:visited
+{
+text-decoration:none;
+color:#ababbf;
+font-weight:bold;
+background-color:#2e2e37;
+border:solid 2px #cacad8;
+padding:4px;
+}
+
+a.mail:hover
+{
+text-decoration:none;
+font-weight:bold;
+color:black;
+background-color:#64646e;
+border:solid 2px #cacad8;
+padding:4px;
+}
+
+div.mailheader
+{
+background-color:#2e2e37;
+padding:10px;
+border:solid 3px #cacad8;
+width:350px;
+}
+div#mailmain
+{
+background-color:#2e2e37;
+padding:10px;
+border:solid 3px #cacad8;
+width:500px;
+}
+.box
+{
+background-color:#2e2e37;
+padding:10px;
+border:solid 3px #cacad8;
+}
+div.rahmen
+{
+border:1pt solid white;
+width:300px;
+}
+/*.bordered
+{
+border:1pt solid white;
+}*/
+.bordered tr td
+{
+text-align:center;
+border:1pt solid white;
+}
+.bordered2 tr td
+{
+text-align:left;
+border:1pt solid white;
+}
+
+.bordered3 tr td
+{
+text-align:center;
+border:none;
+}
+
+.bordered4 tr td
+{
+text-align:left;
+border:1pt solid #c9c9c9;
+}
+
+
+input{
+border:1px solid #494949;
+font-weight:bold;
+}
+input[type=text], input[type=password]{
+border:1px;
+color:black;
+background-color:lightgrey;
+font-weight:bold;
+}
