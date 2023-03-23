@@ -3,6 +3,8 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
+$verbindung = get_verbindung();
+
 $ticket_id = $_GET["id"];
 if(!ctype_digit($ticket_id) && isset($ticket_id)) {
 	die("Fehlerhafte Ticket ID!");

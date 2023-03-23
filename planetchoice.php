@@ -24,6 +24,7 @@ if ($betray) {
             echo 'Planet wurde freigegeben';
         }
     }
+    
     ?>
     <h3>Planetenauswahl</h3>
     <table class="liste"><tr><th>Display</th><th>Name</th><th>Sektor</th><th>System</th><th>Energie</th><th>Schilde</th><th>Lagerkapazit&auml;t</th></tr>
@@ -31,8 +32,10 @@ if ($betray) {
         $id = $_SESSION["Id"];
         $abfrage = mysqli_query($verbindung, "SELECT * FROM `planeten` WHERE besitzer='$id'");
         while ($planet = mysqli_fetch_array($abfrage)) {
+            
             $planet = new Planeten($planet["id"]);
             echo '<tr><td><a href="planet.php?pid=', $planet->id, '"><img src="images/misc/', $planet->bild, '" border="0"></a></td><td>', $planet->name, '(', $planet->id, ')</td><td>', $planet->position->x, '/', $planet->position->y, '</td><td>', $planet->position->system->name, '-System (', $planet->position->system->id, ') ', $planet->position->system->x, '/', $planet->position->system->y, ' </td><td>', $planet->energie, '/', $planet->maxenergie, '</td><td>', $planet->schilde, '/', $planet->maxschilde, '</td><td>', floor(($planet->frachtraum->gesamt() / $planet->frachtraum->max) * 100), ' %</td></tr>';
+            //die("test");
         }
         echo '</table>';
     }

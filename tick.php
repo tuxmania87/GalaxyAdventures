@@ -3,9 +3,11 @@
 $hkontrolle = date("H");
 ignore_user_abort(true);
 
-include("/var/www/ksmm/devga/klassen.php");
-include_once("/var/www/ksmm/devga/connect.php");
+include("klassen.php");
+include_once("connect.php");
 
+
+$verindung = get_verbindung();
 
 //tick anmelden
 $anfangminuten = date("i");
@@ -15,17 +17,17 @@ $anfang = $anfangminuten * 60 + $anfangsek;
 
 $datum = date("Y-m-d H:i:s");
 $ip = $_SERVER['REMOTE_ADDR'];
-mysql_query("INSERT INTO `ticklog` (datum,ip,status) VALUES ('$datum','$ip','1')");
+mysqli_query($verindung,"INSERT INTO `ticklog` (datum,ip,status) VALUES ('$datum','$ip','1')");
 
 
 //globale Accountänderung
-mysql_query("UPDATE account SET mitglied=mitglied+1");
-mysql_query("UPDATE account SET inaktiv=inaktiv+1");
+mysqli_query($verindung,"UPDATE account SET mitglied=mitglied+1");
+mysqli_query($verindung,"UPDATE account SET inaktiv=inaktiv+1");
 
 //Output auf schiffen / energie
 $outarray = array();
-$abfrage = mysql_query("SELECT * FROM schiffe s, bauplan b WHERE s.klasse = b.klasse and besitzer!=2 AND energie<maxenergie AND (warpkern>0 AND warpkernstatus=1)") or die(mysql_error());
-while ($energie = mysql_fetch_array($abfrage))
+$abfrage = mysqli_query($verindung,"SELECT * FROM schiffe s, bauplan b WHERE s.klasse = b.klasse and besitzer!=2 AND energie<maxenergie AND (warpkern>0 AND warpkernstatus=1)") or die(mysqli_error($verindung));
+while ($energie = mysqli_fetch_array($abfrage))
     $outarray[] = $energie["id"];
 
 for ($g = 0; $g < sizeof($outarray); $g++) {
@@ -39,15 +41,15 @@ for ($g = 0; $g < sizeof($outarray); $g++) {
         $eamount--;
     }
 
-    mysql_query("UPDATE schiffe SET warpkern='" . $eschiff->warpkern . "',energie='" . $eschiff->energie . "' WHERE id='" . $eschiff->id . "'");
+    mysqli_query($verindung,"UPDATE schiffe SET warpkern='" . $eschiff->warpkern . "',energie='" . $eschiff->energie . "' WHERE id='" . $eschiff->id . "'");
 }
 
 //forschung allgemein TODO
-mysql_query("update mapforschung set status=status-1 where status>1");
+mysqli_query($verindung,"update mapforschung set status=status-1 where status>1");
 
 //schiffe ausbauen
-mysql_query("UPDATE schiffe SET frachtraum=frachtraum-1 WHERE typ='' AND frachtraum>0");
-mysql_query("UPDATE schiffe SET typ='s',frachtraum='0/0/0/0/0/0/0/0/50' WHERE typ='' AND frachtraum=0");
+mysqli_query($verindung,"UPDATE schiffe SET frachtraum=frachtraum-1 WHERE typ='' AND frachtraum>0");
+mysqli_query($verindung,"UPDATE schiffe SET typ='s',frachtraum='0/0/0/0/0/0/0/0/50' WHERE typ='' AND frachtraum=0");
 
 //planetenberechnung
 //pre tick berechnung
@@ -131,8 +133,8 @@ while (sizeof($round_nodes) > 0) {
 
 
 
-$q = mysql_query("select id from planeten where besitzer != 2");
-while ($r = mysql_fetch_array($q)) {
+$q = mysqli_query($verindung,"select id from planeten where besitzer != 2");
+while ($r = mysqli_fetch_array($q)) {
 
     $planet = new Planeten($r["id"]);
 
@@ -217,6 +219,10 @@ while ($r = mysql_fetch_array($q)) {
                         $addfracht->fracht[$j + 1]->anzahl += $planet->feld[$i]->bau->produziert->fracht[$j + 1]->anzahl;
                         $addfracht->fracht[$j + 1]->anzahl -= $planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl;
                     }
+
+                    print $glob_energy."\n";
+                    var_dump($planet->feld[$i]->bau->braucht->fracht[0]);
+
                     $glob_energy -= $planet->feld[$i]->bau->braucht->fracht[0]->anzahl;
                     $addfracht->fracht[0]->anzahl -= $planet->feld[$i]->bau->braucht->fracht[0]->anzahl;
                 }
@@ -224,7 +230,7 @@ while ($r = mysql_fetch_array($q)) {
         } // end of inner rounds
     } // end of rounds
     $planet->frachtraum->save();
-    mysql_query("update planeten set energie=energie+" . $glob_energy . " where id = " . $planet->id);
+    mysqli_query($verindung,"update planeten set energie=energie+" . $glob_energy . " where id = " . $planet->id);
     if ($planet->id == 154)
         echo "update planeten set energie=energie+" . $glob_energy . " where id = " . $planet->id . "\n";
 
@@ -234,7 +240,7 @@ while ($r = mysql_fetch_array($q)) {
         if($planet->feld[$i]->rest_bauzeit > 0) {
             $planet->feld[$i]->rest_bauzeit--;
             if($planet->feld[$i]->rest_bauzeit == 0) {
-                mysql_query("update planeten set lager=lager+".$planet->feld[$i]->bau->lager.",maxschilde=maxschilde+".$planet->feld[$i]->bau->schilde.",laser=laser+".$planet->feld[$i]->bau->laser.",maxenergie=maxenergie+".$planet->feld[$i]->bau->epslager." where id=".$planet->id) or die(mysql_error());
+                mysqli_query($verindung,"update planeten set lager=lager+".$planet->feld[$i]->bau->lager.",maxschilde=maxschilde+".$planet->feld[$i]->bau->schilde.",laser=laser+".$planet->feld[$i]->bau->laser.",maxenergie=maxenergie+".$planet->feld[$i]->bau->epslager." where id=".$planet->id) or die(mysqli_error($verindung));
                 
             }
         }
@@ -244,20 +250,22 @@ while ($r = mysql_fetch_array($q)) {
 
 //ende Planetenbrechnung
 
-mysql_query("UPDATE planeten SET energie=maxenergie WHERE energie>maxenergie");
-mysql_query("update planeten set schilde=maxschilde where schilde>maxschilde");
+mysqli_query($verindung,"UPDATE planeten SET energie=maxenergie WHERE energie>maxenergie");
+mysqli_query($verindung,"update planeten set schilde=maxschilde where schilde>maxschilde");
 
 //schilde und tarnung
-mysql_query("UPDATE schiffe,planeten SET schildstatus=0 WHERE schildstatus=1 AND energie=0");
-mysql_query("UPDATE schiffe SET tarnung=0 WHERE tarnung=1 AND energie=0");
-mysql_query("UPDATE schiffe,planeten SET energie=energie-1 WHERE energie>0 AND schildstatus=1");
-mysql_query("UPDATE schiffe SET energie=energie-1 WHERE energie>0 AND tarnung=1");
+mysqli_query($verindung,"UPDATE schiffe SET schildstatus=0 WHERE schildstatus=1 AND energie=0");
+mysqli_query($verindung,"UPDATE planeten SET schildstatus=0 WHERE schildstatus=1 AND energie=0");
+mysqli_query($verindung,"UPDATE schiffe SET tarnung=0 WHERE tarnung=1 AND energie=0");
+mysqli_query($verindung,"UPDATE schiffe SET energie=energie-1 WHERE energie>0 AND schildstatus=1");
+mysqli_query($verindung,"UPDATE planeten SET energie=energie-1 WHERE energie>0 AND schildstatus=1");
+mysqli_query($verindung,"UPDATE schiffe SET energie=energie-1 WHERE energie>0 AND tarnung=1");
 
-mysql_query("UPDATE schiffe SET schilde=maxschilde,hull=maxhull WHERE (SELECT COUNT(*) FROM quests WHERE geber=schiffe.id OR abgeber=schiffe.id)>0");
+#mysqli_query($verindung,"UPDATE schiffe SET schilde=maxschilde,hull=maxhull WHERE (SELECT COUNT(*) FROM quests WHERE geber=schiffe.id OR abgeber=schiffe.id)>0");
 
 //Energieverlust der Schiffe
 
-$q = mysql_query("update schiffe s, weltraum w, weltraumfelder x 
+$q = mysqli_query($verindung,"update schiffe s, weltraum w, weltraumfelder x 
 set s.energie=round(s.energie*(1-x.energieverlust/10)*100)/100
 where
 s.typ ='s' and
@@ -281,8 +289,8 @@ x.energieverlust >0
 
 
 //mailerinnerungen
-$rememberquery = mysql_query("SELECT * FROM account WHERE inaktiv=35 AND id>9");
-while ($rem = mysql_fetch_array($rememberquery)) {
+$rememberquery = mysqli_query($verindung,"SELECT * FROM account WHERE inaktiv=35 AND id>9");
+while ($rem = mysqli_fetch_array($rememberquery)) {
     $mail1 = $rem["email"];
     $name1 = $rem["name"];
     $message = "Hallo $name1,\n\nDu bekommst diese Mail weil du seit 35 Ticks (7 Tagen) dich nicht mehr bei Galaxy Adventures gemeldet hast. Dies soll nur eine kleine Erinnerung sein, dass dein Account noch existiert ;). Solltest du kein Interesse mehr an Galaxy-Adventures 2 haben und weitere 35 Ticks verstreichen, so wird dein Account geloescht und alle deine Daten aus der Datenbank entfernt.\nIch wuensche dir viel Spass\n\ncremetorte";
@@ -291,8 +299,8 @@ while ($rem = mysql_fetch_array($rememberquery)) {
 
 //loeschung
 //mailerinnerungen
-$rememberquery = mysql_query("SELECT * FROM account WHERE inaktiv >= 70 AND id>9");
-while ($rem = mysql_fetch_array($rememberquery)) {
+$rememberquery = mysqli_query($verindung,"SELECT * FROM account WHERE inaktiv >= 70 AND id>9");
+while ($rem = mysqli_fetch_array($rememberquery)) {
     $mail1 = $rem["email"];
     $name1 = $rem["name"];
     $id1 = $rem["id"];
@@ -303,15 +311,15 @@ while ($rem = mysql_fetch_array($rememberquery)) {
 }
 
 //Gondeln reseten
-mysql_query("UPDATE schiffe SET gondeln=0,phaser=0");
+mysqli_query($verindung,"UPDATE schiffe SET gondeln=0,phaser=0");
 
 //blauer nebel schaden
-$abfrage = mysql_query("SELECT * FROM weltraum WHERE typ='b'");
-while ($foo = mysql_fetch_array($abfrage)) {
+$abfrage = mysqli_query($verindung,"SELECT * FROM weltraum WHERE typ='b'");
+while ($foo = mysqli_fetch_array($abfrage)) {
     $x = $foo["x"];
     $y = $foo["y"];
-    $abfrage2 = mysql_query("SELECT * FROM schiffe WHERE x='$x' AND y='$y'");
-    while ($bar = mysql_fetch_array($abfrage2)) {
+    $abfrage2 = mysqli_query($verindung,"SELECT * FROM schiffe WHERE x='$x' AND y='$y'");
+    while ($bar = mysqli_fetch_array($abfrage2)) {
         $schiff = new Schiffe($bar["id"]);
         $schiff->hull--;
         if ($schiff->hull <= 0)
@@ -336,7 +344,7 @@ while ($foo = mysql_fetch_array($abfrage)) {
   }
  */
 
-mysql_query("UPDATE schiffe SET schilde=maxschilde WHERE schilde>maxschilde");
+#mysqli_query($verindung,"UPDATE schiffe SET schilde=maxschilde WHERE schilde>maxschilde");
 
 //include("wpunkte.php");
 //Tick abmelden
@@ -344,5 +352,5 @@ $endeminuten = date("i");
 $endesek = date("s");
 $ende = $endeminuten * 60 + $endesek;
 $zeit = $ende - $anfang;
-mysql_query("UPDATE `ticklog` SET status=0,dauer='$zeit' WHERE datum='$datum'");
+mysqli_query($verindung,"UPDATE `ticklog` SET status=0,dauer='$zeit' WHERE datum='$datum'");
 ?>

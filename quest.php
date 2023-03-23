@@ -3,12 +3,14 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
+$verbindung = get_verbindung();
+
 $ich=new Account($_SESSION["Id"]);
 
 //test implematnion vom showquest.php erfolgstrigger
 //questpruefeung : Buildings ( Typ 4)
-$abfrage=mysql_query("SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION["Id"]."' AND quests.id=erfolge.qid AND quests.typ='4' AND erledigt='0'");
-while($row=mysql_fetch_assoc($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION["Id"]."' AND quests.id=erfolge.qid AND quests.typ='4' AND erledigt='0'");
+while($row=mysqli_fetch_assoc($abfrage))
 {
 $menge=$row["max"];
 $saveid=$row["id"];
@@ -18,8 +20,8 @@ $anzahl=$row["anzahl"];
 if($saveid>0) {
 	$bcount=0;
 	$sumfeld=array();
-	$abfrage=mysql_query("SELECT * FROM planeten WHERE besitzer='".$_SESSION["Id"]."'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM planeten WHERE besitzer='".$_SESSION["Id"]."'");
+	while($row=mysqli_fetch_array($abfrage))
 	{
 	$gefunden=false;
 	$planet=new Planeten($row["id"]);
@@ -32,12 +34,12 @@ for($i=0;$i<sizeof($sumfeld);$i++) $count++;
 
 
 //if($count>=$menge && $bcount>=$anzahl+$menge) mysql_query("UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
-if($bcount>=$menge) mysql_query("UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
+if($bcount>=$menge) mysqli_query($verbindung, "UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
 }
 
 //questpruefeung : Items ( Typ 6)
-$abfrage=mysql_query("SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION["Id"]."' AND quests.id=erfolge.qid AND quests.typ='4' AND erledigt='0'");
-while($row=mysql_fetch_assoc($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION["Id"]."' AND quests.id=erfolge.qid AND quests.typ='4' AND erledigt='0'");
+while($row=mysqli_fetch_assoc($abfrage))
 {
 $menge=$row["max"];
 $saveid=$row["id"];
@@ -47,8 +49,8 @@ $anzahl=$row["anzahl"];
 if($saveid>0) {
 	$bcount=0;
 	$sumfeld=array();
-	$abfrage=mysql_query("SELECT * FROM planeten WHERE besitzer='".$_SESSION["Id"]."'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM planeten WHERE besitzer='".$_SESSION["Id"]."'");
+	while($row=mysqli_fetch_array($abfrage))
 	{
 	$gefunden=false;
 	$planet=new Planeten($row["id"]);
@@ -60,7 +62,7 @@ for($i=0;$i<sizeof($sumfeld);$i++) $count++;
 //mysql_query("UPDATE erfolge SET anzahl='$count' WHERE id='$saveid'");
 
 
-if($count>=$menge && $bcount>=$anzahl+$menge) mysql_query("UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
+if($count>=$menge && $bcount>=$anzahl+$menge) mysqli_query($verbindung, "UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
 }
 
 //ende trigger
@@ -79,8 +81,8 @@ if($sid>0 && ( $ushp->position->x!=$schiff->position->x || $ushp->position->y!=$
 
 
 $sarray=array();
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE system='".$schiff->position->system->id."' AND x='".$schiff->position->x."' AND y='".$schiff->position->y."'");
-while($row=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE system='".$schiff->position->system->id."' AND x='".$schiff->position->x."' AND y='".$schiff->position->y."'");
+while($row=mysqli_fetch_array($abfrage))
 $sarray[]=$row["id"];
 if(sizeof($sarray)<=1) die("Fehler: Kein Schiff gefunden");
 
@@ -98,26 +100,26 @@ if(isset($_GET["aid"]) && ctype_digit($_GET["aid"]))
 	//spezialfall typ=6
 	if($neuq->typ==6)
 		{
-		//prüfen auf globale quest
+		//prï¿½fen auf globale quest
 		if($neuq->abgeber==0)
 		{
 		//entfernen aller Qitems
-		$abfrage=mysql_query("SELECT id FROM schiffe WHERE besitzer='$ich->id'");
-		while($row=mysql_fetch_array($abfrage))
+		$abfrage=mysqli_query($verbindung, "SELECT id FROM schiffe WHERE besitzer='$ich->id'");
+		while($row=mysqli_fetch_array($abfrage))
 		{
 		$shp=new Schiffe($row[0]); 
 		for($i=0;$i<sizeof($shp->qitems);$i++) if($neuq->item==$shp->qitems[$i]->id) $shp->qitems[$i]->id=0;
 		$shp->savequest();
 		}
-		$result=mysql_query("UPDATE erfolge SET erledigt=2 WHERE erledigt=1 AND id='".$_GET["aid"]."' AND uid='".$_SESSION["Id"]."'");
+		$result=mysqli_query($verbindung, "UPDATE erfolge SET erledigt=2 WHERE erledigt=1 AND id='".$_GET["aid"]."' AND uid='".$_SESSION["Id"]."'");
 		if($result) echo "Quest erfolgreich abgegeben.";
 		}
 		else
 		{
 		$shp2=new Schiffe($neuq->abgeber);
 		//auswahl einengen alle schiffe die im sektor sind
-		$abfrage=mysql_query("SELECT * FROM schiffe WHERE x='".$shp2->position->x."' AND y='".$shp2->position->y."' AND orbit='".$shp2->position->orbit."' AND system='".$shp2->position->system->id."' AND besitzer='".$_SESSION["Id"]."'");
-		while($row=mysql_fetch_array($abfrage)) {
+		$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE x='".$shp2->position->x."' AND y='".$shp2->position->y."' AND orbit='".$shp2->position->orbit."' AND system='".$shp2->position->system->id."' AND besitzer='".$_SESSION["Id"]."'");
+		while($row=mysqli_fetch_array($abfrage)) {
 		//auswahl einengen alle schiffe die max anzahl an qitems dabei haben in $preship werfen (id)
 		$qcounter=0;
 		$stellen=array();
@@ -141,7 +143,7 @@ if(isset($_GET["aid"]) && ctype_digit($_GET["aid"]))
 			}
 			*/
 			$shp3->savequest();
-			$result=mysql_query("UPDATE erfolge SET erledigt=2 WHERE erledigt=1 AND id='".$_GET["aid"]."' AND uid='".$_SESSION["Id"]."'");
+			$result=mysqli_query($verbindung, "UPDATE erfolge SET erledigt=2 WHERE erledigt=1 AND id='".$_GET["aid"]."' AND uid='".$_SESSION["Id"]."'");
 			if($result) echo "Quest erfolgreich abgegeben.";
 			}
 			else {  $qit=new Item($neuq->zusatz);
@@ -155,22 +157,22 @@ if(isset($_GET["aid"]) && ctype_digit($_GET["aid"]))
 					$ushp->frachtraum->$tstoff-=$neuq->max;
 					$ushp->frachtraum->save(); }
 					}
-	if($neuq->qid==18) mysql_query("UPDATE forschung SET oberth=1 WHERE besitzer='".$_SESSION["Id"]."'");
+	if($neuq->qid==18) mysqli_query($verbindung, "UPDATE forschung SET oberth=1 WHERE besitzer='".$_SESSION["Id"]."'");
 	
-	$result=mysql_query("UPDATE erfolge SET erledigt=2 WHERE erledigt=1 AND id='".$_GET["aid"]."' AND uid='".$_SESSION["Id"]."'");
+	$result=mysqli_query($verbindung, "UPDATE erfolge SET erledigt=2 WHERE erledigt=1 AND id='".$_GET["aid"]."' AND uid='".$_SESSION["Id"]."'");
 	if($result) echo "Quest erfolgreich abgegeben.";
 	}
-	if($neuq->qid==30) mysql_query("UPDATE forschung SET miranda=1 WHERE besitzer='".$_SESSION["Id"]."'");
+	if($neuq->qid==30) mysqli_query($verbindung, "UPDATE forschung SET miranda=1 WHERE besitzer='".$_SESSION["Id"]."'");
 	
 	/* QUESTBELOHNUNG */
 		if(( sizeof($neuq->bschiffe)>0 || sizeof($brohstoffe)>0 ) && $schiff_bekommen) {
-		$heimat=mysql_query("SELECT x,y,system FROM planeten WHERE heimat=1 AND besitzer='".$_SESSION["Id"]."'");
-		$heimat=mysql_fetch_array($heimat);
+		$heimat=mysqli_query($verbindung, "SELECT x,y,system FROM planeten WHERE heimat=1 AND besitzer='".$_SESSION["Id"]."'");
+		$heimat=mysqli_fetch_array($heimat);
 		if($neuq->bschiffe[0]!='') for($i=0;$i<sizeof($neuq->bschiffe);$i++) {
 			$lastid=checkforlastid('schiffe')+1;
 			echo 'MILCH: ',$neuq->bschiffe[$i],'<br />';
-			mysql_query("INSERT INTO schiffe (name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau) SELECT 'noname','".$heimat[0]."','".$heimat[1]."','".$heimat[2]."','".$_SESSION["Id"]."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,typ,lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau FROM bauplan WHERE klasse='".$neuq->bschiffe[$i]."'")or die(mysql_error());
-			mysql_query("INSERT INTO schiffsmodule (sid,a1,a2,d1,d2,c1,c2) SELECT '$lastid',a1,a2,d1,d2,c1,c2 FROM bauplan WHERE klasse='".$neuq->bschiffe[$i]."'") or die(mysql_error());
+			mysqli_query($verbindung, "INSERT INTO schiffe (name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau) SELECT 'noname','".$heimat[0]."','".$heimat[1]."','".$heimat[2]."','".$_SESSION["Id"]."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,typ,lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau FROM bauplan WHERE klasse='".$neuq->bschiffe[$i]."'")or die(mysqli_error($verbindung));
+			mysqli_query($verbindung, "INSERT INTO schiffsmodule (sid,a1,a2,d1,d2,c1,c2) SELECT '$lastid',a1,a2,d1,d2,c1,c2 FROM bauplan WHERE klasse='".$neuq->bschiffe[$i]."'") or die(mysqli_error($verbindung));
 	}					
 		if($neuq->brohstoffe[0]!='' && $neuq->abgeber>0) for($i=0;$i<sizeof($neuq->brohstoffe);$i++)
 			{
@@ -208,10 +210,11 @@ if(isset($_GET["qid"]) && ctype_digit($_GET["qid"]))
 	{
 	$bcount=0;
 	//falls 4 bestimmen der aktuellen baude
-	$abfrage=mysql_query("SELECT typ,zusatz FROM quests WHERE id='".$_GET["qid"]."'"); $abfrage=mysql_fetch_array($abfrage);
+	$abfrage=mysqli_query($verbindung, "SELECT typ,zusatz FROM quests WHERE id='".$_GET["qid"]."'"); 
+	$abfrage=mysqli_fetch_array($abfrage);
 	$qtyp=$abfrage[0]; $zusatz1=$abfrage[1];
-	$abfrage=mysql_query("SELECT id FROM planeten WHERE besitzer='".$_SESSION["Id"]."'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT id FROM planeten WHERE besitzer='".$_SESSION["Id"]."'");
+	while($row=mysqli_fetch_array($abfrage))
 	{
 	$pla=new Planeten($row["id"]);
 	for($i=1;$i<=50;$i++) if($pla->feld[$i]->was==$zusatz1 && $pla->feld[$i]->bauzeit==0) $bcount++;
@@ -219,31 +222,31 @@ if(isset($_GET["qid"]) && ctype_digit($_GET["qid"]))
 	
 	
 	//quest annehmen
-	$abf=mysql_query("SELECT * FROM erfolge WHERE qid='".$_GET["qid"]."' AND uid='".$_SESSION["Id"]."'");
-	while($ro=mysql_fetch_array($abf))
+	$abf=mysqli_query($verbindung, "SELECT * FROM erfolge WHERE qid='".$_GET["qid"]."' AND uid='".$_SESSION["Id"]."'");
+	while($ro=mysqli_fetch_array($abf))
 	die("Quest bereits vorhanden!");
-	if($qtyp!=4 && $qtyp!=8) mysql_query("INSERT INTO erfolge (uid,qid) VALUES ('".$_SESSION["Id"]."','".$_GET["qid"]."')") or die(mysql_error());
-	if($qtyp==4) mysql_query("INSERT INTO erfolge (anzahl,uid,qid) VALUES ('$bcount','".$_SESSION["Id"]."','".$_GET["qid"]."')") or die(mysql_error());
-	if($qtyp==8) mysql_query("INSERT INTO erfolge (erledigt,uid,qid) VALUES ('1','".$_SESSION["Id"]."','".$_GET["qid"]."')") or die(mysql_error());
+	if($qtyp!=4 && $qtyp!=8) mysqli_query($verbindung, "INSERT INTO erfolge (uid,qid) VALUES ('".$_SESSION["Id"]."','".$_GET["qid"]."')") or die(mysqli_error($verbindung));
+	if($qtyp==4) mysqli_query($verbindung, "INSERT INTO erfolge (anzahl,uid,qid) VALUES ('$bcount','".$_SESSION["Id"]."','".$_GET["qid"]."')") or die(mysqli_error($verbindung));
+	if($qtyp==8) mysqli_query($verbindung, "INSERT INTO erfolge (erledigt,uid,qid) VALUES ('1','".$_SESSION["Id"]."','".$_GET["qid"]."')") or die(mysqli_error($verbindung));
 	if($qtyp==8) echo '<b>Quest erledigt!</b><br /><br />'; else echo 'Quest angenommen!<br /><br />';
 	}
 
 
-$abfrage=mysql_query("SELECT * FROM quests WHERE (geber='$sid' OR abgeber='$sid') AND (level='".$ich->level."' OR level=0) ORDER BY id DESC");
-while($row=mysql_fetch_array($abfrage)) {
+$abfrage=mysqli_query($verbindung, "SELECT * FROM quests WHERE (geber='$sid' OR abgeber='$sid') AND (level='".$ich->level."' OR level=0) ORDER BY id DESC");
+while($row=mysqli_fetch_array($abfrage)) {
 
 //Anzeige der QUests beschraenken
 $ch=false;
-$abfrage2=mysql_query("SELECT * FROM erfolge WHERE uid='".$_SESSION["Id"]."' AND erledigt=2 AND qid='".$row["vorquest"]."'");
-while($row2=mysql_fetch_array($abfrage2))
+$abfrage2=mysqli_query($verbindung, "SELECT * FROM erfolge WHERE uid='".$_SESSION["Id"]."' AND erledigt=2 AND qid='".$row["vorquest"]."'");
+while($row2=mysqli_fetch_array($abfrage2))
 $ch=true;
 
 if($ch || $row["vorquest"]==0) {
 //ende der beschr
 $tempid=$row["id"];
-$abfrage2=mysql_query("SELECT * FROM erfolge WHERE uid='".$_SESSION["Id"]."' AND qid='".$tempid."'");
+$abfrage2=mysqli_query($verbindung, "SELECT * FROM erfolge WHERE uid='".$_SESSION["Id"]."' AND qid='".$tempid."'");
 $fertig=-1;
-while($row2=mysql_fetch_array($abfrage2)) {
+while($row2=mysqli_fetch_array($abfrage2)) {
 $fertig=$row2["erledigt"];
 $aid=$row2["id"];
 }
@@ -253,7 +256,8 @@ if($row["typ"]==2 && $uid>0 && $fertig==0)
 	{
 	$tvar=$row["zusatz"];
 	echo 'Bedingung 1: ',$ushp->frachtraum->$tvar,'   Bedingung 2: ',$row["max"],'<br />';
-	if($ushp->frachtraum->$tvar>=$row["max"]) { $fertig=1; mysql_query("UPDATE erfolge SET erledigt=1 WHERE qid='".$row["id"]."' AND uid='".$_SESSION["Id"]."' AND erledigt=0"); $row["erledigt"]=1; }
+	if($ushp->frachtraum->$tvar>=$row["max"]) { $fertig=1; 
+		mysqli_query($verbindung, "UPDATE erfolge SET erledigt=1 WHERE qid='".$row["id"]."' AND uid='".$_SESSION["Id"]."' AND erledigt=0"); $row["erledigt"]=1; }
 	}
 
 //ende bestimmung questtyp 2

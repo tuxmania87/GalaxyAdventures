@@ -1,6 +1,8 @@
 <?php
 include("klassen.php");
 
+$verbindung = get_verbindung();
+
 function getpass() {
     $abc = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
     $pwd = "";
@@ -27,8 +29,8 @@ if ($_POST["sent"] == 1 && $_POST["einverstanden"] == 'on') {
     changeit($accemail);
     echo '!!ACCMAIL: ', $accemail;
     $existName = 0;
-    $abfrage = mysql_query("SELECT * FROM account WHERE login='$accname' OR email='$accemail'");
-    while ($account = mysql_fetch_array($abfrage)) {
+    $abfrage = mysqli_query($verbindung, "SELECT * FROM account WHERE login='$accname' OR email='$accemail'");
+    while ($account = mysqli_fetch_array($abfrage)) {
         $existName = 1;
     }
     if ($existName == 0) {
@@ -39,7 +41,7 @@ if ($_POST["sent"] == 1 && $_POST["einverstanden"] == 'on') {
         echo '<a href="login.php">zum login</a>';
         $pass = $accpasswort;
         $accpasswort = md5($accpasswort);
-        mysql_query("INSERT INTO `account` (login,email,passwort) VALUES ('$accname' , '$accemail' , '$accpasswort')") OR die(mysql_error());
+        mysqli_query($verbindung, "INSERT INTO `account` (login,email,passwort) VALUES ('$accname' , '$accemail' , '$accpasswort')") OR die(mysql_error());
     }
 }
         include("nav2.php");

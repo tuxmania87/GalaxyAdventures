@@ -5,6 +5,7 @@ include("klassen.php");
 
 //CHEATSCHUTZ ANFANG
 
+$verbindung = get_verbindung();
 
 $betray=false;
 if($_SESSION["Id"]<=0) $betray=true;
@@ -18,7 +19,7 @@ $ich=new Account($id);
 if($_POST["sent"]==4) {
 $beschreibung=($_POST["bla"]);
 changeit($beschreibung);
-mysql_query("UPDATE account SET beschreibung='$beschreibung' WHERE id='$id'") or die(mysql_error());
+mysqli_query($verbindung, "UPDATE account SET beschreibung='$beschreibung' WHERE id='$id'") or die(mysql_error());
 echo 'Beschreibung ge&auml;ndert.';
 }
 
@@ -26,12 +27,12 @@ echo 'Beschreibung ge&auml;ndert.';
 //Allgemeiner Fall CHat Check
 if($_POST["chatchange"]==1) {
 if(isset($_POST["chatvar"])) {
-	mysql_query("UPDATE account SET chat=1 WHERE id='$ich->id'");
+	mysqli_query($verbindung, "UPDATE account SET chat=1 WHERE id='$ich->id'");
 	$ich->chat=1;
 	}
 else
 	{
-	mysql_query("UPDATE account SET chat=0 WHERE id='$ich->id'");
+	mysqli_query($verbindung, "UPDATE account SET chat=0 WHERE id='$ich->id'");
 	$ich->chat=0;
 	}
 }
@@ -75,12 +76,12 @@ else
               imagecopyresampled($tn, $image, 0, 0, 0, 0, $modwidth, $modheight, $width, $height) ; 
  
               imagejpeg($tn, $save, 100) ; 
-		mysql_query("UPDATE account SET bild='$save' WHERE id='$id'");
+		mysqli_query($verbindung, "UPDATE account SET bild='$save' WHERE id='$id'");
  			} else  { if($width<3000 && $height<3000) {
 			$source=$file; $target2="avatar/sml_" . $id . ".jpg" ;
 	              copy($target, $target2);
 			echo 'Bild hochgeladen..<br />';
-			mysql_query("UPDATE account SET bild='$target2' WHERE id='$id'");
+			mysqli_query($verbindung, "UPDATE account SET bild='$target2' WHERE id='$id'");
 				} 
 				}
           }
@@ -88,7 +89,7 @@ else
 //Fall 2 name aendern
 if($_POST["sent"]==2) {
 	$newname=pruefetext($_POST["nick"]);
-	mysql_query("UPDATE account SET nickname='$newname' WHERE id='$id'");
+	mysqli_query($verbindung, "UPDATE account SET nickname='$newname' WHERE id='$id'");
 	echo 'Neuer Name wurde erfolgreich gesetzt!';
 	echo '<META HTTP-EQUIV="Refresh" CONTENT="0;URL=logout.php">';
 }
@@ -102,7 +103,7 @@ if($_POST["sent"]==1 && $_POST["pwchangepost"]==1)
 		if($newpw==$newpw2)
 			{
 			$newpw=md5($newpw);
-			mysql_query("UPDATE account SET passwort='$newpw' WHERE id='$id'");
+			mysqli_query($verbindung, "UPDATE account SET passwort='$newpw' WHERE id='$id'");
 			echo 'Neues Passwort wurde erfolgreich gesetzt!';
 			echo '<META HTTP-EQUIV="Refresh" CONTENT="0;URL=main.php">';
 			}
@@ -111,8 +112,8 @@ if($_POST["sent"]==1 && $_POST["pwchangepost"]==1)
 	}
 //Ende
 
-$accountvar=mysql_query("SELECT * FROM account WHERE id='$id'");
-while($accountfeld=mysql_fetch_array($accountvar)) {
+$accountvar=mysqli_query($verbindung, "SELECT * FROM account WHERE id='$id'");
+while($accountfeld=mysqli_fetch_array($accountvar)) {
 $name=$accountfeld["name"];
 $nick=$accountfeld["displaynick"];
 $img=$accountfeld["avatar"];

@@ -1,5 +1,5 @@
 @echo off
-SET dim=100
+SET dim=200
 SET /a itermax=dim/20
 SET /a itermaxsquare = itermax * itermax 
 SET /a upperbound = itermaxsquare - 1

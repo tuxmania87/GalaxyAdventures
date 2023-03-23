@@ -9,7 +9,7 @@ $verbindung = get_verbindung();
 
 //questpruefeung : Sammeln ( Typ 2)
 
-print "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='" . $_SESSION["Id"] . "' AND quests.id=erfolge.qid AND quests.typ='2' AND erledigt='0' LIMIT 1";
+print "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='" . $_SESSION["Id"] . "' AND quests.id=erfolge.qid AND quests.typ=2 AND erledigt='0' LIMIT 1";
 
 $abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='" . $_SESSION["Id"] . "' AND quests.id=erfolge.qid AND quests.typ='2' AND erledigt='0' LIMIT 1");
 while ($row = mysqli_fetch_assoc($abfrage)) {
@@ -20,11 +20,41 @@ while ($row = mysqli_fetch_assoc($abfrage)) {
 }
 
 if ($saveid > 0) {
+	/*
 	$testab = mysqli_query($verbindung, "SELECT SUM(" . $art . ") FROM schiffe WHERE besitzer='" . $ich->id . "'");
 	$testaa = mysqli_query($verbindung, "SELECT SUM(" . $art . ") FROM planeten WHERE besitzer='" . $ich->id . "'");
 	$testab = mysqli_fetch_array($testab);
 	$testaa = mysqli_fetch_array($testaa);
-	$summe = $testab[0] + $testaa[0];
+	*/
+
+	$testsum = 0;
+
+	$testab = mysqli_query($verbindung, "select id from schiffe where besitzer = '".$ich->id."'");
+	while($row = mysqli_fetch_assoc($testab)) {
+		$ship_id = $row["id"];
+
+		$t_s = new Schiffe($ship_id);
+		for($i=0; $i<sizeof($t_s->frachtraum->fracht);$i++) {
+			if(strtolower($t_s->frachtraum->fracht[$i]->name) == $art) {
+				$testsum += $t_s->frachtraum->fracht[$i]->anzahl;
+			}
+		}
+	}
+
+
+	$testab = mysqli_query($verbindung, "select id from planeten where besitzer = '".$ich->id."'");
+	while($row = mysqli_fetch_assoc($testab)) {
+		$planet_id = $row["id"];
+
+		$t_s = new Planeten($planet_id);
+		for($i=0; $i<sizeof($t_s->frachtraum->fracht);$i++) {
+			if(strtolower($t_s->frachtraum->fracht[$i]->name) == $art) {
+				$testsum += $t_s->frachtraum->fracht[$i]->anzahl;
+			}
+		}
+	}
+
+	$summe = $testsum;;
 	if ($summe < 0) $summe = 0;
 	if ($summe > $max) {
 		$summe = $max;
@@ -43,7 +73,7 @@ unset($anzahl);
 
 
 //questpruefeung : Buildings ( Typ 4)
-$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='" . $_SESSION["Id"] . "' AND quests.id=erfolge.qid AND quests.typ='4' AND erledigt='0'");
+$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='" . $_SESSION["Id"] . "' AND quests.id=erfolge.qid AND quests.typ=4 AND erledigt='0'");
 while ($row = mysqli_fetch_assoc($abfrage)) {
 	$menge = $row["max"];
 	$saveid = $row["id"];

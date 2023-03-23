@@ -4,6 +4,7 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
+$verbindung = get_verbindung();
 
   function bool2string($a) {
         return $a ? 'ja' : 'nein';
@@ -45,8 +46,8 @@ if ($_GET["kategorie"] == "planetfeld") {
     echo '<h3>Planetenfelder</h3>';
     echo '<table class="liste"><tr><th>Id</th><th>Name</th><th>Bild</th></tr>';
 
-    $q = mysql_query("select * from planetenfelder");
-    while ($r = mysql_fetch_array($q)) {
+    $q = mysqli_query($verbindung, "select * from planetenfelder");
+    while ($r = mysqli_fetch_array($q)) {
         echo '<tr>';
         echo '<td>' . $r["id"] . '</td>';
         echo '<td>' . $r["name"] . '</td>';
@@ -60,8 +61,8 @@ if ($_GET["kategorie"] == "gebaude") {
     echo '<h3>Gebäude</h3>';
     echo '<table class="liste"><tr><th>Id</th><th>Display</th><th>Name</th><th>Kosten</th><th>Dauerkosten</th><th>Effekt</th><th>Dauereffekt</th><th>Bauzeiten</th><th>Baubar auf</th></tr>';
 
-    $q = mysql_query("select id from gebaude");
-    while ($r = mysql_fetch_array($q)) {
+    $q = mysqli_query($verbindung, "select id from gebaude");
+    while ($r = mysqli_fetch_array($q)) {
         $b = new Bauplan_Gebaude($r["id"]);
 
 

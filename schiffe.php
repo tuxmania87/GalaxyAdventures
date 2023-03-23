@@ -625,7 +625,7 @@ if (mysqli_num_rows($display_test1) > 0 || mysqli_num_rows($display_test2) > 0) 
 
                 $t_color = "";
                 $t_color2 = "";
-
+                echo $tempschiff->id."<br>";
                 if ($tempschiff->hull / $tempschiff->maxhull <= 0.5 && $tempschiff->hull / $tempschiff->maxhull > 0.2) {
                     $t_color = '<span style="color:yellow;">';
                     $t_color2 = "</span>";

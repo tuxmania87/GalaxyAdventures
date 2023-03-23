@@ -154,7 +154,7 @@ class Quest
     {
         $verbindung = get_verbindung();
         if ($this->anzahl < $this->max) $this->anzahl++;
-        mysqli_query($verbindung,"UPDATE erfolge SET anzahl='" . $this->anzahl . "' WHERE id='" . $this->id . "'");
+        mysqli_query($verbindung, "UPDATE erfolge SET anzahl='" . $this->anzahl . "' WHERE id='" . $this->id . "'");
     }
 
     public function done()
@@ -163,7 +163,7 @@ class Quest
         if ($this->anzahl == $this->max) {
             $this->erledigt = 1;
         }
-        mysqli_query($verbindung,"UPDATE erfolge SET erledigt='" . $this->erledigt . "' WHERE id='" . $this->id . "'");
+        mysqli_query($verbindung, "UPDATE erfolge SET erledigt='" . $this->erledigt . "' WHERE id='" . $this->id . "'");
     }
 }
 
@@ -557,7 +557,7 @@ class Frachtraum
                     $res->id = $r["id"];
                     $res->name = $r["name"];
                     $res->wichtung = $r["punktwichtung"];
-                    $res->anzahl = $sid[$r["id"]];
+                    $res->anzahl = (int) $sid[$r["id"]];
                     $this->fracht[] = $res;
                 }
             } else {
@@ -1503,15 +1503,39 @@ class Schiffe extends Rohling
             }
         }
 
+        //QUESTITEMS
+        for ($i = 0; $i < sizeof($ziel->qitems); $i++) {
+            $abfrage = mysqli_query($verbindung, "SELECT erfolge.id FROM erfolge,quests WHERE erfolge.erledigt=0 AND erfolge.uid='" . $this->besitzer->id . "' AND erfolge.qid='" . $ziel->qitems[$i] . "' AND erfolge.qid=quests.id AND erfolge.anzahl<quests.max");
+            while ($row = mysqli_fetch_array($abfrage)) {
+                $qst = new Quest($row[0]);
+                $qst->plus();
+                if ($qst->anzahl >= $qst->max) $qst->done();
+                $this->qitems[] = $ziel->qitems[$i];
+                unset($ziel->qitems[$i]);
+                $ziel->qitems = array_values($ziel->qitems);
+                echo 'Gegenstand erhalten: ', $qst->zusatz, '<br />';
+            }
+        }
+        $this->savequest();
+        $ziel->savequest();
+        //ENDE QUESTITEMS
+
         $gefunden = false;
-        for ($i = 0; $i < sizeof($waren); $i++)
-            if ($waren[$i] > 0)
-                $gefunden = true;
+        if($this->frachtraum->gesamt() > 0)
+            $gefunden = true;
+
         if ((!$gefunden && (sizeof($ziel->qitems) == 0)) || $delme) {
             mysqli_query($verbindung, "DELETE FROM schiffe WHERE id='" . $ziel->id . "'");
             $ziel = null;
         }
         return 0;
+    }
+
+    public function savequest()
+    {
+        $verbindung = get_verbindung();
+        $tempkey = implode(",", $this->qitems);
+        mysqli_query($verbindung, "UPDATE schiffe SET qitems='$tempkey' WHERE id='" . $this->id . "'");
     }
 
     public function kampftick($status, $ziel3)
@@ -1995,17 +2019,18 @@ class Ticket
 
     function __construct($i)
     {
+        $verbindung = get_verbindung();
         if ($i == 0 || $i == "") {
             //create new ticket
-            mysql_query("INSERT INTO tickets (titel,nachricht,ast,cr,status,comments) VALUES ('','',0,0,0,'')") or die(mysql_error());
-            $this->id = mysql_insert_id();
+            mysqli_query($verbindung, "INSERT INTO tickets (titel,nachricht,ast,cr,status,comments) VALUES ('','',0,0,0,'')") or die(mysql_error());
+            $this->id = mysqli_insert_id($verbindung);
             return;
         }
         if (ctype_digit($i) && $i > 0) {
             //init stuff
             $this->id = $i;
-            $q = mysql_query("SELECT * FROM tickets WHERE id = " . $this->id);
-            while ($r = mysql_fetch_array($q)) {
+            $q = mysqli_query($verbindung, "SELECT * FROM tickets WHERE id = " . $this->id);
+            while ($r = mysqli_fetch_array($q)) {
                 $this->titel = $r["titel"];
                 $this->nachricht = $r["nachricht"];
                 $this->assignedTo = new Account($r["ast"]);
@@ -2023,8 +2048,9 @@ class Ticket
 
     function saveToDB()
     {
+        $verbindung = get_verbindung();
         $commentstring = "";
-        mysql_query("UPDATE tickets SET titel='" . $this->titel . "',nachricht='" . $this->nachricht . "',ast='" . $this->assignedTo->id . "',cr='" . $this->createdBy->id . "',status='" . $this->status . "',comments='" . $commentstring . "' WHERE id = " . $this->id) or die(mysql_error());
+        mysqli_query($verbindung, "UPDATE tickets SET titel='" . $this->titel . "',nachricht='" . $this->nachricht . "',ast='" . $this->assignedTo->id . "',cr='" . $this->createdBy->id . "',status='" . $this->status . "',comments='" . $commentstring . "' WHERE id = " . $this->id) or die(mysql_error());
     }
 }
 

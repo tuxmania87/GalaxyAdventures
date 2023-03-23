@@ -9,6 +9,8 @@ $tid=$_GET["tid"];
 $schiff=new Schiffe($sid);
 $target=new Planeten($tid);
 
+$verbindung = get_verbindung();
+
 $oflaeche = $target->typ[1]=='m' && strlen($target->typ)==2?24:50;
 
 $stunde=date("H");
@@ -26,8 +28,8 @@ if($betray) { echo 'Du bist nicht <a href="login.php">eingeloggt oder du versuch
 
 //QUESTABFRAGE
 
-$abfrage=mysql_query("SELECT E.id FROM erfolge E,quests Q WHERE E.qid=Q.id AND Q.typ=9 AND E.erledigt=0 AND Q.zusatz='".$target->typ."'");
-while($row=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT E.id FROM erfolge E,quests Q WHERE E.qid=Q.id AND Q.typ=9 AND E.erledigt=0 AND Q.zusatz='".$target->typ."'");
+while($row=mysqli_fetch_array($abfrage))
 	{
 	$qst = new Quest($row[0]);
 	$qst->plus();
@@ -175,7 +177,7 @@ if($i%6==0 && $oflaeche==24) echo '</tr>';
 echo '</table><hr />';
 echo '<br /><table class="bordered2">';
 $inhalt=array("rohstoffa","rohstoffb","rohstoffc","rohstoffd","isochips","tritanium","dili","antimaterie","deuterium","npcborg","npcrom","npcfer","npcfod","npckling","npccard");
-$inhaltcap=array("Baustoff","Duranium","Erz","Sorium","Isochips","Tritanium","Dilithium","Antimaterie","Deuterium","Vinkulum","Ale","Latinum","Château Picard","Blutwein","Taspar Eier");
+$inhaltcap=array("Baustoff","Duranium","Erz","Sorium","Isochips","Tritanium","Dilithium","Antimaterie","Deuterium","Vinkulum","Ale","Latinum","Chï¿½teau Picard","Blutwein","Taspar Eier");
 $inhaltimg=array("baustoff.png","duranium.png","erz.png","sorium.png","isochips.png","tritanium.png","dili.png","antimaterie.png","deuterium.png","vinkulum.png","ale.png","latinum.png","chateau.png","blutwein.png","eier.png");
 for($i=0;$i<sizeof($inhalt);$i++) 
 if($target->$inhalt[$i]>0) echo '<tr><td>',$inhaltcap[$i],'</td><td><img src="images/misc/',$inhaltimg[$i],'" border="0" /></td><td>',$target->$inhalt[$i],'</td></tr>';
