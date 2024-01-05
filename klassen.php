@@ -666,7 +666,7 @@ class Frachtraum
 class Planeten extends Rohling
 {
     public $heimat = 0;
-    public $feld = [];
+    public array $feld = [];
     public $orbit = 0;
     public $klasse;
     public $defense;
