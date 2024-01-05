@@ -1,12 +1,12 @@
-
-
 <?php
+
 define('MAXMEM', 32 * 1024 * 1024);  // --- memory limit (32M) ---
 
 $abschnitt = $argv[1];
 $dim = $argv[2];
+$outname = $argv[3];
 
-echo 'test_enter';
+// echo 'test_enter';
 
 function drawBorder(&$img, &$color, $thickness = 1)
 {
@@ -34,6 +34,8 @@ for ($i = $startx; $i < $startx + 20; ++$i) {
 
         // echo $i." ".$j."\n";
 
+        // echo 'DEBUG '.$i.' | '.$j.' '.$f->bild.' ending '.strtolower($split[sizeof($split) - 1])."\n";
+
         if (strtolower($split[sizeof($split) - 1]) == 'png') {
             $piece = imagecreatefrompng('images/'.$f->bild);
         }
@@ -43,14 +45,12 @@ for ($i = $startx; $i < $startx + 20; ++$i) {
 
         // Draw border
         $farbe = imagecolorallocate($piece, 160, 0, 0);
+        // var_dump($farbe);
         drawBorder($piece, $farbe);
-
-        // var_dump($piece);
 
         imagecopy($img, $piece, $i * 34 - $startx * 34, $j * 34 - $starty * 34, 0, 0, 34, 34);
     }
 }
 
-imagepng($img);
+imagepng($img, $outname);
 imagedestroy($img);
-?>
