@@ -230,7 +230,7 @@ if ($_GET['levelup'] == 1 && $questcounter == 3 && $ich->level == 1) {
     // echo "INSERT INTO schiffe (id,typ,name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','s','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'";
 
     $erzer = new Bauplan_Schiffe($klasse);
-    mysqli_query($verindung, "INSERT INTO schiffe 
+    mysqli_query($verbindung, "INSERT INTO schiffe 
         (klasse,warpkern,typ,x,y,`system`,besitzer,energie,hull,alarmstufe,`name`,`nachricht`) 
         VALUES (
             '".$klasse."',
@@ -253,7 +253,7 @@ if ($_GET['levelup'] == 1 && $questcounter == 3 && $ich->level == 1) {
     $klasse = 'Tanker';
 
     $tanker = new Bauplan_Schiffe($klasse);
-    mysqli_query($verindung, "INSERT INTO schiffe 
+    mysqli_query($verbindung, "INSERT INTO schiffe 
         (klasse,warpkern,typ,x,y,`system`,besitzer,energie,hull,alarmstufe,`name`,`nachricht`) 
         VALUES (
             '".$klasse."',
