@@ -1,39 +1,39 @@
 <?php
-//Test auf Tick
-include_once("connect.php");
+// Test auf Tick
+include_once 'connect.php';
 $verbindung = get_verbindung();
-$tm = mysqli_query($verbindung, "SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die(mysql_error());
+
+$tm = mysqli_query($verbindung, 'SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)') or exit($verbindung->error);
 while ($tm2 = mysqli_fetch_array($tm)) {
-    if ($tm2["status"] == 1) {
-        header("Location: http://www.keinerspieltmitmir.de/devga/maintick.php");
+    if ($tm2['status'] == 1) {
+        header('Location: http://www.keinerspieltmitmir.de/devga/maintick.php');
         exit;
     }
 }
 
-
-//endetest
+// endetest
 session_start();
 $beta = 0;
-$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='" . $_SESSION["Id"] . "'");
+$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".$_SESSION['Id']."'");
 $tm = mysqli_fetch_array($tm);
 $beta = $tm[0];
 
-$tm = mysqli_query($verbindung, "SELECT * FROM `gamestatus` WHERE id=(SELECT max(id) FROM `gamestatus`)") or die(mysql_error());
+$tm = mysqli_query($verbindung, 'SELECT * FROM `gamestatus` WHERE id=(SELECT max(id) FROM `gamestatus`)') or exit($verbindung->error);
 while ($tm2 = mysqli_fetch_array($tm)) {
-    if ($tm2["status"] == 'offline' && $beta == 0) {
-//header ("Location: http://www.keinerspieltmitmir.de/devga/wartung.php");
-//exit;
+    if ($tm2['status'] == 'offline' && $beta == 0) {
+        // header ("Location: http://www.keinerspieltmitmir.de/devga/wartung.php");
+        // exit;
     }
 }
 
-$ich_temp = mysqli_query($verbindung,"SELECT level FROM account WHERE id='" . $_SESSION["Id"] . "'");
+$ich_temp = mysqli_query($verbindung, "SELECT level FROM account WHERE id='".$_SESSION['Id']."'");
 $ich_temp = mysqli_fetch_array($ich_temp);
 $ich_temp = $ich_temp[0];
 
 if ($ich_temp >= 4) {
-    $tm = mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='" . $_SESSION["Id"] . "'") or die(mysql_error());
+    $tm = mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".$_SESSION['Id']."'") or exit($verbindung->error);
     while ($tm2 = mysqli_fetch_array($tm)) {
-        header("Location: move.php");
+        header('Location: move.php');
         exit;
     }
 }
@@ -68,9 +68,13 @@ if ($ich_temp >= 4) {
 
             function start() {
                 time();
-<?php if (($_SERVER["SCRIPT_NAME"] == '/ga_source/main.php' || $_SERVER["SCRIPT_NAME"] == '/de/index.php') && (ctype_digit($_SESSION["Id"]) || $_SESSION["nick"] != '')) echo 'setRequest("chat_query.php");'; ?>
+<?php if (($_SERVER['SCRIPT_NAME'] == '/ga_source/main.php' || $_SERVER['SCRIPT_NAME'] == '/de/index.php') && (ctype_digit($_SESSION['Id']) || $_SESSION['nick'] != '')) {
+    echo 'setRequest("chat_query.php");';
+} ?>
                        window.setInterval("time()", 1000);
-<?php if (($_SERVER["SCRIPT_NAME"] == '/ga_source/main.php' || $_SERVER["SCRIPT_NAME"] == '/de/index.php') && (ctype_digit($_SESSION["Id"]) || $_SESSION["nick"] != '')) echo 'window.setInterval("setRequest(\"chat_query.php\")", 1200);'; ?>
+<?php if (($_SERVER['SCRIPT_NAME'] == '/ga_source/main.php' || $_SERVER['SCRIPT_NAME'] == '/de/index.php') && (ctype_digit($_SESSION['Id']) || $_SESSION['nick'] != '')) {
+    echo 'window.setInterval("setRequest(\"chat_query.php\")", 1200);';
+} ?>
                    }
 
                    function time() {
@@ -122,13 +126,14 @@ if ($ich_temp >= 4) {
         </script>
         <?php
         $gnu = false;
-        $ssid = $_SESSION["Id"];
-        $pa = mysqli_query($verbindung, "SELECT * FROM mail WHERE popup='1' AND empfaenger='$ssid'");
-        while ($pr = mysqli_fetch_array($pa))
-            $gnu = true;
+$ssid = $_SESSION['Id'];
+$pa = mysqli_query($verbindung, "SELECT * FROM mail WHERE popup='1' AND empfaenger='$ssid'");
+while ($pr = mysqli_fetch_array($pa)) {
+    $gnu = true;
+}
 
-        if ($gnu) {
-            ?>
+if ($gnu) {
+    ?>
             <script type="text/javascript">
                 $(document).ready(function(){
                     tb_show("Neue Nachricht","popuppost.php?height=40&width=400","images/cart.jpg");
@@ -136,8 +141,8 @@ if ($ich_temp >= 4) {
             </script>
 
             <?php
-        }
-        ?>
+}
+?>
 
         <script type="text/javascript" src="tooltips.js"></script>
         <title>Star Trek - Galaxy Adventures II</title>

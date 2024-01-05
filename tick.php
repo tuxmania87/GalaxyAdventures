@@ -17,7 +17,7 @@ $anfang = $anfangminuten * 60 + $anfangsek;
 
 $datum = date("Y-m-d H:i:s");
 $ip = $_SERVER['REMOTE_ADDR'];
-mysqli_query($verindung,"INSERT INTO `ticklog` (datum,ip,status) VALUES ('$datum','$ip','1')");
+mysqli_query($verindung,"INSERT INTO `ticklog` (`start`,ip,`status`) VALUES ('$datum','$ip','1')");
 
 
 //globale Accountänderung
@@ -352,5 +352,8 @@ $endeminuten = date("i");
 $endesek = date("s");
 $ende = $endeminuten * 60 + $endesek;
 $zeit = $ende - $anfang;
-mysqli_query($verindung,"UPDATE `ticklog` SET status=0,dauer='$zeit' WHERE datum='$datum'");
+
+$end_datetime = date("Y-m-d H:i:s");
+
+mysqli_query($verindung,"UPDATE `ticklog` SET status=0,`end`='end_datetime' WHERE datum='$datum'");
 ?>
