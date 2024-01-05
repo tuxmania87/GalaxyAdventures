@@ -110,13 +110,12 @@ class Quest
     public $bschiffe = [];
     public $brohstoffe = [];
 
-    public $abgabetext = "";
-
+    public $abgabetext = '';
 
     public function __construct($qqid)
     {
         $verbindung = get_verbindung();
-        $abfrage = mysqli_query($verbindung, "SELECT * FROM erfolge,quests WHERE erfolge.id='".$qqid."' AND quests.id=erfolge.qid") or exit("error");
+        $abfrage = mysqli_query($verbindung, "SELECT * FROM erfolge,quests WHERE erfolge.id='".$qqid."' AND quests.id=erfolge.qid") or exit('error');
         while ($row = mysqli_fetch_assoc($abfrage)) {
             $this->id = $qqid;
             $this->qid = $row['qid'];
@@ -203,7 +202,7 @@ class Logbuch
         }
         if (!$changed) {
             $this->id = checkforlastid('logbuch') + 1;
-            //mysqli_query($verbindung, 'INSERT INTO logbuch () VALUES ()');
+            // mysqli_query($verbindung, 'INSERT INTO logbuch () VALUES ()');
         }
     }
 
@@ -322,8 +321,6 @@ class Account
     {
         $this->nickname = pruefetext($name);
     }
-
-    
 
     public function vertrag($typ)
     {
@@ -553,24 +550,17 @@ class Frachtraum
             if ($typ == 'dummy') {
                 $sid = explode('/', $sid);
 
-                $resource_ids_as_array = implode(",",array_diff($sid, [""]));
+                // $resource_ids_as_array = implode(",",array_diff($sid, [""]));
 
-                if(strlen($resource_ids_as_array) > 0)
-                {
-                    
-
-                    
-
-                    $q = mysqli_query($verbindung, 'select * from res where id in ('.$resource_ids_as_array.') order by id');
-                    while ($r = mysqli_fetch_array($q)) {
-                        $res = new Res();
-                        $res->bild = $r['bild'];
-                        $res->id = $r['id'];
-                        $res->name = $r['name'];
-                        $res->wichtung = $r['punktwichtung'];
-                        $res->anzahl = (int) $sid[$r['id']];
-                        $this->fracht[] = $res;
-                    }
+                $q = mysqli_query($verbindung, 'select * from res order by id');
+                while ($r = mysqli_fetch_array($q)) {
+                    $res = new Res();
+                    $res->bild = $r['bild'];
+                    $res->id = $r['id'];
+                    $res->name = $r['name'];
+                    $res->wichtung = $r['punktwichtung'];
+                    $res->anzahl = (int) $sid[$r['id']];
+                    $this->fracht[] = $res;
                 }
             } else {
                 while ($row = mysqli_fetch_array($abfrage)) {
@@ -837,15 +827,15 @@ class Rohling
     public $nachricht = '';
     public $dock = 0;
 
-    // has to be moved out of rohling 
+    // has to be moved out of rohling
     // or split up because kampftick is handling instances of
     // ship and planet
     public $klasse;
     public $tarnung;
     public $hull;
 
-    public function kampftick($status, $ziel3) {
-
+    public function kampftick($status, $ziel3)
+    {
     }
 
     public function schilde()
@@ -2302,11 +2292,11 @@ class Planetenfelder
         $res = [];
         $q = mysqli_query($verbindung, 'select * from planetenfelder');
         while ($r = mysqli_fetch_array($q)) {
-            $t = new Planetenfeld($r["id"]);
-            #$t->id = $r['id'];
-            #$t->name = $r['name'];
-            #$t->bild = $r['bild'];
-            #$res[] = $t;
+            $t = new Planetenfeld($r['id']);
+            // $t->id = $r['id'];
+            // $t->name = $r['name'];
+            // $t->bild = $r['bild'];
+            // $res[] = $t;
         }
     }
 }
