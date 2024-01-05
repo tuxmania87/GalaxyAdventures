@@ -670,6 +670,7 @@ class Planeten extends Rohling
     public $orbit = 0;
     public $klasse;
     public $defense;
+    public $skill;
     public $fehler = [
         0 => '',
         1 => 'Das Schiff muss den Orbit erst verlassen!<br />',
