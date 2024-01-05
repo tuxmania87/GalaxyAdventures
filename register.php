@@ -41,7 +41,12 @@ if ($_POST["sent"] == 1 && $_POST["einverstanden"] == 'on') {
         echo '<a href="login.php">zum login</a>';
         $pass = $accpasswort;
         $accpasswort = md5($accpasswort);
-        mysqli_query($verbindung, "INSERT INTO `account` (login,email,passwort) VALUES ('$accname' , '$accemail' , '$accpasswort')") OR die(mysql_error());
+        $ip = $_SERVER['REMOTE_ADDR'];
+        mysqli_query($verbindung, 
+            "INSERT INTO `account` (`login`,email,passwort,beschreibung,regdatum,regip) 
+                VALUES 
+                ('$accname' , '$accemail' , '$accpasswort','', CURRENT_TIMESTAMP,'$ip')"
+                )  OR die($verbindung->error);
     }
 }
         include("nav2.php");
@@ -102,7 +107,7 @@ DIE AGB's / Regeln
 Mit dem Zugriff auf �Star Trek - Galaxy Adventures II - Forum� wird zwischen dir und dem Betreiber ein Vertrag mit folgenden Regelungen geschlossen:
 1. Nutzungsvertrag
 
-   1. Mit dem Zugriff auf �Star Trek - Galaxy Adventures II - Forum� (im Folgenden �das Board�) schliesst du einen Nutzungsvertrag mit dem Betreiber des Boards ab (im Folgenden �Betreiber�) und erkl&auml;rst dich mit den nachfolgenden Regelungen einverstanden.
+   1. Mit dem Zugriff auf Star Trek - Galaxy Adventures II - Forum  schliesst du einen Nutzungsvertrag mit dem Betreiber des Boards ab (im Folgenden �Betreiber�) und erkl&auml;rst dich mit den nachfolgenden Regelungen einverstanden.
    2. Wenn du mit diesen Regelungen nicht einverstanden bist, so darfst du das Board nicht weiter nutzen. F&uuml;r die Nutzung des Boards gelten jeweils die an dieser Stelle ver&ouml;ffentlichten Regelungen.
    3. Der Nutzungsvertrag wird auf unbestimmte Zeit geschlossen und kann von beiden Seiten ohne Einhaltung einer Frist jederzeit gek&uuml;ndigt werden.
 
