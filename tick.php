@@ -355,5 +355,5 @@ $zeit = $ende - $anfang;
 
 $end_datetime = date("Y-m-d H:i:s");
 
-mysqli_query($verindung,"UPDATE `ticklog` SET status=0,`end`='end_datetime' WHERE datum='$datum'");
+mysqli_query($verindung,"UPDATE `ticklog` SET status=0,`end`='end_datetime' WHERE `start`='$datum'");
 ?>
