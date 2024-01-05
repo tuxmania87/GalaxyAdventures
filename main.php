@@ -105,7 +105,7 @@ if (!$checked) {
     echo '</table>';
 }
 //TICK
-$tm = mysqli_query($verbindung, "SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die(mysql_error());
+$tm = mysqli_query($verbindung, "SELECT `start`, `end`, (`end`-`start`) as dauer FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die($verbindung->error);
 while ($tm2 = mysqli_fetch_array($tm)) {
     $onlinecounter = 0;
     $isonlinevar = mysqli_query($verbindung, "SELECT * FROM account");
@@ -128,7 +128,7 @@ while ($tm2 = mysqli_fetch_array($tm)) {
     if ($tm2["status"] == 1)
         echo 'Tick l&auml;uft gerade .... Bitte warten!';
     else
-        echo 'Letzer Tick: ', gerdatum($tm2["datum"]), ' (Dauer: ', $tm2["dauer"], ' Sekunden)';
+        echo 'Letzer Tick ausgeführt am : ', gerdatum($tm2["start"]), ' (Dauer: ', $tm2["dauer"], ' Sekunden)';
 }
 //TICK
 
