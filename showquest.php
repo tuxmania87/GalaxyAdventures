@@ -228,12 +228,48 @@ if ($_GET['levelup'] == 1 && $questcounter == 3 && $ich->level == 1) {
     $lastid = checkforlastid('schiffe') + 1;
     $klasse = 'Erzfrachter';
     // echo "INSERT INTO schiffe (id,typ,name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','s','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'";
-    mysqli_query($verbindung, "INSERT INTO schiffe (id,name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'s',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'");
+
+    $erzer = new Bauplan_Schiffe($klasse);
+    mysqli_query($verindung, "INSERT INTO schiffe 
+        (klasse,warpkern,typ,x,y,`system`,besitzer,energie,hull,alarmstufe,`name`,`nachricht`) 
+        VALUES (
+            '".$klasse."',
+            '".$erzer->maxwarpkern."',
+            's',
+            '".$myplanet->position->x."',
+            '".$myplanet->position->y."',
+            '".$myplanet->position->system->id."',
+            '$ich->id',
+            '".$erzer->maxenergie."',
+            '".$erzer->maxhull."',
+            'green'
+            ,'Erzfrachter von ".$ich->nickname."'
+            ,''
+            )");
+
     mysqli_query($verbindung, "INSERT INTO schiffsmodule (sid,c1,c2) VALUES ('$lastid','-1','-1')");
     // tanker
     $lastid = checkforlastid('schiffe') + 1;
     $klasse = 'Tanker';
-    mysqli_query($verbindung, "INSERT INTO schiffe (id,name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'s',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'");
+
+    $tanker = new Bauplan_Schiffe($klasse);
+    mysqli_query($verindung, "INSERT INTO schiffe 
+        (klasse,warpkern,typ,x,y,`system`,besitzer,energie,hull,alarmstufe,`name`,`nachricht`) 
+        VALUES (
+            '".$klasse."',
+            '".$tanker->maxwarpkern."',
+            's',
+            '".$myplanet->position->x."',
+            '".$myplanet->position->y."',
+            '".$myplanet->position->system->id."',
+            '$ich->id',
+            '".$tanker->maxenergie."',
+            '".$tanker->maxhull."',
+            'green'
+            ,'Tanker von ".$ich->nickname."'
+            ,''
+            )");
+
     mysqli_query($verbindung, "INSERT INTO schiffsmodule (sid,c1) VALUES ('$lastid','-1')");
 }
 
@@ -250,12 +286,12 @@ if ($_GET['levelup'] == 2 && $questcounter2 == 5 && $ich->level == 2) {
     $lastid = checkforlastid('schiffe') + 1;
     $klasse = 'Erzfrachter';
     // echo "INSERT INTO schiffe (id,typ,name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','s','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'";
-    mysqli_query($verbindung, "INSERT INTO schiffe (id,name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'s',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'");
+    mysqli_query($verbindung, "INSERT INTO schiffe (id,name,x,y,`system`,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'s',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'");
     mysqli_query($verbindung, "INSERT INTO schiffsmodule (sid,c1,c2) VALUES ('$lastid','-1','-1')");
     // tanker
     $lastid = checkforlastid('schiffe') + 1;
     $klasse = 'Tanker';
-    mysqli_query($verbindung, "INSERT INTO schiffe (id,name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'s',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'");
+    mysqli_query($verbindung, "INSERT INTO schiffe (id,name,x,y,`system`,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,orbit) SELECT '$lastid','noname','".$myplanet->position->x."','".$myplanet->position->y."','".$myplanet->position->system->id."','".$ich->id."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,'s',lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,'1' FROM bauplan WHERE klasse='$klasse'");
     mysqli_query($verbindung, "INSERT INTO schiffsmodule (sid,c1) VALUES ('$lastid','-1')");
 }
 if ($_GET['levelup'] == 3 && $questcounter3 == 3 && $ich->level == 3) {
@@ -298,10 +334,10 @@ if ($ich->level == 1) {	// Fortschrittsnezige
     }
     echo 'erledigte Quests: ', $questcounter, '/3';
     if ($questcounter == 3) {
-        echo ' (fertig)</span><br /><br /><a href="showquest.php?levelup=1"><img width="32px" src="plus.png" border="0" /><font color="#7CEF0A"><b>! Level aufsteigen !</b></font><img src="plus.png" width="32px" border="0" /></a><br />';
+        echo ' (fertig)</span><br /><br /><a href="showquest.php?levelup=1"><img width="32px" src="images/plus.png" border="0" /><font color="#7CEF0A"><b>! Level aufsteigen !</b></font><img src="images/plus.png" width="32px" border="0" /></a><br />';
     }
     if ($questcounter == 3) {
-        echo '<br /><span class="uberschrift">Levelbelohnung:</span><br /><br />- volle Energie auf Planeten<br />- einen Tanker ( <img src="images/tanker.png" border="0" /> )<br />- einen Frachter ( <img src="images/frachter.png" border="0" /> )!<br />';
+        echo '<br /><span class="uberschrift">Levelbelohnung:</span><br /><br />- volle Energie auf Planeten<br />- einen Tanker ( <img src="images/ships/tanker.png" border="0" /> )<br />- einen Frachter ( <img src="images/ships/frachter.png" border="0" /> )!<br />';
     }
 }
 if ($ich->level == 2) {	// Fortschrittsnezige
@@ -342,7 +378,6 @@ if ($ich->level == 4) {	// Fortschrittsnezige
 }
 echo '</div><br /><h2><u>Quest &Uuml;bersicht</u></h2><br />';
 echo '<h3><a href="quest.php?sid=0">Link: prim&auml;re Level Quests</a></h3><br />';
-
 
 // OFFENE QUESTS
 echo '<div class="smallbox"><h3>offene Quests</h3>';

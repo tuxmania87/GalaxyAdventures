@@ -26,7 +26,7 @@ while ($row = mysqli_fetch_assoc($abfrage)) {
     $gebaude = $row['zusatz'];
     $anzahl = $row['anzahl'];
 }
-echo("DEBUG ". $saveid);
+echo 'DEBUG '.$saveid;
 if ($saveid > 0) {
     $bcount = 0;
     $sumfeld = [];
@@ -34,12 +34,13 @@ if ($saveid > 0) {
     while ($row = mysqli_fetch_array($abfrage)) {
         $gefunden = false;
         $planet = new Planeten($row['id']);
-		echo "CHECKING ".$planet->id;
+        echo 'CHECKING '.$planet->id.' for '.$gebaude.' ';
         for ($i = 1; $i <= 50; ++$i) {
-            if ($planet->feld[$i]->was == $gebaude && $planet->feld[$i]->bauzeit == 0) {
+            echo 'LOOP '.$i.' WAS '.$planet->feld[$i]->name.' BAU ID '.$planet->feld[$i]->bau->id.' BAUZEIT '.$planet->feld[$i]->rest_bauzeit.'<br><br>';
+            if ($planet->feld[$i]->bau->id == $gebaude && $planet->feld[$i]->rest_bauzeit == 0) {
                 $gefunden = true;
                 ++$bcount;
-				echo "found";
+                echo 'found';
             }
         }
         $sumfeld[] = $gefunden ? '1' : '0';
@@ -275,7 +276,7 @@ if (isset($_GET['qid']) && ctype_digit($_GET['qid'])) {
         exit('Quest bereits vorhanden!');
     }
     if ($qtyp != 4 && $qtyp != 8) {
-        mysqli_query($verbindung, "INSERT INTO erfolge (uid,qid) VALUES ('".$_SESSION['Id']."','".$_GET['qid']."')") or exit(mysqli_error($verbindung));
+        mysqli_query($verbindung, 'INSERT INTO erfolge (uid,qid,anzahl) VALUES ('.$_SESSION['Id'].','.$_GET['qid'].',0)') or exit($verbindung->error);
     }
     if ($qtyp == 4) {
         mysqli_query($verbindung, "INSERT INTO erfolge (anzahl,uid,qid) VALUES ('$bcount','".$_SESSION['Id']."','".$_GET['qid']."')") or exit(mysqli_error($verbindung));

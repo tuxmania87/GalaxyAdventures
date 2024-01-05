@@ -540,7 +540,7 @@ class Frachtraum
                 $abfrage = mysqli_query($verbindung, "SELECT maxfrachtraum,lager,frachtraum FROM schiffe s, bauplan b WHERE s.id='$sid' and s.klasse = b.klasse");
             }
             if ($typ == 'planet') {
-                echo $sid.' '.$typ.'<br>';
+                // echo $sid.' '.$typ.'<br>';
                 $abfrage = mysqli_query($verbindung, "SELECT maxfrachtraum,lager,frachtraum FROM planeten p WHERE id='$sid'") or exit(mysqli_error($verbindung));
             }
             if ($typ == 'konto') {

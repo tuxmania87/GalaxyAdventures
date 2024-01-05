@@ -22,37 +22,37 @@ DROP TABLE IF EXISTS `schiffe`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `schiffe` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
+  `name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'noname',
   `x` int NOT NULL,
   `y` int NOT NULL,
-  `orbit` tinyint NOT NULL,
+  `orbit` tinyint NOT NULL DEFAULT '0',
   `system` int NOT NULL,
   `besitzer` int NOT NULL,
   `energie` float NOT NULL,
   `warpkern` int NOT NULL,
-  `warpkernstatus` tinyint(1) NOT NULL,
+  `warpkernstatus` tinyint(1) NOT NULL DEFAULT '0',
   `hull` int NOT NULL,
-  `schilde` int NOT NULL,
-  `schildstatus` tinyint NOT NULL,
+  `schilde` int NOT NULL DEFAULT '0',
+  `schildstatus` tinyint NOT NULL DEFAULT '0',
   `alarmstufe` varchar(10) NOT NULL DEFAULT 'green',
   `typ` char(1) NOT NULL,
-  `frachtraum` varchar(255) NOT NULL,
-  `flotte` int NOT NULL,
-  `phaser` int NOT NULL,
-  `torpedohitze` int NOT NULL,
-  `gondeln` int NOT NULL,
+  `frachtraum` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
+  `flotte` int NOT NULL DEFAULT '0',
+  `phaser` int NOT NULL DEFAULT '0',
+  `torpedohitze` int NOT NULL DEFAULT '0',
+  `gondeln` int NOT NULL DEFAULT '0',
   `nachricht` text NOT NULL,
-  `tarnung` int NOT NULL,
+  `tarnung` int NOT NULL DEFAULT '0',
   `klasse` varchar(250) NOT NULL,
-  `dock` int NOT NULL,
-  `loot` tinyint(1) NOT NULL,
-  `kills` int NOT NULL,
-  `defend` int NOT NULL,
+  `dock` int NOT NULL DEFAULT '0',
+  `loot` tinyint(1) NOT NULL DEFAULT '0',
+  `kills` int NOT NULL DEFAULT '0',
+  `defend` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `x` (`x`),
   KEY `y` (`y`),
   KEY `x_2` (`x`,`y`,`system`)
-) ENGINE=MyISAM AUTO_INCREMENT=4127 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4129 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -63,4 +63,4 @@ CREATE TABLE `schiffe` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-05 20:53:33
+-- Dump completed
