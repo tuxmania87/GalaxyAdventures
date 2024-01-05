@@ -124,7 +124,7 @@ if ($_POST["do"] == 913 && $cur_feld->feld->wurmloch) {
     $schiff->position->y = $cur_feld->ziel->y;
     $schiff->position->system = new System($cur_feld->ziel->system);
     $cur_feld = new Weltraum($schiff->position->x, $schiff->position->y, $schiff->position->system->id, $schiff->position->system->id > 0);
-    mysqli_query($verbindung, "UPDATE schiffe SET x='" . $schiff->position->x . "',y='" . $schiff->position->y . "',system='" . $schiff->position->system->id . "' WHERE id='" . $schiff->id . "'");
+    mysqli_query($verbindung, "UPDATE schiffe SET x='" . $schiff->position->x . "',y='" . $schiff->position->y . "',`system`='" . $schiff->position->system->id . "' WHERE id='" . $schiff->id . "'");
 }
 
 //schilde anmachen
@@ -342,7 +342,8 @@ if ($schiff->skill->bauen == 1) {
 }
 
 //steht schiff auf planet?
-$abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND system=" . $schiff->position->system->id);
+echo("DEBUG ". ("SELECT * FROM planeten WHERE x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND `system`=" . $schiff->position->system->id));
+$abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND `system`=" . $schiff->position->system->id);
 while ($tmp = mysqli_fetch_array($abfrage)) {
     $tempschiff = new Planeten($tmp["id"]);
     echo '<tr><th>Planet</th>';
@@ -474,7 +475,7 @@ for ($i = 0; $i < sizeof($cur_ships); $i++) {
 }
 
 //Transwarp Spalte
-$abfrage = mysqli_query($verbindung, "SELECT * FROM weltraum WHERE typ='t' AND x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND system=" . $schiff->position->system->id);
+$abfrage = mysqli_query($verbindung, "SELECT * FROM weltraum WHERE typ='t' AND x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND `system`=" . $schiff->position->system->id);
 while ($tmp = mysqli_fetch_array($abfrage)) {
     echo '<tr><th>Transwarp-Spalte</th><td><img src="images/misc/spalte.jpg" border="0" /></td>';
     echo '<td><a href="schiffe.php?sid=', $schiff->id, '&do=88">in die Spalte einfliegen ( 10% Verlustgefahr )</a></td></tr>';
@@ -574,8 +575,8 @@ echo '</td></tr></table>';
 
 
 //Schiffsansicht
-$display_test1 = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE system=" . $schiff->position->system->id . " AND orbit=" . $schiff->position->orbit . " AND x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND id!='$schiff->id' AND typ='s' AND klasse!='Tr&uuml;mmer'");
-$display_test2 = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE system=" . $schiff->position->system->id . " AND orbit=" . $schiff->position->orbit . " AND x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND id!='$schiff->id' AND klasse='Tr&uuml;mmer'");
+$display_test1 = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE `system`=" . $schiff->position->system->id . " AND orbit=" . $schiff->position->orbit . " AND x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND id!='$schiff->id' AND typ='s' AND klasse!='Tr&uuml;mmer'");
+$display_test2 = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE `system`=" . $schiff->position->system->id . " AND orbit=" . $schiff->position->orbit . " AND x=" . $schiff->position->x . " AND y=" . $schiff->position->y . " AND id!='$schiff->id' AND klasse='Tr&uuml;mmer'");
 if (mysqli_num_rows($display_test1) > 0 || mysqli_num_rows($display_test2) > 0) {
 
     echo '<br /><h3>Schiffe im Sektor</h3><table class="liste">';

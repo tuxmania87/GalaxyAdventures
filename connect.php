@@ -2,7 +2,7 @@
 
 function get_verbindung()
 {
-    $verbindung = mysqli_connect('keinerspieltmitmir.de', 'gauser', 'gauser82859415');
+    $verbindung = mysqli_connect('p:keinerspieltmitmir.de', 'gauser', 'gauser82859415');
 
     // mysqli_query($verbindung, "SET NAMES 'utf8'") or die($verbindung->error);
     // mysqli_query($verbindung, "SET character_set_connection = 'utf8'") or die($verbindung->error);
