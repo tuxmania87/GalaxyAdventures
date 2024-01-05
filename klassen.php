@@ -552,15 +552,25 @@ class Frachtraum
 
             if ($typ == 'dummy') {
                 $sid = explode('/', $sid);
-                $q = mysqli_query($verbindung, 'select * from res order by id');
-                while ($r = mysqli_fetch_array($q)) {
-                    $res = new Res();
-                    $res->bild = $r['bild'];
-                    $res->id = $r['id'];
-                    $res->name = $r['name'];
-                    $res->wichtung = $r['punktwichtung'];
-                    $res->anzahl = (int) $sid[$r['id']];
-                    $this->fracht[] = $res;
+
+                $resource_ids_as_array = implode(",",array_diff($sid, [""]));
+
+                if(strlen($resource_ids_as_array) > 0)
+                {
+                    
+
+                    
+
+                    $q = mysqli_query($verbindung, 'select * from res where id in ('.$resource_ids_as_array.') order by id');
+                    while ($r = mysqli_fetch_array($q)) {
+                        $res = new Res();
+                        $res->bild = $r['bild'];
+                        $res->id = $r['id'];
+                        $res->name = $r['name'];
+                        $res->wichtung = $r['punktwichtung'];
+                        $res->anzahl = (int) $sid[$r['id']];
+                        $this->fracht[] = $res;
+                    }
                 }
             } else {
                 while ($row = mysqli_fetch_array($abfrage)) {
@@ -659,6 +669,7 @@ class Planeten extends Rohling
     public $feld = [];
     public $orbit = 0;
     public $klasse;
+    public $defense;
     public $fehler = [
         0 => '',
         1 => 'Das Schiff muss den Orbit erst verlassen!<br />',
@@ -824,6 +835,17 @@ class Rohling
     public $bild;
     public $nachricht = '';
     public $dock = 0;
+
+    // has to be moved out of rohling 
+    // or split up because kampftick is handling instances of
+    // ship and planet
+    public $klasse;
+    public $tarnung;
+    public $hull;
+
+    public function kampftick($status, $ziel3) {
+
+    }
 
     public function schilde()
     {
@@ -1712,11 +1734,11 @@ class Schiffe extends Rohling
                 $randx = rand($this->position->x - 10, $this->position->x + 10);
                 $randy = rand($this->position->y - 10, $this->position->y + 10);
 
-                mysqli_query($verbindung, "insert into schiffe (energie,hull,warpkern,frachtraum,name,x,y,typ,system,klasse,besitzer) values ('".$t_fracht->maxenergie."','".$t_fracht->maxhull."','".$t_fracht->maxwarpkern."','".$this->frachtraum->dump()."','verlorene Fracht','".$randx."','".$randy."','s','".$this->position->system->id."','".$t_fracht->klasse."','2')") or exit(mysql_error());
+                mysqli_query($verbindung, "insert into schiffe (energie,hull,warpkern,frachtraum,name,x,y,typ,system,klasse,besitzer) values ('".$t_fracht->maxenergie."','".$t_fracht->maxhull."','".$t_fracht->maxwarpkern."','".$this->frachtraum->dump()."','verlorene Fracht','".$randx."','".$randy."','s','".$this->position->system->id."','".$t_fracht->klasse."','2')") or exit($verbindung->error);
             }
         }
         mysqli_query($verbindung, "UPDATE schiffe SET dock=0 WHERE dock='$this->id'");
-        mysqli_query($verbindung, "UPDATE schiffe SET loot=1,klasse='$this->klasse',hull='$this->hull',name='$this->name',besitzer=".$this->besitzer->id.",schildstatus='$this->schildstatus',schilde='$this->schilde',frachtraum='' WHERE id='$this->id'") or exit(mysql_error());
+        mysqli_query($verbindung, "UPDATE schiffe SET loot=1,klasse='$this->klasse',hull='$this->hull',name='$this->name',besitzer=".$this->besitzer->id.",schildstatus='$this->schildstatus',schilde='$this->schilde',frachtraum='' WHERE id='$this->id'") or exit($verbindung->error);
 
         return 0;
     }
@@ -1871,7 +1893,7 @@ class Schiffe extends Rohling
                 }
             }
 
-            mysqli_query($verbindung, "UPDATE schiffe SET gondeln='".$this->gondeln."',energie='".$this->energie."',`system`='".$this->position->system->id."',x=".$this->position->x.',y='.$this->position->y.',orbit='.$this->position->orbit." WHERE id='$this->id'") or exit(mysql_error());
+            mysqli_query($verbindung, "UPDATE schiffe SET gondeln='".$this->gondeln."',energie='".$this->energie."',`system`='".$this->position->system->id."',x=".$this->position->x.',y='.$this->position->y.',orbit='.$this->position->orbit." WHERE id='$this->id'") or exit($verbindung->error);
             mysqli_query($verbindung, 'UPDATE counter SET count=count+1 WHERE id=1') or exit($verbindung->error);
             /* $abfrage2=mysql_query("SELECT * FROM schiffe WHERE id!='$this->id' AND `system`='".$this->position->system->id."' AND x=".$this->position->x." AND y=".$this->position->y." AND orbit=".$this->position->orbit);
               while($row2=mysql_fetch_array($abfrage2))

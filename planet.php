@@ -393,7 +393,7 @@ echo '</table>';
 
 echo '<br />';
 echo '<h4>Schiffe im Orbit</h4><form action="planet.php?pid=', $planet->id, '" method="post"><table><tr><td>';
-$sio = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='s' AND orbit=1 AND x='" . $planet->position->x . "' AND y='" . $planet->position->y . "' AND system='" . $planet->position->system->id . "' AND tarnung=0");
+$sio = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='s' AND orbit=1 AND x='" . $planet->position->x . "' AND y='" . $planet->position->y . "' AND `system`='" . $planet->position->system->id . "' AND tarnung=0");
 if (mysqli_num_rows($sio) > 0) {
     echo '<select name="target">';
     while ($ship = mysqli_fetch_array($sio)) {
