@@ -1,1 +1,307 @@
-<?PHPfunction changeit(&$text) {$neutext="";$bool1=false;for($i=0;$i<strlen($text);$i++) if($text[$i]=='"' || $text[$i]=="'") $text[$i]='-';}include_once("connect.php");function enthaeltCode($trennzeichen1,$trennzeichen2,$text) {	$pos1 = strpos($text,$trennzeichen1);	if ($pos1 != false) {		$pos2 = strpos($text,$trennzeichen2,$pos1);		if ($pos2 != false) {			return true;			}		else {			return false;			}		}	else {		return false;		}	}function aufspalten($trennzeichen1,$trennzeichen2,$text) {	$pos1 = strpos($text,$trennzeichen1);	$pos2 = strpos($text,$trennzeichen2,$pos1);	$links = substr($text,0,$pos1);	$mitte = substr($text,$pos1+1,$pos2-$pos1-1);	$rechts = substr($text,$pos2+1,strlen($text)-$pos2-1);	return array($links,$mitte,$rechts);	}function interpretiereCode($trennzeichen1,$trennzeichen2,$text,&$offenetags) {	$treffer = false;	if ($text[0]=='b') $text = $text; else $text = strtolower($text);	if ($text == "b") {		$text = "<b>";		$treffer = true;		$offenetags["b"]++;		}	if (($text == "/b") && ($offenetags["b"] > 0)) {		$text = "</b>";		$treffer = true;		$offenetags["b"]--;		}	if ($text == "i") {		$text = "<i>";		$treffer = true;		$offenetags["i"]++;		}	if (($text == "/i") && ($offenetags["i"] > 0)) {		$text = "</i>";		$treffer = true;		$offenetags["i"]--;		}	if ($text == "klein") {		$text = "<font size=\"-1\">";		$treffer = true;		$offenetags["klein"]++;		}	if (($text == "/klein") && ($offenetags["klein"] > 0)) {		$text = "</font>";		$treffer = true;		$offenetags["klein"]--;		}	if ($text == "gross") {		$text = "<font size=\"+1\">";		$treffer = true;		$offenetags["gross"]++;		}	if (($text == "/gross") && ($offenetags["gross"] > 0)) {		$text = "</font>";		$treffer = true;		$offenetags["gross"]--;		}	if ($text == "norpg") {		$text = "<font color=\"white\">NORPG: </font><font color=\"black\"><i>";		$treffer = true;		$offenetags["norpg"]++;		}	if (($text == "/norpg") && ($offenetags["norpg"] > 0)) {		$text = "</i></font>";		$treffer = true;		$offenetags["norpg"]--;		}	if (substr($text,0,6) == "farbe:") {		$farbe = substr($text,6,strlen($text)-6);		$text = implode("",array("<font color=\"",$farbe,"\">"));		$treffer = true;		$offenetags["farbe"]++;		}			if (($text == "/farbe") && ($offenetags["farbe"] > 0)) {		$text = "</font>";		$treffer = true;		$offenetags["farbe"]--;		}	if (substr($text,0,8) == "spieler:") {		$spielerid = substr($text,8,strlen($text)-8);		$result=mysql_query("SELECT * FROM account WHERE id = '$spielerid'");		$row=mysql_fetch_array($result);		$name = $row["nickname"];		//mysql_close($db);		$text = $name;		$treffer=true;		}				if (substr($text,0,5) == "link:") {		$spielerid = substr($text,5,strlen($text)-5);		//mysql_close($db);		if(strpos($spielerid,"http://")===false)			$spielerid = "http://" . $spielerid;				$text = "<a href=" . $spielerid . " target=\"_blank\">".$spielerid."</a>";		$treffer=true;		}	if (substr($text,0,8) == "allianz:") {		$allyid = substr($text,8,strlen($text)-8);		$result=mysql_query("SELECT * FROM allianz WHERE id = '$allyid'");		$row=mysql_fetch_array($result);		$name = $row["name"];		//mysql_close($db);		$text = $name;		$treffer=true;		}	//bilder	if (substr($text,0,5) == "bild:") {		$bildurl = substr($text,5,strlen($text)-5);				$file=$bildurl;		list($width, $height) = getimagesize($file);		if($width <= 700 && $height <= 500)		$text = '<img src="' . $bildurl . '" border="0" />';			else		$text = "";		$treffer=true;		}	if (!$treffer) {		$text = "";		}	return $text;	}function schliesseVerbleibendeTags($offenetags) {	while($offenetags["b"] > 0) {		$text .= "</b>";		$offenetags["b"]--;		}	while($offenetags["i"] > 0) {		$text .= "</i>";		$offenetags["i"]--;		}	while($offenetags["klein"] > 0) {		$text .= "</font>";		$offenetags["klein"]--;		}	while($offenetags["gross"] > 0) {		$text .= "</font>";		$offenetags["gross"]--;		}	while($offenetags["norpg"] > 0) {		$text .= "</i></font>";		$offenetags["norpg"]--;		}	while($offenetags["farbe"] > 0) {		$text .= "</font>";		$offenetags["farbe"]--;		}	return $text;	}function ersetzeCode($text) {	$offenetags = array(					"b" => 0,					"i" => 0,					"klein" => 0,					"gross" => 0,					"norpg" => 0,					"farbe" => 0					);	while (enthaeltCode("[","]",$text)) {		$temparray = aufspalten("[","]",$text);		$temparray[1] = interpretiereCode("[","]",$temparray[1],$offenetags);   		$text = implode("",$temparray);   		}	$text = implode("",array($text,schliesseVerbleibendeTags($offenetags)));	return $text;	}function pruefeText($text) {              	changeit($text);        	$text = htmlentities($text, ENT_COMPAT | ENT_HTML401 , 'UTF-8');	$text = " " . $text;	$text = ersetzeCode($text);//	mysql_real_escape_string($text);	return $text;	}?>
+<?php
+
+function changeit(&$text)
+{
+    $neutext = '';
+    $bool1 = false;
+    for ($i = 0; $i < strlen($text); ++$i) {
+        if ($text[$i] == '"' || $text[$i] == "'") {
+            $text[$i] = '-';
+        }
+    }
+}
+
+include_once 'connect.php';
+
+function enthaeltCode($trennzeichen1, $trennzeichen2, $text)
+{
+    $pos1 = strpos($text, $trennzeichen1);
+
+    if ($pos1 != false) {
+        $pos2 = strpos($text, $trennzeichen2, $pos1);
+
+        if ($pos2 != false) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+function aufspalten($trennzeichen1, $trennzeichen2, $text)
+{
+    $pos1 = strpos($text, $trennzeichen1);
+
+    $pos2 = strpos($text, $trennzeichen2, $pos1);
+
+    $links = substr($text, 0, $pos1);
+
+    $mitte = substr($text, $pos1 + 1, $pos2 - $pos1 - 1);
+
+    $rechts = substr($text, $pos2 + 1, strlen($text) - $pos2 - 1);
+
+    return [$links, $mitte, $rechts];
+}
+
+function interpretiereCode($trennzeichen1, $trennzeichen2, $text, &$offenetags)
+{
+    $verbindung = get_verbindung();
+    $treffer = false;
+
+    if ($text[0] == 'b') {
+        $text = $text;
+    } else {
+        $text = strtolower($text);
+    }
+
+    if ($text == 'b') {
+        $text = '<b>';
+
+        $treffer = true;
+
+        ++$offenetags['b'];
+    }
+
+    if (($text == '/b') && ($offenetags['b'] > 0)) {
+        $text = '</b>';
+
+        $treffer = true;
+
+        --$offenetags['b'];
+    }
+
+    if ($text == 'i') {
+        $text = '<i>';
+
+        $treffer = true;
+
+        ++$offenetags['i'];
+    }
+
+    if (($text == '/i') && ($offenetags['i'] > 0)) {
+        $text = '</i>';
+
+        $treffer = true;
+
+        --$offenetags['i'];
+    }
+
+    if ($text == 'klein') {
+        $text = '<font size="-1">';
+
+        $treffer = true;
+
+        ++$offenetags['klein'];
+    }
+
+    if (($text == '/klein') && ($offenetags['klein'] > 0)) {
+        $text = '</font>';
+
+        $treffer = true;
+
+        --$offenetags['klein'];
+    }
+
+    if ($text == 'gross') {
+        $text = '<font size="+1">';
+
+        $treffer = true;
+
+        ++$offenetags['gross'];
+    }
+
+    if (($text == '/gross') && ($offenetags['gross'] > 0)) {
+        $text = '</font>';
+
+        $treffer = true;
+
+        --$offenetags['gross'];
+    }
+
+    if ($text == 'norpg') {
+        $text = '<font color="white">NORPG: </font><font color="black"><i>';
+
+        $treffer = true;
+
+        ++$offenetags['norpg'];
+    }
+
+    if (($text == '/norpg') && ($offenetags['norpg'] > 0)) {
+        $text = '</i></font>';
+
+        $treffer = true;
+
+        --$offenetags['norpg'];
+    }
+
+    if (substr($text, 0, 6) == 'farbe:') {
+        $farbe = substr($text, 6, strlen($text) - 6);
+
+        $text = implode('', ['<font color="', $farbe, '">']);
+
+        $treffer = true;
+
+        ++$offenetags['farbe'];
+    }
+
+    if (($text == '/farbe') && ($offenetags['farbe'] > 0)) {
+        $text = '</font>';
+
+        $treffer = true;
+
+        --$offenetags['farbe'];
+    }
+
+    if (substr($text, 0, 8) == 'spieler:') {
+        $spielerid = substr($text, 8, strlen($text) - 8);
+
+        $result = mysqli_query($verbindung, "SELECT * FROM account WHERE id = '$spielerid'");
+
+        $row = mysqli_fetch_array($result);
+
+        $name = $row['nickname'];
+
+        // mysql_close($db);
+
+        $text = $name;
+
+        $treffer = true;
+    }
+
+    if (substr($text, 0, 5) == 'link:') {
+        $spielerid = substr($text, 5, strlen($text) - 5);
+
+        // mysql_close($db);
+
+        if (strpos($spielerid, 'http://') === false) {
+            $spielerid = 'http://'.$spielerid;
+        }
+
+        $text = '<a href='.$spielerid.' target="_blank">'.$spielerid.'</a>';
+
+        $treffer = true;
+    }
+
+    if (substr($text, 0, 8) == 'allianz:') {
+        $allyid = substr($text, 8, strlen($text) - 8);
+
+        $result = mysqli_query($verbindung, "SELECT * FROM allianz WHERE id = '$allyid'");
+
+        $row = mysqli_fetch_array($result);
+
+        $name = $row['name'];
+
+        // mysql_close($db);
+
+        $text = $name;
+
+        $treffer = true;
+    }
+    // bilder
+    if (substr($text, 0, 5) == 'bild:') {
+        $bildurl = substr($text, 5, strlen($text) - 5);
+
+        $file = $bildurl;
+        list($width, $height) = getimagesize($file);
+        if ($width <= 700 && $height <= 500) {
+            $text = '<img src="'.$bildurl.'" border="0" />';
+        } else {
+            $text = '';
+        }
+
+        $treffer = true;
+    }
+
+    if (!$treffer) {
+        $text = '';
+    }
+
+    return $text;
+}
+
+function schliesseVerbleibendeTags($offenetags)
+{
+    $text = '';
+    while ($offenetags['b'] > 0) {
+        $text .= '</b>';
+
+        --$offenetags['b'];
+    }
+
+    while ($offenetags['i'] > 0) {
+        $text .= '</i>';
+
+        --$offenetags['i'];
+    }
+
+    while ($offenetags['klein'] > 0) {
+        $text .= '</font>';
+
+        --$offenetags['klein'];
+    }
+
+    while ($offenetags['gross'] > 0) {
+        $text .= '</font>';
+
+        --$offenetags['gross'];
+    }
+
+    while ($offenetags['norpg'] > 0) {
+        $text .= '</i></font>';
+
+        --$offenetags['norpg'];
+    }
+
+    while ($offenetags['farbe'] > 0) {
+        $text .= '</font>';
+
+        --$offenetags['farbe'];
+    }
+
+    return $text;
+}
+
+function ersetzeCode($text)
+{
+    $offenetags = [
+                    'b' => 0,
+
+                    'i' => 0,
+
+                    'klein' => 0,
+
+                    'gross' => 0,
+
+                    'norpg' => 0,
+
+                    'farbe' => 0,
+                    ];
+
+    while (enthaeltCode('[', ']', $text)) {
+        $temparray = aufspalten('[', ']', $text);
+
+        $temparray[1] = interpretiereCode('[', ']', $temparray[1], $offenetags);
+
+        $text = implode('', $temparray);
+    }
+
+    $text = implode('', [$text, schliesseVerbleibendeTags($offenetags)]);
+
+    return $text;
+}
+
+function pruefeText($text)
+{
+    changeit($text);
+
+    $text = htmlentities($text, ENT_COMPAT | ENT_HTML401, 'UTF-8');
+    $text = ' '.$text;
+
+    $text = ersetzeCode($text);
+
+    //	mysql_real_escape_string($text);
+
+    return $text;
+}
