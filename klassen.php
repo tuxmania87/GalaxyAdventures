@@ -203,7 +203,7 @@ class Logbuch
         }
         if (!$changed) {
             $this->id = checkforlastid('logbuch') + 1;
-            mysqli_query($verbindung, 'INSERT INTO logbuch () VALUES ()');
+            //mysqli_query($verbindung, 'INSERT INTO logbuch () VALUES ()');
         }
     }
 

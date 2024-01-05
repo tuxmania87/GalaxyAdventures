@@ -1,77 +1,111 @@
 <?php
 
-include("head.php");
-include("navlogged.php");
-include("klassen.php");
-//CHEATSCHUTZ ANFANG
+include 'head.php';
+include 'navlogged.php';
+include 'klassen.php';
+include_once 'connect.php';
+// CHEATSCHUTZ ANFANG
 
-//SESSION
+// SESSION
 
+$verbindung = get_verbindung();
 
-$fromschiff=$_GET["fs"];
-$fromplanet=$_GET["fp"];
-$toschiff=$_GET["ts"];
-$toplanet=$_GET["tp"];
+$fromschiff = $_GET['fs'];
+$fromplanet = $_GET['fp'];
+$toschiff = $_GET['ts'];
+$toplanet = $_GET['tp'];
 
-if(isset($fromschiff) && isset($fromplanet)) die("Fehler: Overflow!");
-if(isset($toschiff) && isset($toplanet)) die("Fehler: Overflow!");
-
-$betray=false;
-$tmp=mysql_query("SELECT besitzer FROM schiffe WHERE id='$fromid'");
-while($testtmp=mysql_fetch_array($tmp))
-if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
-
-if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
-
-//CHEATSCHUTZ ENDE
-
-if(isset($fromschiff)) $from=new Schiffe($fromschiff);
-if(isset($fromplanet)) $from=new Planeten($fromplanet);
-
-if(isset($toschiff)) $to=new Schiffe($toschiff);
-if(isset($toplanet)) $to=new Planeten($toplanet);
-
-if($from->position->x==$to->position->x && $from->position->y==$to->position->y && ($from->position->orbit==$to->position->orbit || $to->typ!='s' || $from->typ!='s') && $from->position->system->id==$to->position->system->id) {
-
-if($_POST["do"]==1) {
-$amount=ceil($_POST["zahl"]);
-echo '!!',$amount,'!!';
-if($from->energie<$amount) { $amount=$from->energie; echo 'Nicht genug Energie vorhanden: Wert ge&auml;ndert auf ',$amount,'<br />'; }
-if($to->energie+$amount>$to->maxenergie) { $amount=$to->maxenergie-$to->energie; echo 'Ziel hat nicht genug Platz: Wert angepasst auf ',$amount,'<br />'; }
-if($amount >0) {
-$to->energie+=$amount;
-$from->energie-=$amount;
-if($to->typ=='s') mysql_query("UPDATE schiffe SET energie='".$to->energie."' WHERE id='".$to->id."'");
-else			mysql_query("UPDATE planeten SET energie='".$to->energie."' WHERE id='".$to->id."'");
-if($from->typ=='s') mysql_query("UPDATE schiffe SET energie='".$from->energie."' WHERE id='".$from->id."'");
-else			mysql_query("UPDATE planeten SET energie='".$from->energie."' WHERE id='".$from->id."'");
-
-echo 'Transfer erfolgreich: Es wurden ',$amount,' Energieeinheiten &uuml;bertragen!<br />';
+if (isset($fromschiff) && isset($fromplanet)) {
+    exit('Fehler: Overflow!');
 }
-else echo 'Betr&auml;ge die kleiner als 1 sind, werden nicht akzeptiert!';
+if (isset($toschiff) && isset($toplanet)) {
+    exit('Fehler: Overflow!');
 }
 
-echo '<h3>Energietransfer - Wert korrigiert sich automatisch</h3>';
-echo '<form action="energie.php?';
-if($from->typ=='s') echo 'fs=',$from->id; else echo 'fp=',$from->id;
-if($to->typ=='s') echo '&ts=',$to->id; else echo '&tp=',$to->id;
-
-echo '" method="post"><input type="hidden" name="do" value="1"><input type="text" name="zahl"><br /><input type="submit" value="Energie senden"></form>';
+$betray = false;
+$tmp = mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$fromid'");
+while ($testtmp = mysqli_fetch_array($tmp)) {
+    if ($_SESSION['Id'] != $testtmp['besitzer']) {
+        $betray = true;
+    }
 }
-if($to->besitzer->id==$_SESSION["Id"] && $to->typ=='s') echo '<br /><a href="schiffe.php?sid=',$to->id,'">vor zum Zielschiff</a><br />';
-if($to->besitzer->id==$_SESSION["Id"] && $to->typ!='s' ) echo '<br /><a href="planet.php?pid=',$to->id,'">vor zum Zielplaneten</a><br />';
-if($from->typ=='s') echo '<br /><a href="schiffe.php?sid=',$from->id,'">zur&uuml;ck zum Schiff</a>';
-else echo '<br /><a href="planet.php?pid=',$from->id,'">zur&uuml;ck zum Planeten</a>';
 
+if ($betray && $testid > 0) {
+    echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...';
+} else {
+    // CHEATSCHUTZ ENDE
 
+    if (isset($fromschiff)) {
+        $from = new Schiffe($fromschiff);
+    }
+    if (isset($fromplanet)) {
+        $from = new Planeten($fromplanet);
+    }
 
+    if (isset($toschiff)) {
+        $to = new Schiffe($toschiff);
+    }
+    if (isset($toplanet)) {
+        $to = new Planeten($toplanet);
+    }
 
+    if ($from->position->x == $to->position->x && $from->position->y == $to->position->y && ($from->position->orbit == $to->position->orbit || $to->typ != 's' || $from->typ != 's') && $from->position->system->id == $to->position->system->id) {
+        if ($_POST['do'] == 1) {
+            $amount = ceil($_POST['zahl']);
+            echo '!!',$amount,'!!';
+            if ($from->energie < $amount) {
+                $amount = $from->energie;
+                echo 'Nicht genug Energie vorhanden: Wert ge&auml;ndert auf ',$amount,'<br />';
+            }
+            if ($to->energie + $amount > $to->maxenergie) {
+                $amount = $to->maxenergie - $to->energie;
+                echo 'Ziel hat nicht genug Platz: Wert angepasst auf ',$amount,'<br />';
+            }
+            if ($amount > 0) {
+                $to->energie += $amount;
+                $from->energie -= $amount;
+                if ($to->typ == 's') {
+                    mysqli_query($verbindung, "UPDATE schiffe SET energie='".$to->energie."' WHERE id='".$to->id."'");
+                } else {
+                    mysqli_query($verbindung, "UPDATE planeten SET energie='".$to->energie."' WHERE id='".$to->id."'");
+                }
+                if ($from->typ == 's') {
+                    mysqli_query($verbindung, "UPDATE schiffe SET energie='".$from->energie."' WHERE id='".$from->id."'");
+                } else {
+                    mysqli_query($verbindung, "UPDATE planeten SET energie='".$from->energie."' WHERE id='".$from->id."'");
+                }
 
+                echo 'Transfer erfolgreich: Es wurden ',$amount,' Energieeinheiten &uuml;bertragen!<br />';
+            } else {
+                echo 'Betr&auml;ge die kleiner als 1 sind, werden nicht akzeptiert!';
+            }
+        }
 
+        echo '<h3>Energietransfer - Wert korrigiert sich automatisch</h3>';
+        echo '<form action="energie.php?';
+        if ($from->typ == 's') {
+            echo 'fs=',$from->id;
+        } else {
+            echo 'fp=',$from->id;
+        }
+        if ($to->typ == 's') {
+            echo '&ts=',$to->id;
+        } else {
+            echo '&tp=',$to->id;
+        }
 
-
-
-
+        echo '" method="post"><input type="hidden" name="do" value="1"><input type="text" name="zahl"><br /><input type="submit" value="Energie senden"></form>';
+    }
+    if ($to->besitzer->id == $_SESSION['Id'] && $to->typ == 's') {
+        echo '<br /><a href="schiffe.php?sid=',$to->id,'">vor zum Zielschiff</a><br />';
+    }
+    if ($to->besitzer->id == $_SESSION['Id'] && $to->typ != 's') {
+        echo '<br /><a href="planet.php?pid=',$to->id,'">vor zum Zielplaneten</a><br />';
+    }
+    if ($from->typ == 's') {
+        echo '<br /><a href="schiffe.php?sid=',$from->id,'">zur&uuml;ck zum Schiff</a>';
+    } else {
+        echo '<br /><a href="planet.php?pid=',$from->id,'">zur&uuml;ck zum Planeten</a>';
+    }
 }
-include("foot.php");
-?>
+include 'foot.php';
