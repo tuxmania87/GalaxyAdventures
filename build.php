@@ -138,7 +138,7 @@ for ($k = 0; $k < sizeof($liste); $k++) {
     echo '</td>';
     
     echo '<td>';
-    echo $myAccount->level <= 3 ? 0 : $liste[$k]->bauzeit . " Ticks";
+    echo ($myAccount->level <= 3 ? 0 : $liste[$k]->bauzeit) . " Ticks";
     echo '</td>';
     echo '<td>';
     for ($i = 0; $i < sizeof($liste[$k]->untergrund); $i++) {
