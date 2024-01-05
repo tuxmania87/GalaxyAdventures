@@ -1,0 +1,1 @@
+mysqldump -u root --no-data --tab=schema_backup/ game2
