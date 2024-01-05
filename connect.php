@@ -2,14 +2,17 @@
 
 function get_verbindung()
 {
-    $verbindung = mysqli_connect('p:keinerspieltmitmir.de', 'gauser', 'gauser82859415');
+    $jsonString = file_get_contents('config.json');
+    $jsonData = json_decode($jsonString);
+
+    $verbindung = mysqli_connect($jsonData->database->host, $jsonData->database->user, $jsonData->database->password);
 
     // mysqli_query($verbindung, "SET NAMES 'utf8'") or die($verbindung->error);
     // mysqli_query($verbindung, "SET character_set_connection = 'utf8'") or die($verbindung->error);
     // mysqli_query($verbindung, "SET character_set_database = 'utf8'") or die($verbindung->error);
     // mysqli_query($verbindung, "SET character_set_server = 'utf8'") or die($verbindung->error);
 
-    mysqli_select_db($verbindung, 'game2');
+    mysqli_select_db($verbindung, $jsonData->database->dbname);
 
     return $verbindung;
 }
