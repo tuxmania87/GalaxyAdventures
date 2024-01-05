@@ -1,5 +1,6 @@
 <?php
 
+error_reporting(E_ALL & ~E_WARNING);
 function get_verbindung()
 {
     $jsonString = file_get_contents('config.json');
