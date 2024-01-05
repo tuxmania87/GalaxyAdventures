@@ -1,26 +1,28 @@
 <?php
-//Test auf Tick
-include_once("connect.php");
-$tm = mysql_query("SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die(mysql_error());
-while ($tm2 = mysql_fetch_array($tm)) {
-    if ($tm2["status"] == 1) {
-        header("Location: http://keinerspieltmitmir.de/de/maintick.php");
+// Test auf Tick
+include_once 'connect.php';
+
+$verbindung = get_verbindung();
+
+$tm = mysqli_query($verbindung, 'SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)') or exit($verbindung->error);
+while ($tm2 = mysqli_fetch_array($tm)) {
+    if ($tm2['status'] == 1) {
+        header('Location: http://keinerspieltmitmir.de/de/maintick.php');
         exit;
     }
 }
 
-
-//endetest
+// endetest
 session_start();
 $beta = 0;
-$tm = mysql_query("SELECT beta FROM account WHERE id='" . $_SESSION["Id"] . "'");
-$tm = mysql_fetch_array($tm);
+$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".$_SESSION['Id']."'");
+$tm = mysqli_fetch_array($tm);
 $beta = $tm[0];
 
-$tm = mysql_query("SELECT * FROM `gamestatus` WHERE id=(SELECT max(id) FROM `gamestatus`)") or die(mysql_error());
-while ($tm2 = mysql_fetch_array($tm)) {
-    if ($tm2["status"] == 'offline' && $beta == 0) {
-        header("Location: http://www.keinerspieltmitmir.de/de/wartung.php");
+$tm = mysqli_query($verbindung, 'SELECT * FROM `gamestatus` WHERE id=(SELECT max(id) FROM `gamestatus`)') or exit($verbindung->error);
+while ($tm2 = mysqli_fetch_array($tm)) {
+    if ($tm2['status'] == 'offline' && $beta == 0) {
+        header('Location: http://www.keinerspieltmitmir.de/de/wartung.php');
         exit;
     }
 }
@@ -147,10 +149,11 @@ while ($tm2 = mysql_fetch_array($tm)) {
         </script>
 <?php
 $gnu = false;
-$ssid = $_SESSION["Id"];
-$pa = mysql_query("SELECT * FROM mail WHERE popup='1' AND empfaenger='$ssid'");
-while ($pr = mysql_fetch_array($pa))
+$ssid = $_SESSION['Id'];
+$pa = mysqli_query($verbindung, "SELECT * FROM mail WHERE popup='1' AND empfaenger='$ssid'");
+while ($pr = mysqli_fetch_array($pa)) {
     $gnu = true;
+}
 
 if ($gnu) {
     ?>
@@ -170,43 +173,45 @@ if ($gnu) {
     </head>
 
 <?php
-include("navlogged.php");
-include("klassen.php");
+include 'navlogged.php';
+include 'klassen.php';
 
-$ich = new Account($_SESSION["Id"]);
+$ich = new Account($_SESSION['Id']);
 
-
-if (isset($_GET["pid"]) && ctype_digit($_GET["pid"])) {
-    $pid = $_GET["pid"];
+if (isset($_GET['pid']) && ctype_digit($_GET['pid'])) {
+    $pid = $_GET['pid'];
     $t = new Planeten($pid);
-    if ($t->besitzer->id != 2 || $t->position->x > 200 || $t->position->y > 200 || $t->typ != 'm')
-        die();
-    //alle schiffe verschieben
-    mysql_query("UPDATE schiffe SET orbit=1,system='" . $t->position->system->id . "',x='" . $t->position->x . "',y='" . $t->position->y . "' WHERE besitzer='" . $_SESSION["Id"] . "'");
-    //planetenoberfl�che kopieren
-    $oldpl = mysql_query("SELECT id FROM planeten WHERE besitzer='" . $_SESSION["Id"] . "'");
-    $oldpl = mysql_fetch_array($oldpl);
+    if ($t->besitzer->id != 2 || $t->position->x > 200 || $t->position->y > 200 || $t->typ != 'm') {
+        exit;
+    }
+    // alle schiffe verschieben
+    mysqli_query($verbindung, "UPDATE schiffe SET orbit=1,system='".$t->position->system->id."',x='".$t->position->x."',y='".$t->position->y."' WHERE besitzer='".$_SESSION['Id']."'");
+    // planetenoberfl�che kopieren
+    $oldpl = mysqli_query($verbindung, "SELECT id FROM planeten WHERE besitzer='".$_SESSION['Id']."'");
+    $oldpl = mysqli_fetch_array($oldpl);
     $oldpl = $oldpl[0];
     $old = new Planeten($oldpl);
-    //$old->feld=$t->feld;
-    //var_dump($old->feld);
-    for ($i = 1; $i <= 50; $i++) {
+    // $old->feld=$t->feld;
+    // var_dump($old->feld);
+    for ($i = 1; $i <= 50; ++$i) {
         $old->feld[$i]->pid = $pid;
-        //$t->feld[$i]=$old->feld[$i];
+        // $t->feld[$i]=$old->feld[$i];
         $old->feld[$i]->save();
     }
     $t->frachtraum = $old->frachtraum;
     $t->frachtraum->id2 = $pid;
     $t->frachtraum->save();
-    mysql_query("UPDATE planeten SET energie='" . $old->maxenergie . "',maxenergie='" . $old->maxenergie . "',name='" . $old->name . "',heimat=1,besitzer='" . $_SESSION["Id"] . "' WHERE id='" . $t->id . "'");
+    mysqli_query($verbindung, "UPDATE planeten SET energie='".$old->maxenergie."',maxenergie='".$old->maxenergie."',name='".$old->name."',heimat=1,besitzer='".$_SESSION['Id']."' WHERE id='".$t->id."'");
     $old->sprengen();
     echo '<meta http-equiv="refresh" content="0;url=main.php">';
 }
 
-if ($ich->level <= 3)
-    die();
-if (mysql_num_rows(mysql_query("SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='" . $_SESSION["Id"] . "'")) == 0)
-    die();
+if ($ich->level <= 3) {
+    exit;
+}
+if (mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".$_SESSION['Id']."'")) == 0) {
+    exit;
+}
 
 echo '<h3>Umsiedlung</h3>';
 
@@ -214,12 +219,12 @@ echo 'Da du jetzt &uuml;ber mehr Erfahrung verfügst, wirst du umgesiedelt. Bitt
     eines der folgenden Systeme aus und du wirst direkt umgesiedelt:<br /><br />';
 
 echo '<table class="bordered2"><tr><td>IMG</td><td>gelgen im System:</td><td>Position im System</td></tr>';
-$abfrage = mysql_query("SELECT planeten.id FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x<=200 AND systeme.y<=200 AND planeten.besitzer='2' AND planeten.typ='m'");
-while ($row = mysql_fetch_array($abfrage)) {
+$abfrage = mysqli_query($verbindung, "SELECT planeten.id FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x<=200 AND systeme.y<=200 AND planeten.besitzer='2' AND planeten.typ='m'");
+while ($row = mysqli_fetch_array($abfrage)) {
     $planet = new Planeten($row[0]);
     echo '<tr><td><a target="_blank" href="map.php?system=', $planet->position->system->id, '"><img src="images/systems/', $planet->position->system->bild, '" border="0" /></a></td><td>', $planet->position->system->x, '/', $planet->position->system->y, ' (', $planet->position->system->name, ' [', $planet->position->system->id, '] )</td><td>', $planet->position->x, '/', $planet->position->y, '</td><td><a href="move.php?pid=', $planet->id, '">ausw&auml;hlen</a></td></tr>';
 }
 echo '</table>';
 
-include("foot.php");
+include 'foot.php';
 ?>
