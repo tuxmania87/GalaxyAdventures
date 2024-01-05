@@ -16,6 +16,7 @@ $mitglied = $row1["mitglied"];
 
 $ich = new Account($_SESSION["Id"]);
 
+$myAccount = new Account($selfid);
 
 //CHEATSCHUTZ ANFANG
 
@@ -59,7 +60,7 @@ if (isset($_GET["bauen"]) && ctype_digit($_GET["bauen"])) {
         //bauen
         $planet->feld[$fid]->bau = $bauplan;
         $planet->feld[$fid]->aktiv = 1;
-        $planet->feld[$fid]->rest_bauzeit = $bauplan->bauzeit;
+        $planet->feld[$fid]->rest_bauzeit = $myAccount->level <=3 ? 0 : $bauplan->bauzeit;
         $planet->feld[$fid]->save();
 
         for ($i = 0; $i < sizeof($planet->frachtraum->fracht); $i++) {
@@ -137,7 +138,7 @@ for ($k = 0; $k < sizeof($liste); $k++) {
     echo '</td>';
     
     echo '<td>';
-    echo $liste[$k]->bauzeit . " Ticks";
+    echo $myAccount->level <= 3 ? 0 : $liste[$k]->bauzeit . " Ticks";
     echo '</td>';
     echo '<td>';
     for ($i = 0; $i < sizeof($liste[$k]->untergrund); $i++) {
