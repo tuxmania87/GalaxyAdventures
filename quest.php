@@ -210,13 +210,13 @@ if (isset($_GET['aid']) && ctype_digit($_GET['aid'])) {
 
         /* QUESTBELOHNUNG */
         if ((sizeof($neuq->bschiffe) > 0 || sizeof($brohstoffe) > 0) && $schiff_bekommen) {
-            $heimat = mysqli_query($verbindung, "SELECT x,y,system FROM planeten WHERE heimat=1 AND besitzer='".$_SESSION['Id']."'");
+            $heimat = mysqli_query($verbindung, "SELECT x,y,`system` FROM planeten WHERE heimat=1 AND besitzer='".$_SESSION['Id']."'");
             $heimat = mysqli_fetch_array($heimat);
             if ($neuq->bschiffe[0] != '') {
                 for ($i = 0; $i < sizeof($neuq->bschiffe); ++$i) {
                     $lastid = checkforlastid('schiffe') + 1;
                     echo 'MILCH: ',$neuq->bschiffe[$i],'<br />';
-                    mysqli_query($verbindung, "INSERT INTO schiffe (name,x,y,system,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau) SELECT 'noname','".$heimat[0]."','".$heimat[1]."','".$heimat[2]."','".$_SESSION['Id']."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,typ,lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau FROM bauplan WHERE klasse='".$neuq->bschiffe[$i]."'") or exit(mysqli_error($verbindung));
+                    mysqli_query($verbindung, "INSERT INTO schiffe (name,x,y,`system`,besitzer,energie,maxenergie,energieoutput,maxwarpkern,schilde,maxschilde,hull,maxhull,bild,klasse,typ,lager,deuterium,skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau) SELECT 'noname','".$heimat[0]."','".$heimat[1]."','".$heimat[2]."','".$_SESSION['Id']."',maxenergie,maxenergie,energieoutput,maxwarpkern,maxschilde,maxschilde,maxhull,maxhull,bild,klasse,typ,lager,'40',skilldeut,skillerz,skilltranswarp,laser,maxtorpedo,maxgondeln,maxphaser,skilltarnung,lrs,skillbau FROM bauplan WHERE klasse='".$neuq->bschiffe[$i]."'") or exit(mysqli_error($verbindung));
                     mysqli_query($verbindung, "INSERT INTO schiffsmodule (sid,a1,a2,d1,d2,c1,c2) SELECT '$lastid',a1,a2,d1,d2,c1,c2 FROM bauplan WHERE klasse='".$neuq->bschiffe[$i]."'") or exit(mysqli_error($verbindung));
                 }
             }
