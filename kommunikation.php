@@ -100,7 +100,7 @@ if ($betray) {
     $but = new Button('map.php?x=180&y=110.php', 'Karte');
     $but->printme();
     echo '<br />';
-    $but = new Button('minimap.png', 'Galaxis als Karte');
+    $but = new Button('minimap/minimap.png', 'Galaxis als Karte');
     $but->printme();
     echo '<br /><br />';
     $but = new Button('player.php', 'Liste der Spieler');

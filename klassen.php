@@ -2050,7 +2050,7 @@ class Schiffe extends Rohling
                 break;
         }
 
-        $limes = $cur_field->feld->deut;
+        $limes = $was == "erz" ? $cur_field->feld->erz : $cur_field->feld->deut;
 
         if ($anzahl > $this->energie) {
             $anzahl = $this->energie;
