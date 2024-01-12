@@ -68,11 +68,11 @@ if ($ich_temp >= 4) {
 
             function start() {
                 time();
-<?php if (($_SERVER['SCRIPT_NAME'] == '/ga_source/main.php' || $_SERVER['SCRIPT_NAME'] == '/de/index.php') && (ctype_digit($_SESSION['Id']) || $_SESSION['nick'] != '')) {
+<?php if (($_SERVER['SCRIPT_NAME'] == '/GalaxyAdventures/main.php' || $_SERVER['SCRIPT_NAME'] == '/de/index.php') && (ctype_digit($_SESSION['Id']) || $_SESSION['nick'] != '')) {
     echo 'setRequest("chat_query.php");';
 } ?>
                        window.setInterval("time()", 1000);
-<?php if (($_SERVER['SCRIPT_NAME'] == '/ga_source/main.php' || $_SERVER['SCRIPT_NAME'] == '/de/index.php') && (ctype_digit($_SESSION['Id']) || $_SESSION['nick'] != '')) {
+<?php if (($_SERVER['SCRIPT_NAME'] == '/GalaxyAdventures/main.php' || $_SERVER['SCRIPT_NAME'] == '/de/index.php') && (ctype_digit($_SESSION['Id']) || $_SESSION['nick'] != '')) {
     echo 'window.setInterval("setRequest(\"chat_query.php\")", 1200);';
 } ?>
                    }
@@ -148,5 +148,6 @@ if ($gnu) {
         <title>Star Trek - Galaxy Adventures II</title>
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
+    
 
 
