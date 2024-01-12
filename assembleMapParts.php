@@ -2,6 +2,16 @@
 
 define('MAXMEM', 32 * 1024 * 1024);  // --- memory limit (32M) ---
 
+// dim of the image is 32 + 2 pixels for border
+// (left and right, up and down)
+$IMAGE_DIMENSION = 34;
+
+// Number of image tiles, fixed at 20 images
+// so output is 20 images high and wide
+$TILE_DIMENSION = 20;
+
+$TILE_DIMENSION_IN_PIXEL = $IMAGE_DIMENSION * $TILE_DIMENSION;
+
 $dim = $argv[1];
 $outname = $argv[2];
 
@@ -20,17 +30,17 @@ function drawBorder(&$img, &$color, $thickness = 1)
 header('Content-Type: image/png');
 include 'klassen.php';
 
-$img = imagecreatetruecolor(680 * 5, 680 * 5);
+$img = imagecreatetruecolor($TILE_DIMENSION_IN_PIXEL * ($dim / $TILE_DIMENSION), $TILE_DIMENSION_IN_PIXEL * ($dim / $TILE_DIMENSION));
 
-for ($i = 0; $i < $dim / 20; ++$i) {
-    for ($j = 0; $j < $dim / 20; ++$j) {
-        $it = $j * $dim / 20 + $i;
+for ($i = 0; $i < $dim / $TILE_DIMENSION; ++$i) {
+    for ($j = 0; $j < $dim / $TILE_DIMENSION; ++$j) {
+        $it = $j * $dim / $TILE_DIMENSION + $i;
         echo $it."\n";
         $piece = imagecreatefrompng('minimap/bild'.$it.'.png');
         // Draw border
         // var_dump($piece);
 
-        imagecopy($img, $piece, $i * 680, $j * 680, 0, 0, 680, 680);
+        imagecopy($img, $piece, $i * $TILE_DIMENSION_IN_PIXEL, $j * $TILE_DIMENSION_IN_PIXEL, 0, 0, $TILE_DIMENSION_IN_PIXEL, $TILE_DIMENSION_IN_PIXEL);
     }
 }
 

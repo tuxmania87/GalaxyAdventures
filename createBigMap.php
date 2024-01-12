@@ -2,9 +2,18 @@
 
 define('MAXMEM', 32 * 1024 * 1024);  // --- memory limit (32M) ---
 
-$abschnitt = $argv[1];
-$dim = $argv[2];
-$outname = $argv[3];
+$dim = $argv[1];
+$offsetX = $argv[2];
+$offsetY = $argv[3];
+$outname = $argv[4];
+
+// dim of the image is 32 + 2 pixels for border
+// (left and right, up and down)
+$IMAGE_DIMENSION = 34;
+
+// Number of image tiles, fixed at 20 images
+// so output is 20 images high and wide
+$TILE_DIMENSION = 20;
 
 // echo 'test_enter';
 
@@ -20,35 +29,77 @@ function drawBorder(&$img, &$color, $thickness = 1)
     }
 }
 
-header('Content-Type: image/png');
+// header('Content-Type: image/png');
 include 'klassen.php';
-$startx = ($abschnitt % ($dim / 20)) * 20;
-$starty = floor($abschnitt / ($dim / 20)) * 20;
 
-$img = imagecreatetruecolor(20 * 34, 20 * 34);
+function drawMinimapPart($abschnitt, $dim, $outname)
+{
+    global $TILE_DIMENSION;
+    global $IMAGE_DIMENSION;
 
-for ($i = $startx; $i < $startx + 20; ++$i) {
-    for ($j = $starty; $j < $starty + 20; ++$j) {
-        $f = new Weltraum($i, $j, 0, false);
-        $split = explode('.', $f->bild);
+    global $offsetX;
+    global $offsetY;
 
-        // echo $i." ".$j."\n";
+    $startx = ($abschnitt % ($dim / $TILE_DIMENSION)) * $TILE_DIMENSION;
+    $starty = floor($abschnitt / ($dim / $TILE_DIMENSION)) * $TILE_DIMENSION;
 
-        // echo 'DEBUG '.$i.' | '.$j.' '.$f->bild.' ending '.strtolower($split[sizeof($split) - 1])."\n";
+    $startx += $offsetX;
+    $starty += $offsetY;
 
-        if (strtolower($split[sizeof($split) - 1]) == 'png') {
-            $piece = imagecreatefrompng('images/'.$f->bild);
+    $img = imagecreatetruecolor($TILE_DIMENSION * $IMAGE_DIMENSION, $TILE_DIMENSION * $IMAGE_DIMENSION);
+
+    for ($i = $startx; $i < $startx + $TILE_DIMENSION; ++$i) {
+        for ($j = $starty; $j < $starty + $TILE_DIMENSION; ++$j) {
+            $f = new Weltraum($i, $j, 0, false);
+            $split = explode('.', $f->bild);
+
+            // echo $i." ".$j."\n";
+
+            // echo 'DEBUG '.$i.' | '.$j.' '.$f->bild.' ending '.strtolower($split[sizeof($split) - 1])."\n";
+
+            if (strtolower($split[sizeof($split) - 1]) == 'png') {
+                $piece = imagecreatefrompng('images/'.$f->bild);
+            }
+            if (strtolower($split[sizeof($split) - 1]) == 'jpg') {
+                $piece = imagecreatefromjpeg('images/'.$f->bild);
+            }
+
+            // Draw border
+            // 160,0,0  RGB so its red
+            $farbe = imagecolorallocate($piece, 160, 0, 0);
+            // var_dump($farbe);
+            drawBorder($piece, $farbe);
+
+            imagecopy($img, $piece, $i * $IMAGE_DIMENSION - $startx * $IMAGE_DIMENSION, $j * $IMAGE_DIMENSION - $starty * $IMAGE_DIMENSION, 0, 0, $IMAGE_DIMENSION, $IMAGE_DIMENSION);
         }
-        if (strtolower($split[sizeof($split) - 1]) == 'jpg') {
-            $piece = imagecreatefromjpeg('images/'.$f->bild);
-        }
+    }
 
+    imagepng($img, $outname);
+    imagedestroy($img);
+}
+
+$itermax = $dim / $TILE_DIMENSION;
+$itermaxSquared = $itermax * $itermax;
+$upperBound = $itermaxSquared;
+
+for ($x = 0; $x < $upperBound; ++$x) {
+    echo 'bearbeite Sektor '.$x."\n";
+    drawMinimapPart($x, $dim, 'minimap/bild'.$x.'.png');
+}
+
+$TILE_DIMENSION_IN_PIXEL = $IMAGE_DIMENSION * $TILE_DIMENSION;
+
+$img = imagecreatetruecolor($TILE_DIMENSION_IN_PIXEL * ($dim / $TILE_DIMENSION), $TILE_DIMENSION_IN_PIXEL * ($dim / $TILE_DIMENSION));
+
+for ($i = 0; $i < $dim / $TILE_DIMENSION; ++$i) {
+    for ($j = 0; $j < $dim / $TILE_DIMENSION; ++$j) {
+        $it = $j * $dim / $TILE_DIMENSION + $i;
+        echo $it."\n";
+        $piece = imagecreatefrompng('minimap/bild'.$it.'.png');
         // Draw border
-        $farbe = imagecolorallocate($piece, 160, 0, 0);
-        // var_dump($farbe);
-        drawBorder($piece, $farbe);
+        // var_dump($piece);
 
-        imagecopy($img, $piece, $i * 34 - $startx * 34, $j * 34 - $starty * 34, 0, 0, 34, 34);
+        imagecopy($img, $piece, $i * $TILE_DIMENSION_IN_PIXEL, $j * $TILE_DIMENSION_IN_PIXEL, 0, 0, $TILE_DIMENSION_IN_PIXEL, $TILE_DIMENSION_IN_PIXEL);
     }
 }
 
