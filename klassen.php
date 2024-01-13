@@ -521,6 +521,19 @@ class Frachtraum
     public $klingonen = 0;
     public $cardassianer = 0;
 
+    public function __toString()
+    {
+        $result = "";
+        for ($i = 0; $i < sizeof($this->fracht); ++$i) {
+            if($this->fracht[$i]->anzahl > 0 ){
+                $result .= $this->fracht[$i]->name .': ';
+                $result .= $this->fracht[$i]->anzahl.'<br>';
+            }
+        }    
+        return $result;   
+    }
+
+
     public function dump()
     {
         $r = '';
@@ -1402,6 +1415,58 @@ class Bauplan_Schiffe
 
         return $l;
     }
+
+    public function createEntity($ownerId, $position)
+    {
+        $query = "
+
+        INSERT INTO schiffe(
+            x,
+            y,
+            orbit,
+            system,
+            besitzer,
+            energie,
+            warpkern,
+            hull,
+            typ,
+            nachricht,
+            klasse
+        )
+        SELECT 
+            %d,
+            %d,
+            %d,
+            %d,
+            %d,
+            %d,
+            %d,
+            %d,
+            %s,
+            %s,
+            %s
+
+        ";
+
+        $formatedQuery = sprintf($query,
+            $position["x"],
+            $position["y"],
+            $position["orbit"],
+            $position["system"],
+            $ownerId,
+            $this->maxenergie,
+            0,
+            $this->maxhull,
+            's',
+            '',
+            $this->klasse
+        );
+        
+        $verbindung = get_verbindung();
+        mysqli_query($verbindung, $formatedQuery);
+
+    }
+
 }
 
 class Schiffe extends Rohling

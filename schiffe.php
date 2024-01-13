@@ -335,7 +335,7 @@ echo '</td></tr>';
 
 
 if ($schiff->skill->bauen == 1) {
-    echo '<form action="base.php" method="post"><input type="hidden" name="sid" value="', $schiff->id, '"><tr><th>Raumstation</th><td>';
+    echo '<form action="createship.php?sid='.$schiff->id.'" method="post"><tr><th>Raumstation</th><td>';
     $bu = new Button("", "bauen");
     $bu->printme();
     echo '</td></tr></form>';

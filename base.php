@@ -38,6 +38,10 @@ if ($nebel) {
     echo 'Du kannst nicht im Orbit von fremden Planeten bauen!';
 } else {
     $accid = $_SESSION['Id'];
+
+
+    
+
     if ($job == 1) { 	// Schiff 3 bauen
         if ($schiff->frachtraum->baustoff >= 600 && $schiff->frachtraum->duranium >= 250 && $schiff->frachtraum->sorium >= 10) {
             $schiff->frachtraum->baustoff -= 600;
@@ -112,7 +116,7 @@ if ($nebel) {
         $gebaut = true;
     }
 
-    echo '<h3>Raumstation bauen im Sektor ',$schiff->position->x,'|',$schiff->position->y,'  -   System: ',$schiff->position->system->name,' (',$schiff->position->system->x,'|',$schiff->position->system->y,'</h3>';
+    echo '<h3>Raumstation bauen im Sektor ',$schiff->position->x,'|',$schiff->position->y,'  -   System: ',$schiff->position->system->name,' (',$schiff->position->system->x,'|',$schiff->position->system->y,')</h3>';
     echo $schiff->frachtraum->baustoff > 0 ? 'Baustoff: '.$schiff->frachtraum->baustoff.'<br />' : '';
     echo $schiff->frachtraum->duranium > 0 ? 'Duranium: '.$schiff->frachtraum->duranium.'<br />' : '';
     echo $schiff->frachtraum->erz > 0 ? 'Erz: '.$schiff->frachtraum->erz.'<br />' : '';
@@ -120,30 +124,38 @@ if ($nebel) {
     echo $schiff->frachtraum->deuterium > 0 ? 'Deuterium: '.$schiff->frachtraum->deuterium.'<br />' : '';
     echo '<br /><table class="bordered"><tr><td>Schiffsname</td><td>Bild</td><td>Baukosten</td><td>Schilde</td><td>H&uuml;lle</td><td>Laserst&auml;rke</td><td>A-Module</td><td>B-Module</td><td>C-Module</td><td>Lagerraum</td><td>Bauzeit in Ticks</td><td>sonstiges</td><td></td></tr>';
 
-    if ($_SESSION['Id'] > 9 || $_SESSION['Id'] == 1) {
-        echo '<td>Station</td><td><img src="images/ships/siedlerbase.png" border="0"></td><td>600 Baustoff<br />250 Duranium<br />10 Sorium</td><td>140</td><td>200</td><td>12</td><td>0</td><td>0</td><td>0</td><td>300</td><td>3</td><td>optimale Verteidigungsstation</td><td><a href="base.php?sid=',$schiff->id,'&job=1">Basis bauen!</a></td></tr>';
+
+    $query = "
+        SELECT id from bauplan where skillbase = 1;
+    ";
+
+    $bases = [];
+    $q = mysqli_query($verbindung, $query);
+        while ($r = mysqli_fetch_array($q)) {
+            $bases[] = new Bauplan_Schiffe($r['id']);
+        }
+
+
+    foreach($bases as $base) {
+        echo '<td>'.$base->klasse.'</td>
+            <td><img src="'.$base->bild.'" border="0"></td>
+            <td>'.$base->kosten.'</td>
+            <td>'.$base->maxschilde.'</td>
+            <td>'.$base->maxhull.'</td>
+            <td>'.$base->laser.'</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>'.$base->lager.'</td>
+            <td>'.$base->bauzeit.'</td>
+            <td>optimale Verteidigungsstation</td>
+            <td><a href="base.php?sid=',$schiff->id,'&job='.$base->id.'">Basis bauen!</a></td></tr>';
     }
+
     if ($forschung->horchposten == 1) {
         echo '<td>Horchposten</td><td><img src="images/ships/horchposten.png" border="0"></td><td>200 Baustoff<br />150 Duranium<br />200 Deuterium</td><td>40</td><td>30</td><td>0</td><td>0</td><td>0</td><td>0</td><td>40</td><td>1</td><td>&Uuml;berwacht ein Gebiet von Radius 5 um die Station, also ein 10x10 Feld</td><td><a href="base.php?sid=',$schiff->id,'&job=10">Horchposten bauen!</a></td></tr>';
     }
-    if ($_SESSION['Id'] == 7 || $_SESSION['Id'] == 1) {
-        echo '<td>Station</td><td><img src="images/ships/klingbase.png" border="0"></td><td>-</td><td>10000</td><td>20000</td><td>500</td><td>0</td><td>0</td><td>0</td><td>15000</td><td>0</td><td>optimale Verteidigungsstation</td><td><a href="base.php?sid=',$schiff->id,'&job=2">Basis bauen!</a></td></tr>';
-    }
-    if ($_SESSION['Id'] == 5 || $_SESSION['Id'] == 1) {
-        echo '<td>Station</td><td><img src="images/ships/fodbase.png" border="0"></td><td>-</td><td>10000</td><td>20000</td><td>500</td><td>0</td><td>0</td><td>0</td><td>15000</td><td>0</td><td>optimale Verteidigungsstation</td><td><a href="base.php?sid=',$schiff->id,'&job=3">Basis bauen!</a></td></tr>';
-    }
-    if ($_SESSION['Id'] == 6 || $_SESSION['Id'] == 1) {
-        echo '<td>Station</td><td><img src="images/ships/rombase.png" border="0"></td><td>-</td><td>10000</td><td>20000</td><td>500</td><td>0</td><td>0</td><td>0</td><td>15000</td><td>0</td><td>optimale Verteidigungsstation</td><td><a href="base.php?sid=',$schiff->id,'&job=4">Basis bauen!</a></td></tr>';
-    }
-    if ($_SESSION['Id'] == 3 || $_SESSION['Id'] == 1) {
-        echo '<td>Station</td><td><img src="images/ships/ferbase.png" border="0"></td><td>-</td><td>10000</td><td>20000</td><td>500</td><td>0</td><td>0</td><td>0</td><td>15000</td><td>0</td><td>optimale Verteidigungsstation</td><td><a href="base.php?sid=',$schiff->id,'&job=6">Basis bauen!</a></td></tr>';
-    }
-    if ($_SESSION['Id'] == 8 || $_SESSION['Id'] == 1) {
-        echo '<td>Station</td><td><img src="images/ships/cardbase.png" border="0"></td><td>-</td><td>10000</td><td>20000</td><td>500</td><td>0</td><td>0</td><td>0</td><td>15000</td><td>0</td><td>optimale Verteidigungsstation</td><td><a href="base.php?sid=',$schiff->id,'&job=7">Basis bauen!</a></td></tr>';
-    }
-    if ($_SESSION['Id'] == 4 || $_SESSION['Id'] == 1) {
-        echo '<td>Station</td><td><img src="images/ships/borgbase.gif" border="0"></td><td>-</td><td>10000</td><td>20000</td><td>500</td><td>0</td><td>0</td><td>0</td><td>15000</td><td>0</td><td>optimale Verteidigungsstation</td><td><a href="base.php?sid=',$schiff->id,'&job=8">Basis bauen!</a></td></tr>';
-    }
+
 
     echo '</table>';
 }
