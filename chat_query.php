@@ -28,4 +28,4 @@ while ($row = mysqli_fetch_array($abfrage)) {
 }
 echo '</table>';
 
-// mysql_query("UPDATE account SET aktion='".date("Y-m-d H:i:s")."' WHERE id='".$_SESSION["Id"]."'") or die(mysql_error());
+// mysqli_query($verbindung, "UPDATE account SET aktion='".date("Y-m-d H:i:s")."' WHERE id='".$_SESSION["Id"]."'") or die(mysqli_error($verbindung));

@@ -27,10 +27,10 @@ if($error) { echo 'ausgew&auml;hlte Schiffe sind nicht in einem Sektor!<br /><br
 else {
 $lastid=checkforlastid('flotte')+1;
 $fname=pruefetext($_POST["flottenname"]);
-mysql_query("INSERT INTO flotte (id,name,besitzer) VALUES ('$lastid','$fname','$id')");
+mysqli_query($verbindung, "INSERT INTO flotte (id,name,besitzer) VALUES ('$lastid','$fname','$id')");
 for($i=0;$i<sizeof($schiffe);$i++) {
 $tid=$schiffe[$i];
-mysql_query("UPDATE schiffe SET flotte='$lastid' WHERE id='$tid'") OR die(mysql_error());
+mysqli_query($verbindung, "UPDATE schiffe SET flotte='$lastid' WHERE id='$tid'") OR die(mysqli_error($verbindung));
 echo '<META HTTP-EQUIV="Refresh" CONTENT="0;URL=flotte.php?fid=0">';
 }
 }

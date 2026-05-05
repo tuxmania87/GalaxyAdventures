@@ -2,8 +2,8 @@
 include_once("connect.php");
 $planet1=0;$planet2=0;$planet3=0;$planet4=0;
 $deutnebel=0; $blaunebel=0; $greennebel=0;
-$abfrage=mysql_query("SELECT * FROM schiffe");
-while($row=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe");
+while($row=mysqli_fetch_array($abfrage))
 {
 if($row["typ"]=='b') $blaunebel++;
 if($row["typ"]=='g') $greennebel++;
@@ -25,8 +25,8 @@ echo 'Klasse Wuste Planeten: ',$planet4,'<br />';
 //welt 2
 $planet1=0;$planet2=0;$planet3=0;$planet4=0;
 $deutnebel=0; $blaunebel=0; $greennebel=0;
-$abfrage=mysql_query("SELECT * FROM schiffe2");
-while($row=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe2");
+while($row=mysqli_fetch_array($abfrage))
 {
 if($row["typ"]=='b') $blaunebel++;
 if($row["typ"]=='g') $greennebel++;

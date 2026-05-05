@@ -25,12 +25,12 @@ $anfang=$anfangminuten*60+$anfangsek;
 
 $datum=date("Y-m-d H:i:s");
 $ip=$_SERVER['REMOTE_ADDR'];
-mysql_query("INSERT INTO `ticklog` (datum,ip,status) VALUES ('$datum','$ip','1')");
+mysqli_query($verbindung, "INSERT INTO `ticklog` (datum,ip,status) VALUES ('$datum','$ip','1')");
 
 
-mysql_query("UPDATE account SET mitglied=mitglied+1");
-mysql_query("DELETE FROM schiffe WHERE besitzer=2 AND typ='s' AND hull=1");
-mysql_query("UPDATE schiffe SET hull=hull-1 WHERE besitzer=2 AND typ='s' AND hull > 1");
+mysqli_query($verbindung, "UPDATE account SET mitglied=mitglied+1");
+mysqli_query($verbindung, "DELETE FROM schiffe WHERE besitzer=2 AND typ='s' AND hull=1");
+mysqli_query($verbindung, "UPDATE schiffe SET hull=hull-1 WHERE besitzer=2 AND typ='s' AND hull > 1");
 
 
 
@@ -38,45 +38,45 @@ mysql_query("UPDATE schiffe SET hull=hull-1 WHERE besitzer=2 AND typ='s' AND hul
 // }
 
 //Output auf schiffen / energie
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ='s'");
-while($energie=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='s'");
+while($energie=mysqli_fetch_array($abfrage))
 {
 $tmpid=$energie["id"];
 $out=$energie["energieoutput"];
 $amount=$out;
 if($energie["deuterium"]<$amount) $amount=$energie["deuterium"];
-if($amount+$energie["energie"] > $energie["maxenergie"]) { $amount=$energie["maxenergie"]-$energie["energie"]; mysql_query("UPDATE schiffe SET energie=maxenergie,deuterium=deuterium-'$amount' WHERE id='$tmpid'"); } else
-mysql_query("UPDATE schiffe SET energie=energie+'$amount',deuterium=deuterium-'$amount' WHERE id='$tmpid'");
+if($amount+$energie["energie"] > $energie["maxenergie"]) { $amount=$energie["maxenergie"]-$energie["energie"]; mysqli_query($verbindung, "UPDATE schiffe SET energie=maxenergie,deuterium=deuterium-'$amount' WHERE id='$tmpid'"); } else
+mysqli_query($verbindung, "UPDATE schiffe SET energie=energie+'$amount',deuterium=deuterium-'$amount' WHERE id='$tmpid'");
 }
 
 
 
 //inaktiv
-mysql_query("UPDATE account SET inaktiv=inaktiv+1");
+mysqli_query($verbindung, "UPDATE account SET inaktiv=inaktiv+1");
 
 
 //forschung allgemein
-mysql_query("UPDATE forschung SET waffen2=waffen2-1 WHERE waffen2 > 1");
-mysql_query("UPDATE forschung SET hull1=hull1-1 WHERE hull1 > 1");
-mysql_query("UPDATE forschung SET antrieb1=antrieb1-1 WHERE antrieb1 > 1");
-mysql_query("UPDATE forschung SET krieg=krieg-1 WHERE krieg > 1");
-mysql_query("UPDATE forschung SET krieg2=krieg2-1 WHERE krieg2 > 1");
-mysql_query("UPDATE forschung SET krieg3=krieg3-1 WHERE krieg3 > 1");
-mysql_query("UPDATE forschung SET terra1=terra1-1 WHERE terra1 > 1");
-mysql_query("UPDATE forschung SET terra2=terra2-1 WHERE terra2 > 1");
-mysql_query("UPDATE forschung SET miranda=miranda-1 WHERE miranda > 1");
-mysql_query("UPDATE forschung SET consti=consti-1 WHERE consti > 1");
+mysqli_query($verbindung, "UPDATE forschung SET waffen2=waffen2-1 WHERE waffen2 > 1");
+mysqli_query($verbindung, "UPDATE forschung SET hull1=hull1-1 WHERE hull1 > 1");
+mysqli_query($verbindung, "UPDATE forschung SET antrieb1=antrieb1-1 WHERE antrieb1 > 1");
+mysqli_query($verbindung, "UPDATE forschung SET krieg=krieg-1 WHERE krieg > 1");
+mysqli_query($verbindung, "UPDATE forschung SET krieg2=krieg2-1 WHERE krieg2 > 1");
+mysqli_query($verbindung, "UPDATE forschung SET krieg3=krieg3-1 WHERE krieg3 > 1");
+mysqli_query($verbindung, "UPDATE forschung SET terra1=terra1-1 WHERE terra1 > 1");
+mysqli_query($verbindung, "UPDATE forschung SET terra2=terra2-1 WHERE terra2 > 1");
+mysqli_query($verbindung, "UPDATE forschung SET miranda=miranda-1 WHERE miranda > 1");
+mysqli_query($verbindung, "UPDATE forschung SET consti=consti-1 WHERE consti > 1");
 
 //schiffe ausbauen
-mysql_query("UPDATE schiffe SET rohstoffa=rohstoffa-1 WHERE typ='' AND rohstoffa>0");
-mysql_query("UPDATE schiffe SET typ='s',rohstoffb=0 WHERE typ='' AND rohstoffa=0");
+mysqli_query($verbindung, "UPDATE schiffe SET rohstoffa=rohstoffa-1 WHERE typ='' AND rohstoffa>0");
+mysqli_query($verbindung, "UPDATE schiffe SET typ='s',rohstoffb=0 WHERE typ='' AND rohstoffa=0");
 
 
 
 
 //neue Planetenberechnung
-$abfrage=mysql_query("SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
-while($row=mysql_fetch_array($abfrage)) {
+$abfrage=mysqli_query($verbindung, "SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
+while($row=mysqli_fetch_array($abfrage)) {
 $tpid=$row["id"];
 $tplanet=new schiff();
 $tplanet->getData($tpid);
@@ -135,8 +135,8 @@ $tplanet->getData($tpid);
 }
 
 //neue Planetenberechnung 2
-$abfrage=mysql_query("SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
-while($row=mysql_fetch_array($abfrage)) {
+$abfrage=mysqli_query($verbindung, "SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
+while($row=mysqli_fetch_array($abfrage)) {
 $tpid=$row["id"];
 $tplanet=new schiff();
 $tplanet->getData($tpid);
@@ -161,8 +161,8 @@ $tplanet->getData($tpid);
 }
 
 //neue Planetenberechnung 3
-$abfrage=mysql_query("SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
-while($row=mysql_fetch_array($abfrage)) {
+$abfrage=mysqli_query($verbindung, "SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
+while($row=mysqli_fetch_array($abfrage)) {
 $tpid=$row["id"];
 $tplanet=new schiff();
 $tplanet->getData($tpid);
@@ -182,8 +182,8 @@ $tplanet->getData($tpid);
 }
 
 //ISO berechnung
-$abfrage=mysql_query("SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
-while($row=mysql_fetch_array($abfrage)) {
+$abfrage=mysqli_query($verbindung, "SELECT schiffe.id FROM schiffe, planet2 WHERE schiffe.besitzer !=2 AND schiffe.id = planet2.pid");
+while($row=mysqli_fetch_array($abfrage)) {
 $tpid=$row["id"];
 $tplanet=new schiff();
 $tplanet->getData($tpid);
@@ -204,14 +204,14 @@ $tplanet->getData($tpid);
 }
 
 
-mysql_query("UPDATE schiffe SET energie=maxenergie WHERE typ='m) AND energie>maxenergie");
+mysqli_query($verbindung, "UPDATE schiffe SET energie=maxenergie WHERE typ='m) AND energie>maxenergie");
 
 //warenkzinsen
-mysql_query("UPDATE konto SET rohstoffa=ceil(rohstoffa*0.9),rohstoffb=ceil(rohstoffb*0.9),rohstoffc=ceil(rohstoffc*0.9),rohstoffd=ceil(rohstoffd*0.9),deuterium=ceil(deuterium*0.9)");
+mysqli_query($verbindung, "UPDATE konto SET rohstoffa=ceil(rohstoffa*0.9),rohstoffb=ceil(rohstoffb*0.9),rohstoffc=ceil(rohstoffc*0.9),rohstoffd=ceil(rohstoffd*0.9),deuterium=ceil(deuterium*0.9)");
 
 //mailerinnerungen
-$rememberquery=mysql_query("SELECT * FROM account WHERE inaktiv=56 AND id>9");
-while($rem=mysql_fetch_array($rememberquery)) {
+$rememberquery=mysqli_query($verbindung, "SELECT * FROM account WHERE inaktiv=56 AND id>9");
+while($rem=mysqli_fetch_array($rememberquery)) {
 $mail1=$rem["email"];
 $name1=$rem["name"];
 $message="Hallo $name1,\n\nDu bekommst diese Mail weil du seit 56 Ticks (7 Tagen) dich nicht mehr bei Galaxy Adventures gemeldet hast. Dies soll nur eine kleine Erinnerung sein, dass dein Account noch existiert ;). Solltest du kein Interesse mehr an Galaxy-Adventures 2 haben und weitere 56 Ticks verstreichen, so wird dein Account geloescht und alle deine Daten aus der Datenbank entfernt.\nIch wuensche dir viel Spass\n\ncremetorte";
@@ -220,15 +220,15 @@ mail($mail1,"Erinnerung - 7 Tage", $message,"From: GA-Team <noreply@galaxy-adven
 
 //loeschung
 //mailerinnerungen
-$rememberquery=mysql_query("SELECT * FROM account WHERE inaktiv=112 AND id>9");
-while($rem=mysql_fetch_array($rememberquery)) {
+$rememberquery=mysqli_query($verbindung, "SELECT * FROM account WHERE inaktiv=112 AND id>9");
+while($rem=mysqli_fetch_array($rememberquery)) {
 $mail1=$rem["email"];
 $name1=$rem["name"];
 $id1=$rem["id"];
 $message="Hallo $name1,\n\nDu bekommst diese Mail weil du seit 112 Ticks (14 Tagen) dich nicht mehr bei Galaxy Adventures gemeldet hast. \nDein Account wurde geloescht. Ich hoffe du hattest Spass in Galaxy-Adventures.\nIch wuensche dir viel Spass\n\ncremetorte";
 mail($mail1,"Loeschung - 14 Tage", $message,"From: GA-Team <noreply@galaxy-adventures.net>");
-mysql_query("INSER INTO mail (empfaenger,absender,neu) VALUES ('1','2','1')");
-//mysql_query("DELETE FROM account WHERE id='$id1'");
+mysqli_query($verbindung, "INSER INTO mail (empfaenger,absender,neu) VALUES ('1','2','1')");
+//mysqli_query($verbindung, "DELETE FROM account WHERE id='$id1'");
 }
 
 
@@ -237,7 +237,7 @@ $endeminuten=date("i");
 $endesek=date("s");
 $ende=$endeminuten*60+$endesek;
 $zeit=$ende-$anfang;
-mysql_query("UPDATE `ticklog` SET status=0,dauer='$zeit' WHERE datum='$datum'");
+mysqli_query($verbindung, "UPDATE `ticklog` SET status=0,dauer='$zeit' WHERE datum='$datum'");
 }
 else
 echo 'guter versuch..';

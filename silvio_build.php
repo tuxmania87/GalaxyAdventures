@@ -7,8 +7,8 @@ $fid=$_GET["fid"];
 $do=$_GET["do"];
 
 $selfid=$_SESSION["Id"];
-$res1=mysql_query("SELECT mitglied FROM account WHERE id='$selfid'");
-$row1=mysql_fetch_array($res1);
+$res1=mysqli_query($verbindung, "SELECT mitglied FROM account WHERE id='$selfid'");
+$row1=mysqli_fetch_array($res1);
 $mitglied=$row1["mitglied"];
 
 $ich=new Account($_SESSION["Id"]);

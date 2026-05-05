@@ -49,9 +49,9 @@ if ($saveid > 0) {
     for ($i = 0; $i < sizeof($sumfeld); ++$i) {
         ++$count;
     }
-    // mysql_query("UPDATE erfolge SET anzahl='$count' WHERE id='$saveid'");
+    // mysqli_query($verbindung, "UPDATE erfolge SET anzahl='$count' WHERE id='$saveid'");
 
-    // if($count>=$menge && $bcount>=$anzahl+$menge) mysql_query("UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
+    // if($count>=$menge && $bcount>=$anzahl+$menge) mysqli_query($verbindung, "UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
     if ($bcount >= $menge) {
         mysqli_query($verbindung, "UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");
     }
@@ -84,7 +84,7 @@ if ($saveid > 0) {
     for ($i = 0; $i < sizeof($sumfeld); ++$i) {
         ++$count;
     }
-    // mysql_query("UPDATE erfolge SET anzahl='$count' WHERE id='$saveid'");
+    // mysqli_query($verbindung, "UPDATE erfolge SET anzahl='$count' WHERE id='$saveid'");
 
     if ($count >= $menge && $bcount >= $anzahl + $menge) {
         mysqli_query($verbindung, "UPDATE erfolge SET anzahl='$menge',erledigt=1 WHERE erledigt=0 AND id='$saveid'");

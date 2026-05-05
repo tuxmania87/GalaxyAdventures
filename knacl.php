@@ -68,11 +68,11 @@ if($ch->founder->id != $ich->id) {
 }
 
 if(isset($_GET["rm"]) && ctype_digit($_GET["rm"])) {
-    mysql_query("delete from channelabo where uid=".$_GET["rm"]." and cid=".$ch->id);
+    mysqli_query($verbindung, "delete from channelabo where uid=".$_GET["rm"]." and cid=".$ch->id);
 }
 
 if(isset($_POST["inviteid"]) && ctype_digit($_POST["inviteid"])) {
-    mysql_query("insert into channelabo (cid,uid,status) values ('".$ch->id."','".$_POST["inviteid"]."','2')");
+    mysqli_query($verbindung, "insert into channelabo (cid,uid,status) values ('".$ch->id."','".$_POST["inviteid"]."','2')");
 }
 
 
@@ -86,42 +86,42 @@ if($ch->founder->id != $ich->id) {
 
 echo '<h2>Zugriffskontrolle für '.$ch->caption.' ('.$ch->id.')</h2>';
 
-$q = mysql_query("select uid from channelabo where cid=".$ch->id." and status=1");
+$q = mysqli_query($verbindung, "select uid from channelabo where cid=".$ch->id." and status=1");
 
-if(mysql_num_rows($q) > 0) {
+if(mysqli_num_rows($q) > 0) {
     echo '<h3>autorisierte Nutzer</h3><table class="liste">';
     echo '<tr><th>ID</th><th>Name</th><th>entfernen</th></tr>';
 } else {
     echo '<h3>es gibt noch keine autorisierten Nutzer</h3>';
 }
 
-while($r = mysql_fetch_array($q)) {
+while($r = mysqli_fetch_array($q)) {
     $t_acc = new Account($r["uid"]);
     echo '<tr><td>'.$t_acc->id.'</td><td>'.$t_acc->nickname.'</td><td><a href="knacl.php?cid='.$ch->id.'&rm='.$t_acc->id.'">';
     echo '<img src="images/misc/nix.png" border="0" onmouseover="Tip(\'<b>User von der Liste entfernen</b>\')" onmouseout="UnTip()" /></a></td></tr>';
 }
 
-if(mysql_num_rows($q) > 0) 
+if(mysqli_num_rows($q) > 0) 
     echo "</table><br />";
 
 //Pending
 
-$q = mysql_query("select uid from channelabo where cid=".$ch->id." and status=2");
+$q = mysqli_query($verbindung, "select uid from channelabo where cid=".$ch->id." and status=2");
 
-if(mysql_num_rows($q) > 0) {
+if(mysqli_num_rows($q) > 0) {
     echo '<h3>eingeladene Nutzer</h3><table class="liste">';
     echo '<tr><th>ID</th><th>Name</th><th>entfernen</th></tr>';
 } else {
     echo '<h3>es gibt keine eingeladenen Nutzer</h3>';
 }
 
-while($r = mysql_fetch_array($q)) {
+while($r = mysqli_fetch_array($q)) {
     $t_acc = new Account($r["uid"]);
     echo '<tr><td>'.$t_acc->id.'</td><td>'.$t_acc->nickname.'</td><td><a href="knacl.php?cid='.$ch->id.'&rm='.$t_acc->id.'">';
     echo '<img src="images/misc/nix.png" onmouseover="Tip(\'<b>Einladung zurücknehmen</b>\')" onmouseout="UnTip()" border="0" /></a></td></tr>';
 }
 
-if(mysql_num_rows($q) > 0) 
+if(mysqli_num_rows($q) > 0) 
     echo "</table>";
 
 //invite

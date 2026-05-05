@@ -301,7 +301,7 @@ function pruefeText($text)
 
     $text = ersetzeCode($text);
 
-    //	mysql_real_escape_string($text);
+    //	mysqli_real_escape_string($verbindung, $text);
 
     return $text;
 }

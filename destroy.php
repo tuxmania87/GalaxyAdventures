@@ -48,11 +48,11 @@ if(isset($_GET["destroy"])) {
     
     //release once effect stuff
     if($feld->rest_bauzeit == 0) {
-        mysql_query("update planeten set
+        mysqli_query($verbindung, "update planeten set
             maxenergie=maxenergie-".$feld->bau->epslager.",
             lager=lager-".$feld->bau->lager.",
             laser=laser-".$feld->bau->laser.",
-            maxschilde=maxschilde-".$feld->bau->schilde." where id = ".$pid) or die(mysql_error());
+            maxschilde=maxschilde-".$feld->bau->schilde." where id = ".$pid) or die(mysqli_error($verbindung));
     }
     
     $planet->frachtraum->save();

@@ -22,26 +22,26 @@ if(($_GET["x"])=='' || $_GET["y"]=='')
 if(ctype_digit($_GET["del"]) && $_GET["del"]>0) {
 	$schiffgefunen=false;
 	$planetengefunden=false;
-	$abfrage=mysql_query("SELECT * FROM schiffe WHERE besitzer!=2 AND system='".$_GET["del"]."'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer!=2 AND system='".$_GET["del"]."'");
+	while($row=mysqli_fetch_array($abfrage))
 	$schiffgefunden=true;
-	$abfrage=mysql_query("SELECT * FROM schiffe WHERE besitzer!=2 AND system='".$_GET["del"]."'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer!=2 AND system='".$_GET["del"]."'");
+	while($row=mysqli_fetch_array($abfrage))
 	$schiffgefunden=true;
 	if($schiffgefunden) echo "Hinweis: Es sind noch schiffe im System. Es kann nicht gel&ouml;scht werden!";
 	if($planetgefunden) echo "Hinweis: Es sind noch besidelte planeten im System. Es kann nicht gel&ouml;scht werden!";
 	if(!$schiffgefunden && !$planetgefunden) {
-				mysql_query("DELETE FROM weltraum WHERE system='".$_GET["del"]."'") or die(mysql_error());
-				mysql_query("DELETE FROM schiffe WHERE system='".$_GET["del"]."'");
-				mysql_query("DELETE FROM planeten WHERE system='".$_GET["del"]."'");
-				mysql_query("DELETE FROM systeme WHERE id='".$_GET["del"]."'");
+				mysqli_query($verbindung, "DELETE FROM weltraum WHERE system='".$_GET["del"]."'") or die(mysqli_error($verbindung));
+				mysqli_query($verbindung, "DELETE FROM schiffe WHERE system='".$_GET["del"]."'");
+				mysqli_query($verbindung, "DELETE FROM planeten WHERE system='".$_GET["del"]."'");
+				mysqli_query($verbindung, "DELETE FROM systeme WHERE id='".$_GET["del"]."'");
 				}
 	}
 
 if(ctype_digit($_GET["dx"]) && $_GET["dx"]>-25 && ctype_digit($_GET["dy"]) && $_GET["dy"]>-25)
 	{		//loeschen
-	mysql_query("DELETE FROM planeten WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='0'");
-	mysql_query("DELETE FROM weltraum WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='0'");
+	mysqli_query($verbindung, "DELETE FROM planeten WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='0'");
+	mysqli_query($verbindung, "DELETE FROM weltraum WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='0'");
 	}
 
 
@@ -50,7 +50,7 @@ if(ctype_digit($_GET["rx"]) && $_GET["rx"]>-25 && ctype_digit($_GET["ry"]) && $_
 	$systeme=array("bblaublau","bblaugelb","bblauorange","bblaurot","bblauschwarz","bblauweiss","blau","blaubig","blaublau","brotblau","brotgelb","brotorange","brotrot","brotschwarz","brotweiss","gelb","gelbblau","gelbgelb","gelbweiss","orange","orangegelb","orangeorange","orangeweiss","rot","rotbig","rotblau","rotgelb","rotorange","rotrot","rotweiss","weiss","weissblau");
 	$bildinsert=$systeme[$_POST["operation"]];
 		$lastid=checkforlastid("systeme")+1; 
-		mysql_query("INSERT INTO systeme (id,x,y,name,bild) VALUES ('$lastid','".$_GET["rx"]."','".$_GET["ry"]."','".$_POST["sysname"]."','".$bildinsert.".jpg')") or die(mysql_error());
+		mysqli_query($verbindung, "INSERT INTO systeme (id,x,y,name,bild) VALUES ('$lastid','".$_GET["rx"]."','".$_GET["ry"]."','".$_POST["sysname"]."','".$bildinsert.".jpg')") or die(mysqli_error($verbindung));
 	}
 
 	
@@ -75,17 +75,17 @@ if(ctype_digit($_GET["sx"]) && $_GET["sx"]>-25 && ctype_digit($_GET["sy"]) && $_
 	default: $dovar=-1; break;
 	}
 	switch ($dovar) {
-	case 0: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','d','0')"); break;
-		case 1: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','dk','0')"); break;
-		case 2: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','e','0')"); break;
-		case 3: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','ek','0')"); break;
-		case 4: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','x','0')"); break;
-		case 5: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b','0')"); break;
-		case 6: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','g','0')"); break;
-		case 7: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','p','0')"); break;
-		case 8: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','radio','0')"); break;
-		case 9: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','metrion','0')"); break;
-		case 10: mysql_query("INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','lim','0')"); break;
+	case 0: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','d','0')"); break;
+		case 1: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','dk','0')"); break;
+		case 2: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','e','0')"); break;
+		case 3: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','ek','0')"); break;
+		case 4: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','x','0')"); break;
+		case 5: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b','0')"); break;
+		case 6: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','g','0')"); break;
+		case 7: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','p','0')"); break;
+		case 8: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','radio','0')"); break;
+		case 9: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','metrion','0')"); break;
+		case 10: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','lim','0')"); break;
 		default: echo 'not yet implemented!'; break;
 	}
 	}
@@ -137,8 +137,8 @@ for($y=$sy-15-1;$y<=$sy+15;$y++)
 		if($y==$sy-15-1 && $x>$sx-15-1) echo '<td><center>',$x-1,'</td>';
 	if($y>$sy-15-1) {
 	$done=false;
-	$abfrage=mysql_query("SELECT * FROM weltraum WHERE system='0' AND x='$x' AND y='$y'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM weltraum WHERE system='0' AND x='$x' AND y='$y'");
+	while($row=mysqli_fetch_array($abfrage))
 	{
 	if($row["typ"]=='b') echo '<td><a href="editspace2.php?pinsel=',$_GET["pinsel"],'&x=',$_GET["x"],'&y=',$_GET["y"],'&dx=',$x,'&dy=',$y,'"><img height="16px" width="16px" src="nebel.jpg" border="0" /></a></td>';
 	if($row["typ"]=='e') echo '<td><a href="editspace2.php?pinsel=',$_GET["pinsel"],'&x=',$_GET["x"],'&y=',$_GET["y"],'&dx=',$x,'&dy=',$y,'"><img height="16px" width="16px" src="erz.jpg" border="0" /></a></td>';
@@ -153,8 +153,8 @@ for($y=$sy-15-1;$y<=$sy+15;$y++)
 	if($row["typ"]=='lim') echo '<td><a href="editspace2.php?pinsel=',$_GET["pinsel"],'&x=',$_GET["x"],'&y=',$_GET["y"],'&dx=',$x,'&dy=',$y,'"><img height="16px" width="16px" src="limes.jpg" border="0" /></a></td>';
 	$done=true;
 	}
-	$abfrage=mysql_query("SELECT * FROM systeme WHERE x='$x' AND y='$y'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM systeme WHERE x='$x' AND y='$y'");
+	while($row=mysqli_fetch_array($abfrage))
 	{
 	echo '<td><a href="editsystem.php?system=',$row["id"],'"><img height="16px" width="16px" src="',$row["bild"],'" border="0" /></a></td>';
 	$done=true;

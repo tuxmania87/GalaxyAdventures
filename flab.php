@@ -215,7 +215,7 @@ echo 'Station(Horchposten) wird erforscht<br />';
 }
 
 $aktPlanet->frachtraum->save();
-mysql_query("UPDATE planeten SET energie='".$aktPlanet->energie."' WHERE id='".$aktPlanet->id."'");
+mysqli_query($verbindung, "UPDATE planeten SET energie='".$aktPlanet->energie."' WHERE id='".$aktPlanet->id."'");
 
 echo 'ISO-Chips: ',$aktPlanet->frachtraum->isochips,'<br />Energie: ',$aktPlanet->energie,'<br />';
 echo '<h3>Forschung</h3><table class="bordered2"><tr><td>Forschungsmodul</td><td>Kosten</td><td>Effekt</td></tr>';

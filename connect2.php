@@ -1,13 +1,13 @@
 <?php
-mysql_connect("localhost","d00704ed","db");
-mysql_select_db("d00704ed");
+get_verbindung();
+// DB-Selektion via get_verbindung()
 include("pruefetext.php");
-mysql_query("OPTIMIZE TABLE `account` , `allianz` , `erforscht` , `forschung` , `kontakt` , `logbuch` , `login` , `mail` , `news` , `planet` , `planet2` , `schiffe` , `schiffsmodule` , `skn` , `ticklog` , `tom_team` , `umfrage` , `userlog`");
+mysqli_query($verbindung, "OPTIMIZE TABLE `account` , `allianz` , `erforscht` , `forschung` , `kontakt` , `logbuch` , `login` , `mail` , `news` , `planet` , `planet2` , `schiffe` , `schiffsmodule` , `skn` , `ticklog` , `tom_team` , `umfrage` , `userlog`");
 
 //letze Aktion
 $action=date("Y-m-d H:i:s");
 $selfid=$_SESSION["Id"];
-if($_SESSION["Id"]>0) mysql_query("UPDATE account SET aktion='$action' WHERE id='$selfid'");
+if($_SESSION["Id"]>0) mysqli_query($verbindung, "UPDATE account SET aktion='$action' WHERE id='$selfid'");
 
 function isonline($aktion) {
 $tmpvar1=$aktion[0].$aktion[1].$aktion[2].$aktion[3].$aktion[4].$aktion[5].$aktion[6].$aktion[7].$aktion[8].$aktion[9];
@@ -23,16 +23,16 @@ if($tmpvar3>=$tmpvar2-240 && $tmpvar3<=$tmpvar2) return true; else return false;
 function getGeld()
 {
 $personid=$_SESSION["Id"];
-$abfrage=mysql_query("SELECT * FROM account WHERE id='$personid'");
-while($account=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM account WHERE id='$personid'");
+while($account=mysqli_fetch_array($abfrage))
 $geld = $account["geld"];
 return $geld;
 }
 
 function id2name($id)
 	{
-	$postquery=mysql_query("SELECT * FROM account WHERE id='$id'"); //id einsetzen
-	while($account=mysql_fetch_array($postquery)) 			//Abfrage der accountdaten
+	$postquery=mysqli_query($verbindung, "SELECT * FROM account WHERE id='$id'"); //id einsetzen
+	while($account=mysqli_fetch_array($postquery)) 			//Abfrage der accountdaten
 	{
 	if($account["sponsor"]==1) $returnValue='<img src="star.gif" border="0" title="Sponsor von GA">'.$account["displaynick"]; else
 	$returnValue=$account["displaynick"];
@@ -50,8 +50,8 @@ echo $datum[8];echo $datum[9];echo '.';echo $datum[5];echo $datum[6];echo '.';ec
 
 function getSlot($id) {
 $count=0;
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ='s' AND besitzer='$id'");
-while($schiff=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='s' AND besitzer='$id'");
+while($schiff=mysqli_fetch_array($abfrage))
 {
 if($schiff["klasse"]=='Tanker') $count++;
 if($schiff["klasse"]=='Erzfrachter') $count++;
@@ -81,8 +81,8 @@ public $miranda;
 public $consti;
 
 function getData($id) {
-$t1=mysql_query("SELECT * FROM forschung WHERE besitzer='$id'");
-while($t=mysql_fetch_array($t1))
+$t1=mysqli_query($verbindung, "SELECT * FROM forschung WHERE besitzer='$id'");
+while($t=mysqli_fetch_array($t1))
 {
 $this->id=$t["id"];
 $this->besitzer=$t["besitzer"];
@@ -102,7 +102,7 @@ $this->consti=$t["consti"];
 }
 
 function setData($id) {
-mysql_query("UPDATE forschung SET miranda='$this->miranda',consti='$this->consti',terra2='$this->terra2',terra1='$this->terra1',krieg3='$this->krieg3',krieg2='$this->krieg2',krieg='$this->krieg',waffen2='$this->waffen2',hull1='$this->hull1',antrieb1='$this->antrieb1',rohstoff4='$this->rohstoff4',rohstoff5='$this->rohstoff5' WHERE besitzer='$id'");
+mysqli_query($verbindung, "UPDATE forschung SET miranda='$this->miranda',consti='$this->consti',terra2='$this->terra2',terra1='$this->terra1',krieg3='$this->krieg3',krieg2='$this->krieg2',krieg='$this->krieg',waffen2='$this->waffen2',hull1='$this->hull1',antrieb1='$this->antrieb1',rohstoff4='$this->rohstoff4',rohstoff5='$this->rohstoff5' WHERE besitzer='$id'");
 }
 }
 
@@ -126,8 +126,8 @@ public $c4;
 public $c5;
 
 function getData($sid) {
-$t1=mysql_query("SELECT * FROM schiffsmodule WHERE sid='$sid'");
-while($t=mysql_fetch_array($t1))
+$t1=mysqli_query($verbindung, "SELECT * FROM schiffsmodule WHERE sid='$sid'");
+while($t=mysqli_fetch_array($t1))
 {
 $this->id=$t["id"];
 $this->sid=$t["sid"];
@@ -150,7 +150,7 @@ $this->c5=$t["c5"];
 }
 
 function setData($sid) {
-mysql_query("UPDATE schiffsmodule SET a1='$this->a1',a2='$this->a2',a3='$this->a3',a4='$this->a4',a5='$this->a5',b1='$this->b1',b2='$this->b2',b3='$this->b3',b4='$this->b4',b5='$this->b5',c1='$this->c1',c2='$this->c2',c3='$this->c3',c4='$this->c4',c5='$this->c5' WHERE sid='$sid'");
+mysqli_query($verbindung, "UPDATE schiffsmodule SET a1='$this->a1',a2='$this->a2',a3='$this->a3',a4='$this->a4',a5='$this->a5',b1='$this->b1',b2='$this->b2',b3='$this->b3',b4='$this->b4',b5='$this->b5',c1='$this->c1',c2='$this->c2',c3='$this->c3',c4='$this->c4',c5='$this->c5' WHERE sid='$sid'");
 }
 }
 
@@ -203,13 +203,13 @@ public $tarnung;
 public $skilltranswarp;
 
 function getData($sid) {
-$t1=mysql_query("SELECT * FROM schiffe WHERE id='$sid'");
-while($t=mysql_fetch_array($t1))
+$t1=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE id='$sid'");
+while($t=mysqli_fetch_array($t1))
 {
 $this->id=$t["id"];
 $this->x=$t["x"];
 $this->y=$t["y"];
-$this->name=mysql_real_escape_string($t["name"]);
+$this->name=mysqli_real_escape_string($verbindung, $t["name"]);
 $this->alarmstufe=$t["alarmstufe"];
 $this->hull=$t["hull"];
 $this->schilde=$t["schilde"];
@@ -254,9 +254,9 @@ $this->skilltranswarp=$t["skilltranswarp"];
 }
 
 function setData($sid) {
-mysql_query("UPDATE schiffe SET
+mysqli_query($verbindung, "UPDATE schiffe SET
 tritanium='$this->tritanium',dili='$this->dili',antimaterie='$this->antimaterie',isochips='$this->isochips',skilltranswarp='$this->skilltranswarp',npcfer='$this->npcfer',npcfod='$this->npcfod',npcrom='$this->npcrom',npcborg='$this->npcborg',tarnung='$this->tarnung',skilltarnung='$this->skilltarnung',quest='$this->quest',klasse='$this->klasse',skillerz='$this->skillerz',skilldeut='$this->skilldeut',skillbase='$this->skillbase',flotte='$this->flotte',skillbau='$this->skillbau',skillenergie='$this->skillenergie',orbit='$this->orbit',lager='$this->lager',deuterium='$this->deuterium',rohstoffd='$this->rohstoffd',rohstoffc='$this->rohstoffc',rohstoffb='$this->rohstoffb',rohstoffa='$this->rohstoffa',schildstatus='$this->schildstatus',maxschilde='$this->maxschilde',maxhull='$this->maxhull',energieoutput='$this->energieoutput',maxenergie='$this->maxenergie',img='$this->img',energie='$this->energie',besitzer='$this->besitzer',x='$this->x',y='$this->y',name='$this->name',alarmstufe='$this->alarmstufe',hull='$this->hull',schilde='$this->schilde',laser='$this->laser'
-WHERE id = '$this->id'") or die(mysql_error());
+WHERE id = '$this->id'") or die(mysqli_error($verbindung));
 }
 }
 
@@ -278,8 +278,8 @@ $newtrash->img='trumm.gif';
 
 function id2ally($id)
 {
-$question=mysql_query("SELECT * FROM account WHERE id='$id'");
-while($row=mysql_fetch_array($question))
+$question=mysqli_query($verbindung, "SELECT * FROM account WHERE id='$id'");
+while($row=mysqli_fetch_array($question))
 return $row["allianz"];
 }
 
@@ -287,8 +287,8 @@ return $row["allianz"];
 function checkforlastid($name)
 {
 $checkid=0;
-$tt=mysql_query("SELECT * FROM $name ");
-while($t=mysql_fetch_array($tt))
+$tt=mysqli_query($verbindung, "SELECT * FROM $name ");
+while($t=mysqli_fetch_array($tt))
 if($t["id"]>=$checkid) $checkid=$t["id"];
 return $checkid;
 }
@@ -349,8 +349,8 @@ public $feld50;
 
 function getData($pid)
 {
-$tt=mysql_query("SELECT * FROM planet2 WHERE pid='$pid'");
-while($t=mysql_fetch_array($tt))
+$tt=mysqli_query($verbindung, "SELECT * FROM planet2 WHERE pid='$pid'");
+while($t=mysqli_fetch_array($tt))
 {
 $this->id=$t["id"];
 $this->pid=$t["pid"];
@@ -409,7 +409,7 @@ $this->feld50=$t["feld50"];
 
 function setData($pid)
 {
-mysql_query("UPDATE planet2 SET feld1='$this->feld1',feld2='$this->feld2',feld3='$this->feld3',feld4='$this->feld4',feld5='$this->feld5',feld6='$this->feld6',feld7='$this->feld7',feld8='$this->feld8',feld9='$this->feld9',feld10='$this->feld10',feld11='$this->feld11',feld12='$this->feld12',feld13='$this->feld13',feld14='$this->feld14',feld15='$this->feld15',feld16='$this->feld16',feld17='$this->feld17',feld18='$this->feld18',feld19='$this->feld19',feld20='$this->feld20',feld21='$this->feld21',feld22='$this->feld22',feld23='$this->feld23',feld24='$this->feld24',feld25='$this->feld25',feld26='$this->feld26',feld27='$this->feld27',feld28='$this->feld28',feld29='$this->feld29',feld30='$this->feld30',feld31='$this->feld31',feld32='$this->feld32',feld33='$this->feld33',feld34='$this->feld34',feld35='$this->feld35',feld36='$this->feld36',feld37='$this->feld37',feld38='$this->feld38',feld39='$this->feld39',feld40='$this->feld40',feld41='$this->feld41',feld42='$this->feld42',feld43='$this->feld43',feld44='$this->feld44',feld45='$this->feld45',feld46='$this->feld46',feld47='$this->feld47',feld48='$this->feld48',feld49='$this->feld49',feld50='$this->feld50' WHERE pid='$pid'");
+mysqli_query($verbindung, "UPDATE planet2 SET feld1='$this->feld1',feld2='$this->feld2',feld3='$this->feld3',feld4='$this->feld4',feld5='$this->feld5',feld6='$this->feld6',feld7='$this->feld7',feld8='$this->feld8',feld9='$this->feld9',feld10='$this->feld10',feld11='$this->feld11',feld12='$this->feld12',feld13='$this->feld13',feld14='$this->feld14',feld15='$this->feld15',feld16='$this->feld16',feld17='$this->feld17',feld18='$this->feld18',feld19='$this->feld19',feld20='$this->feld20',feld21='$this->feld21',feld22='$this->feld22',feld23='$this->feld23',feld24='$this->feld24',feld25='$this->feld25',feld26='$this->feld26',feld27='$this->feld27',feld28='$this->feld28',feld29='$this->feld29',feld30='$this->feld30',feld31='$this->feld31',feld32='$this->feld32',feld33='$this->feld33',feld34='$this->feld34',feld35='$this->feld35',feld36='$this->feld36',feld37='$this->feld37',feld38='$this->feld38',feld39='$this->feld39',feld40='$this->feld40',feld41='$this->feld41',feld42='$this->feld42',feld43='$this->feld43',feld44='$this->feld44',feld45='$this->feld45',feld46='$this->feld46',feld47='$this->feld47',feld48='$this->feld48',feld49='$this->feld49',feld50='$this->feld50' WHERE pid='$pid'");
 }
 }
 
@@ -423,8 +423,8 @@ public $deuterium;
 
 function getData($id)
 {
-$tt=mysql_query("SELECT * FROM konto WHERE besitzer='$id'");
-while($t=mysql_fetch_array($tt))
+$tt=mysqli_query($verbindung, "SELECT * FROM konto WHERE besitzer='$id'");
+while($t=mysqli_fetch_array($tt))
 {
 $this->rohstoffa=$t["rohstoffa"];
 $this->rohstoffb=$t["rohstoffb"];
@@ -436,7 +436,7 @@ $this->deuterium=$t["deuterium"];
 
 function setData($id)
 {
-mysql_query("UPDATE konto SET rohstoffd='$this->rohstoffd',rohstoffa='$this->rohstoffa',rohstoffb='$this->rohstoffb',rohstoffc='$this->rohstoffc',deuterium='$this->deuterium' WHERE besitzer='$id'");
+mysqli_query($verbindung, "UPDATE konto SET rohstoffd='$this->rohstoffd',rohstoffa='$this->rohstoffa',rohstoffb='$this->rohstoffb',rohstoffc='$this->rohstoffc',deuterium='$this->deuterium' WHERE besitzer='$id'");
 }
 }
 

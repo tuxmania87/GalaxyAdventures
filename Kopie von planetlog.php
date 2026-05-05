@@ -1,8 +1,8 @@
 <?php
 $inhalt=array("rohstoffa","rohstoffb","rohstoffc","rohstoffd","isochips","tritanium","dili","antimaterie","deuterium");
 include_once("connect.php");
-$result=mysql_query("SELECT * FROM schiffe WHERE typ='m' AND besitzer!=2");
-while($row=mysql_fetch_array($result))
+$result=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='m' AND besitzer!=2");
+while($row=mysqli_fetch_array($result))
 {
 $pid=$row["id"];
 $valuestring="";
@@ -17,6 +17,6 @@ for($i=0;$i<sizeof($inhalt);$i++) {
 if($i!=sizeof($inhalt)-1) $firststring.="$inhalt,";
 if($i<sizeof($inhalt)-1) $firststring.=$inhalt;
 }
-mysql_query("INSERT INTO planetenlog (pid,$firststring) VALUES ('$pid',$valuestring)") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO planetenlog (pid,$firststring) VALUES ('$pid',$valuestring)") or die(mysqli_error($verbindung));
 }
 ?>

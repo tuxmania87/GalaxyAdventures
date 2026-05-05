@@ -31,9 +31,9 @@ function showkn($channel, $pid, $vor) {
     $editid = null;
     $posterid = null;
 //*** EDITPRUFUNG
-    $editvar = mysql_query("SELECT * FROM kn_log WHERE channel='$channel' AND pid='$pid' ORDER BY id ASC LIMIT 1");
-    if (mysql_num_rows($editvar) > 0) {
-        while ($erow = mysql_fetch_array($editvar))
+    $editvar = mysqli_query($verbindung, "SELECT * FROM kn_log WHERE channel='$channel' AND pid='$pid' ORDER BY id ASC LIMIT 1");
+    if (mysqli_num_rows($editvar) > 0) {
+        while ($erow = mysqli_fetch_array($editvar))
             $posterid = $erow["autor"];
         $editid = -2;
     }
@@ -41,9 +41,9 @@ function showkn($channel, $pid, $vor) {
 
 
 
-    $abfrage = mysql_query("SELECT * FROM kn WHERE channel=".$channel." and bezug='" . $knid . "-" . $pid . "' AND bezug != '$vor'");
-    if (mysql_num_rows($abfrage) > 0) {
-        while ($t = mysql_fetch_array($abfrage)) {
+    $abfrage = mysqli_query($verbindung, "SELECT * FROM kn WHERE channel=".$channel." and bezug='" . $knid . "-" . $pid . "' AND bezug != '$vor'");
+    if (mysqli_num_rows($abfrage) > 0) {
+        while ($t = mysqli_fetch_array($abfrage)) {
             if (!(text2num($vorfeld[0]) == 1 && $vorfeld[1] == $t["id"])) {
                 $usr = new Account($t["autor"]);
                 echo '<a href="zusammenhang.php?channel='.$channel.'&pid=', $t["id"], '"><span style="color:red;font-weight:bold;">zur (anderen) Antwort von ', $usr->nickname, ' auf:</span></a><br />';
@@ -52,8 +52,8 @@ function showkn($channel, $pid, $vor) {
     }
 
 
-    $abfrage = mysql_query("SELECT * FROM kn where channel=".$channel."  AND id=" . $pid . " ORDER BY id DESC");
-    while ($t = mysql_fetch_array($abfrage)) {
+    $abfrage = mysqli_query($verbindung, "SELECT * FROM kn where channel=".$channel."  AND id=" . $pid . " ORDER BY id DESC");
+    while ($t = mysqli_fetch_array($abfrage)) {
         if ($editid == -2)
             $editid = $t["autor"];
         if (!isset($posterid))
@@ -73,8 +73,8 @@ function showkn($channel, $pid, $vor) {
 
 // *** MOD VIEW
         if ($ich->moderator == 1) {
-            $editvar = mysql_query("SELECT * FROM kn_log WHERE channel='$channel' AND pid='" . $t["id"] . "' ORDER BY id DESC");
-            while ($erow = mysql_fetch_array($editvar)) {
+            $editvar = mysqli_query($verbindung, "SELECT * FROM kn_log WHERE channel='$channel' AND pid='" . $t["id"] . "' ORDER BY id DESC");
+            while ($erow = mysqli_fetch_array($editvar)) {
                 $editusr = new Account($erow["autor"]);
                 echo '<br /><br /><span style="color:yellow;font-weight:bold;">Version vom :', gerdatum($erow["datum"]), '</span> editiert von ', $editusr->nickname, '<br />';
                 echo nl2br(pruefetext($erow["text"]));

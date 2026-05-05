@@ -1,15 +1,15 @@
 <?php
 //Test auf Tick
-$db = mysql_connect("localhost","root","db");
-mysql_select_db("game2");
-$tm=mysql_query("SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die(mysql_error());
-while($tm2=mysql_fetch_array($tm)) {
+// Verbindung via get_verbindung() aus connect.php
+// DB-Selektion via get_verbindung()
+$tm=mysqli_query($verbindung, "SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die(mysqli_error($verbindung));
+while($tm2=mysqli_fetch_array($tm)) {
 if($tm2["status"]==0) { 
 header ("Location: http://www.keinerspieltmitmir.de/devga/main.php");
 exit;
 }
 }
-mysql_close($db);
+// mysqli_close($verbindung); // war: mysql_close($db)
 //endetest
 session_start();
 ?>

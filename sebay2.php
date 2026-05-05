@@ -18,8 +18,8 @@ if($betray) echo 'Es ist ein Fehler aufgetreten (System.Exception(1))'; else {
 
 echo '<h3>Schiffsversteigerung</h3><br />';
 echo '<table class="bordered"><tr><td>Bild</td><td>Klasse</td><td>Position</td><td>Verk&auml;ufer</td><td>Zahlungsmittel</td><td>Gebot</td><td>B</td><td>Ende</td></tr>';
-$sebayresult=mysql_query("SELECT * FROM sebay WHERE id='$aid'");
-while($ebay=mysql_fetch_array($sebayresult)) {
+$sebayresult=mysqli_query($verbindung, "SELECT * FROM sebay WHERE id='$aid'");
+while($ebay=mysqli_fetch_array($sebayresult)) {
 $schiff=new schiff($ebay["sid"]); 
 echo '<tr><td><img src="',$schiff->img,'" border="0" /></td><td>',$schiff->klasse,'</td><td>',$schiff->x,'|',$schiff->y,'</td><td>',id2name($schiff->besitzer),'</td><td>',$inhaltcap[array_search($ebay["rohstoff"],$inhalt)],'</td><td>',$ebay["gebot"],' (',id2name($ebay["bieter"]),')</td><td><a href="sebay.php?aid=',$ebay["id"],'">bieten</a></td><td>',gerdatum($ebay["ende"]),'</td></tr>';
 

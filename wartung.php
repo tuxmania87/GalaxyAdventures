@@ -2,15 +2,15 @@
 
 //Test auf Tick
 include_once("connect.php");
-$tm=mysql_query("SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die(mysql_error());
-while($tm2=mysql_fetch_array($tm)) {
+$tm=mysqli_query($verbindung, "SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die(mysqli_error($verbindung));
+while($tm2=mysqli_fetch_array($tm)) {
 if($tm2["status"]==1) { 
 header ("Location: http://www.keinerspieltmitmir.de/de/maintick.php");
 exit;
 }
 }
 
-mysql_close($db);
+// mysqli_close($verbindung); // war: mysql_close($db)
 //endetest
 session_start();
 
@@ -141,8 +141,8 @@ Das Spiel ist zur Zeit <b><font color="red">offline</font></b><br /><br />Grund:
 <?php 
 
 /*
-$abfrage=mysql_query("SELECT * FROM gamestatus WHERE id=(SELECT max(id) FROM gamestatus)");
-while($b=mysql_fetch_array($abfrage)) 
+$abfrage=mysqli_query($verbindung, "SELECT * FROM gamestatus WHERE id=(SELECT max(id) FROM gamestatus)");
+while($b=mysqli_fetch_array($abfrage)) 
 echo $b["beschreibung"];
 */
 include("foot.php");

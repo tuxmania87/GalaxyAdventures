@@ -8,8 +8,8 @@ include_once("connect.php");
 $betray=false;
 $testid=$_GET["from"];
 if(!isset($testid)) $testid=$_GET["pid"];
-$tmp=mysql_query("SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysql_fetch_array($tmp))
+$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
+while($testtmp=mysqli_fetch_array($tmp))
 if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
 
 if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {

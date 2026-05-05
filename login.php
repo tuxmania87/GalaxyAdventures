@@ -6,8 +6,8 @@ if($_POST["sent"]==1)
 	$accpasswort=$_POST["passwort"];
 	$existName=0;
 	$fehler='';
-	$abfrage=mysql_query("SELECT * FROM account");
-	while($account=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM account");
+	while($account=mysqli_fetch_array($abfrage))
 		{
 		if($account["name"]==$accname)
 			{
@@ -22,8 +22,8 @@ if($_POST["sent"]==1)
 				setcookie("Pwd", $accpasswort);
 				setcookie("Id", $accid);
 				$ip=$_SERVER["REMOTE_ADDR"]; $datum=date("Y-m-d H:i:s");
-				mysql_query("UPDATE account SET inaktiv='0' WHERE id='$accid'");
-				mysql_query("INSERT INTO iplog (besitzer,ip,datum) VALUES ('$accid','$ip','$datum')");
+				mysqli_query($verbindung, "UPDATE account SET inaktiv='0' WHERE id='$accid'");
+				mysqli_query($verbindung, "INSERT INTO iplog (besitzer,ip,datum) VALUES ('$accid','$ip','$datum')");
 				echo '<meta http-equiv="Refresh" content="0; url=main.php">';
 				} else $fehler='Sicherheitscode falsch! ';
 				}
@@ -38,8 +38,8 @@ include("nav.php");
 if($fehler!='') echo '<center><b><font color="red">',$fehler,'</font></b></center>';
 
 echo '<center><h3>News</h3><table class="box">';
-$var2=mysql_query("SELECT * FROM news ORDER BY id DESC LIMIT 3");
-while($varb=mysql_fetch_array($var2))
+$var2=mysqli_query($verbindung, "SELECT * FROM news ORDER BY id DESC LIMIT 3");
+while($varb=mysqli_fetch_array($var2))
 {
 $text2=nl2br($varb["text"]);
 echo '<tr><td width="150" style="vertical-align:top">',gerdatum($varb["datum"]),'</td><td><font color="',$varb["farbe"],'">',$text2,'</font><hr />geschrieben von: ',id2name($varb["autor"]),'</td></tr><tr><td>&nbsp;</td></tr>';}
