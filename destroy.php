@@ -5,7 +5,6 @@ include("navlogged.php");
 include("klassen.php");
 
 
-//CHEATSCHUTZ ANFANG
 
 $pid = $_GET["pid"];
 $fid = $_GET["fid"];
@@ -19,7 +18,6 @@ $planet = new Planeten($pid);
 if ($planet->besitzer->id != $_SESSION["Id"])
     die("Fehler:");
 
-//CHEATSCHUTZ ENDE
 //aktiveren
 $feld = new Gebaude($pid, $fid);
 

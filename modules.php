@@ -16,9 +16,10 @@ $in=$_POST["in"];
 if(isset($sid)) $schiff=new Schiffe($sid);
 
 //CHEAT SCHUTZ
-$betray=false;
-if(($sid>0 && $schiff->besitzer->id!=$_SESSION["Id"]) || $planet->besitzer->id!=$_SESSION["Id"] || ($sid>0 && $schiff->typ!='s')) $betray=true;
-if($betray) echo 'netter Versuch... ( Fehler: 2 )'; else {
+$userId = requireLogin();
+if (($sid > 0 && ($schiff->besitzer->id !== $userId || $schiff->typ !== 's')) || $planet->besitzer->id !== $userId)
+    exit('Fehler: Zugriff verweigert.');
+{
 
 
 //CHEAT SCHUTZ ENDE

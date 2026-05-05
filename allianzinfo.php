@@ -11,7 +11,8 @@ $aid = $_GET['id'];
 
 // BETRY
 
-$betray = false;
+include_once 'auth.php';
+$userId = requireLogin();
 if (!ctype_digit($aid)) {
     exit('Fehler: ID not valid');
 }

@@ -18,18 +18,9 @@ $ich = new Account($_SESSION['Id']);
 
 $myAccount = new Account($selfid);
 
-// CHEATSCHUTZ ANFANG
-
-$betray = false;
-$testid = $_GET['sid'];
-if (!isset($testid)) {
-    $testid = $_GET['pid'];
-}
-if (!ctype_digit($_GET['pid']) || !ctype_digit($fid)) {
-    exit('Fehler: ID ung&uuml;ltig');
-}
-
-// CHEATSCHUTZ ENDE
+include_once 'auth.php';
+requireLogin();
+$pid = requireIntParam('pid');
 
 $planet = new Planeten($pid);
 

@@ -3,9 +3,10 @@
 include 'head.php';
 include 'navlogged.php';
 include 'klassen.php';
-
-$sid = $_GET['sid'];
-$tid = $_GET['tid'];
+include_once 'auth.php';
+$userId = requireLogin();
+$sid = requireIntParam('sid');
+$tid = requireIntParam('tid');
 
 $schiff = new Schiffe($sid);
 $target = new Planeten($tid);
@@ -15,26 +16,6 @@ $verbindung = get_verbindung();
 $oflaeche = $target->typ[1] == 'm' && strlen($target->typ) == 2 ? 24 : 50;
 
 $stunde = date('H');
-// CHEATSCHUTZ ANFANG
-
-$betray = false;
-if (!ctype_digit($_GET['sid'])) {
-    $betray = true;
-}
-if (!ctype_digit($_GET['tid'])) {
-    $betray = true;
-}
-if ($schiff->typ != 's') {
-    $betray = true;
-}
-if ($schiff->besitzer->id != $_SESSION['Id']) {
-    $betray = true;
-}
-if ($betray) {
-    echo 'Du bist nicht <a href="login.php">eingeloggt oder du versucht auf fremde Accounts zuzugreifen...';
-} else {
-    // CHEATSCHUTZ ENDE
-
     // QUESTABFRAGE
 
     $abfrage = mysqli_query($verbindung, "SELECT E.id FROM erfolge E,quests Q WHERE E.qid=Q.id AND Q.typ=9 AND E.erledigt=0 AND Q.zusatz='".$target->typ."'");

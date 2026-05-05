@@ -13,26 +13,12 @@ $pid = $_GET['pid'];
 if (ctype_digit($pid)) {
     $planet = new Planeten($pid);
 }
-// CHEATSCHUTZ ANFANG
-
-$testid = $_GET['sid'];
-if (!isset($testid)) {
-    $testid = $_GET['pid'];
-}
-if (!ctype_digit($testid)) {
-    exit('Fehler: GET Konflikt');
-}
-if (!isset($_SESSION['Id'])) {
-    exit('Fehler: Session abgelaufen');
-}
-if ($planet->typ != 'm' && $planet->typ != 'l' && $planet->typ != 'i' && $planet->typ != 'z' && $planet->typ != 'mm' && $planet->typ != 'lm' && $planet->typ != 'om') {
-    exit('Fehler: TYP ist unbekannt!');
-}
-if ($planet->besitzer->id != $_SESSION['Id']) {
-    exit;
-}
-
-// CHEATSCHUTZ ENDE
+include_once 'auth.php';
+requireLogin();
+$pid = requireIntParam('pid');
+$validTypes = ['m', 'l', 'i', 'z', 'mm', 'lm', 'om'];
+if (!in_array($planet->typ, $validTypes)) exit('Fehler: Unbekannter Planetentyp.');
+requireOwnership($planet->besitzer->id, 'Planet');
 
 $ich = new Account($_SESSION['Id']);
 $oflaeche = $planet->typ == 'm' || $planet->typ == 'l' || $planet->typ == 'i' || $planet->typ == 'z' ? 50 : 24;

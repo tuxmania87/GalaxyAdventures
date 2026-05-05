@@ -4,7 +4,6 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
-//CHEATSCHUTZ ANFANG
 $fromsplit = explode("-", $_GET["from"]);
 $tosplit = explode("-", $_GET["to"]);
 
@@ -15,7 +14,6 @@ if (!(($fromsplit[0] == 'P' || $fromsplit[0] == 'S') && ($tosplit[0] == 'P' || $
 if ($fromsplit[0] == 'P' && $tosplit[0] == 'P')
     die();
 
-//CHEATSCHUTZ ENDE
 
 $fromid = $fromsplit[1];
 $toid = $tosplit[1];

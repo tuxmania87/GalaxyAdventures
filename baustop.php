@@ -3,16 +3,10 @@
 include("head.php");
 include("navlogged.php");
 include("klassen.php");
-//CHEATSCHUTZ ANFANG
-
-
-$betray=false;
-$testid=$_GET["sid"];
-if(!isset($testid)) $testid=$_GET["pid"];
-if(!ctype_digit($_GET["pid"]) || !ctype_digit($_GET["fid"])) die("Fehler: ID ung&uuml;tig");
-
-
-//CHEATSCHUTZ ENDE
+include_once 'auth.php';
+requireLogin();
+$pid = requireIntParam('pid');
+$fid = requireIntParam('fid');
 
 $pid=$_GET["pid"];
 $fid=$_GET["fid"];

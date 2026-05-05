@@ -7,36 +7,22 @@ include_once 'connect.php';
 
 
 
-$betray = false;
-
-$sid = $_GET['sid'];
-$pid = $_GET['pid'];
-$fid = $_GET['fid'];
-
-if (isset($_GET['fid']) && !ctype_digit($fid)) {
-    $betray = true;
-}
-if (!ctype_digit($sid)) {
-    $betray = true;
-}
-if (!ctype_digit($pid)) {
-    $betray = true;
-}
-
-if (!$betray) {
+include_once 'auth.php';
+$userId = requireLogin();
+$sid = requireIntParam('sid');
+$pid = requireIntParam('pid');
+$fid = optionalIntParam('fid');
+{
     $schiff = new Schiffe($sid);
     $planet = new Planeten($pid);
 
     $glimes = $planet->typ == 'lm' || $planet->typ == 'om' || $planet->typ == 'mm' ? 24 : 50;
 
     if ($schiff->position->system->id != $planet->position->system->id || $schiff->position->x != $planet->position->x || $schiff->position->y != $planet->position->y || $schiff->position->orbit == 0 || $planet->skill->basis == 1 || $schiff->tarnung == 1 || $planet->schildstatus == 1) {
-        $betray = true;
     }
 }
 
-if ($betray) {
-    echo 'Es ist ein Fehler aufgetreten....';
-} else {
+{
     // ******************************
 
     function feuern(&$angreifer, &$verteidiger, $fid)

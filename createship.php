@@ -11,12 +11,8 @@ $verbindung = get_verbindung();
 $pid = $_GET['pid'];
 $fid = $_GET['fid'];
 $sid = $_GET['sid'];
-
-$betray = false;
-
 $builder = '';
 
-// CHEATSCHUTZ ANFANG
 if (!is_null($pid) && !is_null($fid)) {
     $builder = 'planet';
     // fid abfrage
@@ -25,23 +21,18 @@ if (!is_null($pid) && !is_null($fid)) {
     while ($test11 = mysqli_fetch_array($abfrage11)) {
         splitfeld($test11[$planet->xx], $a, $b, $c, $d, $e);
         if ($a != 4 || $e != 1 || $b != 0) {
-            $betray = true;
         }
     }
 
     if ($fid <= 0) {
-        $betray = true;
     }
     if (!ctype_digit($pid)) {
-        $betray = true;
     }
     if (!ctype_digit($fid)) {
-        $betray = true;
     }
     $tmp = mysqli_query($verbindung, "SELECT besitzer FROM planeten WHERE id='$pid'");
     while ($testtmp = mysqli_fetch_array($tmp)) {
         if ($_SESSION['Id'] != $testtmp['besitzer']) {
-            $betray = true;
         }
     }
 } elseif (!is_null($sid)) {
@@ -59,16 +50,11 @@ if (!is_null($pid) && !is_null($fid)) {
     ';
 
     if (mysqli_num_rows(mysqli_query($verbindung, sprintf($query, intval($_SESSION['Id'])))) == 0) {
-        $betray = true;
     }
 }
 
-if ($betray) {
-    echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...';
-} else {
-    // CHEATSCHUTZ ENDE
-
-    $slots = getSlot($_SESSION['Id']);
+{
+        $slots = getSlot($_SESSION['Id']);
 
     if ($slots >= 50) {
         echo 'Dein Schiffslimit ist leider ausgereizt. <br /><br />Du hast ', $slots, ' von 50 SLotpl&auml;tze verbraucht!<br />Frachter und Tanker verbrauchen 1 SLot, Oberth 1 SLot, Miranda 2 Slots, Constitution 3 SLots, Raumstationen 2 Slots!';

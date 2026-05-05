@@ -2,23 +2,13 @@
 include("head.php");
 include("navlogged.php");
 include_once("connect.php");
-
-//CHEATSCHUTZ ANFANG
-
-
-$betray=false;
-$testid=$_GET["sid"];
-if(!isset($testid)) $testid=$_GET["pid"];
-$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysqli_fetch_array($tmp))
-if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
-
-if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
-
-//CHEATSCHUTZ ENDE
-
-
-
+include_once 'auth.php';
+$userId = requireLogin();
+$sid = requireIntParam('sid');
+$tmp = mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$sid'");
+while ($testtmp = mysqli_fetch_array($tmp))
+    if ($userId != $testtmp['besitzer']) exit('Fehler: Du bist nicht der Besitzer.');
+{
 $besitzer = $_SESSION["Id"];
 $pid = $_GET["pid"];
 $modul = "orbit";

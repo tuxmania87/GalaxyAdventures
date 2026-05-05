@@ -7,13 +7,11 @@ include("klassen.php");
 $sid = $_GET["sid"];
 $tid = $_GET["tid"];
 
-$betray = false;
-if (!ctype_digit($sid))
-    $betray = true;
-if (!ctype_digit($tid))
-    $betray = true;
-
-if (!$betray) {
+include_once 'auth.php';
+$userId = requireLogin();
+$sid = requireIntParam('sid');
+$tid = requireIntParam('tid');
+{
     $schiff = new Schiffe($sid);
     $target = new Schiffe($tid);
 

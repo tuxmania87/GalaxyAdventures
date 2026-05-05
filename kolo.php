@@ -9,21 +9,16 @@ $schiff=new Schiffe($sid);
 
 $ich=new Account($_SESSION["Id"]);
 
-//CHEATSCHUTZ ANFANG
-if($ich->level<=3) die("Du kannst erst mit Level 4 Kolonisieren!");
-
-$betray=false;
-$testid=$_GET["sid"];
-if(!isset($testid)) $testid=$_GET["pid"];
-if(!ctype_digit($_GET["sid"])) $betray=true;
-if($schiff->typ!='s') $betray=true;
+include_once 'auth.php';
+requireLogin();
+if ($ich->level <= 3) exit('Du kannst erst mit Level 4 kolonisieren!');
+$sid = requireIntParam('sid');
+if ($schiff->typ != 's') exit('Fehler: Kein Kampfschiff.');
 $tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
 while($testtmp=mysqli_fetch_array($tmp))
-if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
+if ($userId != $testtmp['besitzer']) exit('Fehler: Nicht dein Schiff.');
+{
 
-if($betray) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
-
-//CHEATSCHUTZ ENDE
 
 //ALT
 

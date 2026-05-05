@@ -8,10 +8,7 @@ include 'conenct.php';
 $verbindung = get_verbindung();
 
 echo '<div style="min-width:700px;max-width:950px;">';
-// CHEATSCHUTZ ANFANG
 $self = new Account($_SESSION['Id']);
-
-$betray = false;
 $testid = $_GET['sid'];
 if (!isset($testid)) {
     $testid = $_GET['pid'];
@@ -28,7 +25,6 @@ while ($testtmp = mysqli_fetch_array($tmp)) {
 
 $ich = new Account($_SESSION['Id']);
 
-// CHEATSCHUTZ ENDE
 
 $seite = $_GET['seite'];
 if ($seite == '') {

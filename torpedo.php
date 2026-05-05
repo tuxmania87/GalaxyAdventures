@@ -4,26 +4,15 @@ include("head.php");
 include("navlogged.php");
 include_once("connect.php");
 
-//CHEATSCHUTZ ANFANG
-
-$pid = $_GET["pid"];
-$fid = $_GET["fid"];
-
-$betray = false;
-if (!ctype_digit($pid))
-    $betray = true;
-if (!ctype_digit($fid))
-    $betray = true;
+include_once 'auth.php';
+$pid = requireIntParam('pid');
+$fid = requireIntParam('fid');
 $tmp = mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$pid'");
 while ($testtmp = mysqli_fetch_array($tmp))
-    if ($_SESSION["Id"] != $testtmp["besitzer"])
-        $betray = true;
+    if (requireLogin() != $testtmp['besitzer'])
+        exit('Fehler: Nicht dein Schiff.');
+{
 
-if ($betray) {
-    echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...';
-} else {
-
-//CHEATSCHUTZ ENDE
     $aktPlanet = new schiff($pid);
 //FELDNUMMER 
     $feldnummer = "feld" . $fid;

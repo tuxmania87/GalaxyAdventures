@@ -50,10 +50,6 @@ function handle_response() {
 include("navlogged.php");
 include("klassen.php");
 echo '<div style="min-width:700px;max-width:950px;">';
-//CHEATSCHUTZ ANFANG
-
-
-$betray = false;
 if(!ctype_digit($_GET["cid"])) {
     die("Fehler: Channel ID fehlerhaft");
 }

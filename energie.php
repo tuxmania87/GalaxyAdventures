@@ -4,36 +4,6 @@ include 'head.php';
 include 'navlogged.php';
 include 'klassen.php';
 include_once 'connect.php';
-// CHEATSCHUTZ ANFANG
-
-// SESSION
-
-$verbindung = get_verbindung();
-
-$fromschiff = $_GET['fs'];
-$fromplanet = $_GET['fp'];
-$toschiff = $_GET['ts'];
-$toplanet = $_GET['tp'];
-
-if (isset($fromschiff) && isset($fromplanet)) {
-    exit('Fehler: Overflow!');
-}
-if (isset($toschiff) && isset($toplanet)) {
-    exit('Fehler: Overflow!');
-}
-
-$betray = false;
-$tmp = mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$fromid'");
-while ($testtmp = mysqli_fetch_array($tmp)) {
-    if ($_SESSION['Id'] != $testtmp['besitzer']) {
-        $betray = true;
-    }
-}
-
-if ($betray && $testid > 0) {
-    echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...';
-} else {
-    // CHEATSCHUTZ ENDE
 
     if (isset($fromschiff)) {
         $from = new Schiffe($fromschiff);

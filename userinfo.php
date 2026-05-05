@@ -9,7 +9,8 @@ $verbindung = get_verbindung();
 
 $id = $_GET['id'];
 // BETR
-$betray = false;
+include_once 'auth.php';
+$userId = requireLogin();
 if (!ctype_digit($id)) {
     exit('Fehler: ID-ung&uuml;tig!');
 }

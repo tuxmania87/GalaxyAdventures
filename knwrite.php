@@ -2,15 +2,10 @@
 include("head.php");
 include("navlogged.php");
 include("klassen.php");
-//CHEATSCHUTZ ANFANG
-
-
-$betray = false;
 if ($_SESSION["Id"] <= 0)
     die("Fehler: ID not valid");
 $ich = new Account($_SESSION["Id"]);
 
-//CHEATSCHUTZ ENDE
 
 $channel = $_GET["channel"];
 $pid = ctype_digit($_GET["pid"]) ? $_GET["pid"] : 0;

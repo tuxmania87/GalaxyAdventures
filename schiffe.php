@@ -10,20 +10,11 @@ $sid = $_GET["sid"];
 if (ctype_digit($sid)) {
     $schiff = new Schiffe($sid);
 }
-//CHEATSCHUTZ ANFANG
-
-if (!isset($_SESSION["Id"]))
-    die("Fehler: Session ist nicht vorhanden / Bitte neu einloggen!<br />"); else
-    $ich = new Account($_SESSION["Id"]);
-if (!ctype_digit($_GET["sid"]))
-    die("Fehler: ID ist ung&uuml;tig!<br />");
-if ($schiff->typ != 's')
-    die("Fehler: TYP ist ung&uuml;tig!<br />");
-if ($ich->id != $schiff->besitzer->id)
-    die("Fehler: Besitzer-ID ist ung&uuml;tig!<br />");
-
-
-//CHEATSCHUTZ ENDE
+include_once 'auth.php';
+$ich = getLoggedInAccount();
+$sid = requireIntParam('sid');
+if ($schiff->typ != 's') exit('Fehler: Ungültiger Schiffstyp.');
+requireOwnership($schiff->besitzer->id, 'Schiff');
 //CODE abhandlung
 //name andern do==-1
 

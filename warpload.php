@@ -6,21 +6,12 @@ include("klassen.php");
 
 $sid = $_GET["sid"];
 
-//BETRAY
-$betray = false;
-if (!ctype_digit($sid))
-    $betray = true;
-
-if ($betray)
-    echo 'No valid ID'; else {
-
-
+$userId = requireLogin();
+$sid = requireIntParam('sid');
+{
     $schiff = new Schiffe($sid);
-    if ($schiff->besitzer->id != $_SESSION["Id"])
-        $betray = true;
-
-    if ($betray)
-        echo 'Not your Ship'; else {
+    if ($schiff->besitzer->id !== $userId) exit('Fehler: Nicht dein Schiff.');
+{
 
         if ($_POST["sent"] == 1) {
             $rate = $_POST["wamount"];
