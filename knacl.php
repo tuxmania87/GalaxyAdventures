@@ -68,11 +68,11 @@ if($ch->founder->id != $ich->id) {
 }
 
 if(isset($_GET["rm"]) && ctype_digit($_GET["rm"])) {
-    mysqli_query($verbindung, "delete from channelabo where uid=".$_GET["rm"]." and cid=".$ch->id);
+    mysqli_query($verbindung, "delete from channelabo where uid=".intval($_GET["rm"])." and cid=".$ch->id);
 }
 
 if(isset($_POST["inviteid"]) && ctype_digit($_POST["inviteid"])) {
-    mysqli_query($verbindung, "insert into channelabo (cid,uid,status) values ('".$ch->id."','".$_POST["inviteid"]."','2')");
+    mysqli_query($verbindung, "insert into channelabo (cid,uid,status) values ('".$ch->id."','".intval($_POST["inviteid"])."','2')");
 }
 
 

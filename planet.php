@@ -63,8 +63,8 @@ $liste = Bauplan_Gebaude::getCompleteListe();
 
 // reverse map  Res -> Factory
 $map = [];
-for ($i = 0; $i < sizeof($liste); ++$i) {
-    for ($j = 0; $j < sizeof($liste[$i]->produziert->fracht); ++$j) {
+for ($i = 0; $i < count($liste); ++$i) {
+    for ($j = 0; $j < count($liste[$i]->produziert->fracht); ++$j) {
         if ($liste[$i]->produziert->fracht[$j]->anzahl > 0) {
             $map[$liste[$i]->produziert->fracht[$j]->id][] = $liste[$i]->id;
         }
@@ -74,14 +74,14 @@ for ($i = 0; $i < sizeof($liste); ++$i) {
 $t_fracht = [];
 $glob_energy = 0;
 // get energy producters
-for ($i = 1; $i < sizeof($planet->feld); ++$i) {
+for ($i = 1; $i < count($planet->feld); ++$i) {
     if (
         $planet->feld[$i]->bau->produziert->fracht[0]->anzahl > 0
         && $planet->feld[$i]->aktiv == 1 && $planet->feld[$i]->rest_bauzeit == 0
     ) {
         $create = true;
         $t_array = [];
-        for ($j = 0; $j < sizeof($planet->frachtraum->fracht); ++$j) {
+        for ($j = 0; $j < count($planet->frachtraum->fracht); ++$j) {
             if ($planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl > 0) {
                 if ($planet->frachtraum->fracht[$j]->anzahl < $planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl) {
                     $create = false;
@@ -105,7 +105,7 @@ for ($i = 1; $i < sizeof($planet->feld); ++$i) {
 
 // DEBUG echo "E: ".$glob_energy;
 
-$cp_array = array_fill(0, sizeof($planet->frachtraum->fracht) + 1, 0);
+$cp_array = array_fill(0, count($planet->frachtraum->fracht) + 1, 0);
 
 foreach ($t_fracht as $key => $value) {
     $cp_array[$key] = $value;
@@ -116,12 +116,12 @@ $dummy_fracht = implode('/', $cp_array);
 
 $addfracht = new Frachtraum($dummy_fracht, 'dummy');
 
-// while(sizeof($already_leaf < $prod_count)) {
+// while(count($already_leaf < $prod_count)) {
 // for ($ssd = 0; $ssd < 2; $ssd++) {
-for ($i = 0; $i < sizeof($liste); ++$i) {
+for ($i = 0; $i < count($liste); ++$i) {
     // is_productive?
     $produktiv = false;
-    for ($j = 1; $j < sizeof($liste[$i]->produziert->fracht); ++$j) {
+    for ($j = 1; $j < count($liste[$i]->produziert->fracht); ++$j) {
         if ($liste[$i]->produziert->fracht[$j]->anzahl > 0) {
             $produktiv = true;
         }
@@ -133,9 +133,9 @@ for ($i = 0; $i < sizeof($liste); ++$i) {
         $n->data = $liste[$i]->id;
         $n->next = new Menge();
 
-        for ($j = 1; $j < sizeof($liste[$i]->braucht->fracht); ++$j) {
+        for ($j = 1; $j < count($liste[$i]->braucht->fracht); ++$j) {
             if ($liste[$i]->braucht->fracht[$j]->anzahl > 0) {
-                for ($h = 0; $h < sizeof($map[$liste[$i]->braucht->fracht[$j]->id]); ++$h) {
+                for ($h = 0; $h < count($map[$liste[$i]->braucht->fracht[$j]->id]); ++$h) {
                     $n->next->add($map[$liste[$i]->braucht->fracht[$j]->id][$h]);
                 }
             }
@@ -147,10 +147,10 @@ for ($i = 0; $i < sizeof($liste); ++$i) {
 $leaf_nodes = [];
 $round_nodes = [0];
 
-while (sizeof($round_nodes) > 0) {
+while (count($round_nodes) > 0) {
     $round_nodes = [];
 
-    for ($i = 0; $i < sizeof($nodelist); ++$i) {
+    for ($i = 0; $i < count($nodelist); ++$i) {
         if ($nodelist[$i]->next->is_Empty() && !in_array($nodelist[$i]->data, $leaf_nodes)) {
             $round_nodes[] = $nodelist[$i]->data;
             // $leaf_nodes[] = $nodelist[$i]->data;
@@ -159,11 +159,11 @@ while (sizeof($round_nodes) > 0) {
 
     // TODO: round_nodes contains building ID that have to be handeled by
     // Iterating over planet field list in linear time times O(n)= n * log n
-    for ($i = 1; $i < sizeof($planet->feld); ++$i) {
+    for ($i = 1; $i < count($planet->feld); ++$i) {
         if (in_array($planet->feld[$i]->bau->id, $round_nodes) && $planet->feld[$i]->aktiv == 1 && $planet->feld[$i]->rest_bauzeit == 0) {
             // do we have all necessairy stuff?
             $stuff_control = true;
-            for ($j = 0; $j < sizeof($planet->frachtraum->fracht); ++$j) {
+            for ($j = 0; $j < count($planet->frachtraum->fracht); ++$j) {
                 if ($planet->frachtraum->fracht[$j]->anzahl < $planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl) {
                     $stuff_control = false;
                 }
@@ -174,7 +174,7 @@ while (sizeof($round_nodes) > 0) {
 
             if ($stuff_control) {
                 // yep we can build it
-                for ($j = 0; $j < sizeof($planet->frachtraum->fracht); ++$j) {
+                for ($j = 0; $j < count($planet->frachtraum->fracht); ++$j) {
                     $planet->frachtraum->fracht[$j]->anzahl += $planet->feld[$i]->bau->produziert->fracht[$j + 1]->anzahl;
                     $planet->frachtraum->fracht[$j]->anzahl -= $planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl;
                     $addfracht->fracht[$j + 1]->anzahl += $planet->feld[$i]->bau->produziert->fracht[$j + 1]->anzahl;
@@ -187,9 +187,9 @@ while (sizeof($round_nodes) > 0) {
     }
 
     // prepare for next round
-    for ($i = 0; $i < sizeof($nodelist); ++$i) {
+    for ($i = 0; $i < count($nodelist); ++$i) {
         if (!$nodelist[$i]->next->is_Empty()) {
-            for ($j = 0; $j < sizeof($round_nodes); ++$j) {
+            for ($j = 0; $j < count($round_nodes); ++$j) {
                 $nodelist[$i]->next->del($round_nodes[$j]);
             }
         }
@@ -197,7 +197,7 @@ while (sizeof($round_nodes) > 0) {
     $leaf_nodes = array_merge($leaf_nodes, $round_nodes);
 }
 
-/* TODEL for ($i = 0; $i < sizeof($nodelist); $i++) {
+/* TODEL for ($i = 0; $i < count($nodelist); $i++) {
   if ($nodelist[$i]->next->is_Empty() && !in_array($nodelist[$i]->data, $leaf_nodes)) {
   $leaf_nodes[] = $nodelist[$i]->data;
   echo "Blatt2: " . $nodelist[$i]->data . " <br />";
@@ -274,7 +274,7 @@ for ($i = 1; $i <= $oflaeche; ++$i) {
     $produktiv = false;
 
     if (!is_null($planet->feld[$i]->bau->produziert)) {
-        for ($k = 0; $k < sizeof($planet->feld[$i]->bau->produziert->fracht) && $planet->feld[$i]->bau->id != null; ++$k) {
+        for ($k = 0; $k < count($planet->feld[$i]->bau->produziert->fracht) && $planet->feld[$i]->bau->id != null; ++$k) {
             if ($planet->feld[$i]->bau->produziert->fracht[$k]->anzahl > 0) {
                 $produktiv = true;
                 break;
@@ -337,7 +337,7 @@ for ($i = 51; $i <= $limesorbit; ++$i) {
     $produktiv = false;
 
     if (!is_null($planet->feld[$i]->bau->produziert)) {
-        for ($k = 0; $k < sizeof($planet->feld[$i]->bau->produziert->fracht) && $planet->feld[$i]->bau->id != null; ++$k) {
+        for ($k = 0; $k < count($planet->feld[$i]->bau->produziert->fracht) && $planet->feld[$i]->bau->id != null; ++$k) {
             if ($planet->feld[$i]->bau->produziert->fracht[$k]->anzahl > 0) {
                 $produktiv = true;
                 break;
@@ -426,7 +426,7 @@ echo '<div><h4>Lagerraum</h4><br /><table class="invitetable" style="text-align:
 echo '<tr><th>Lagerraum</th><th style="text-align:center;" colspan="3">'.$planet->frachtraum->gesamt().'/'.$planet->frachtraum->max.' Frei: '.($planet->frachtraum->max - $planet->frachtraum->gesamt());
 echo '</th><th>+/-</th></tr>';
 // lager anzeige
-for ($i = 0; $i < sizeof($planet->frachtraum->fracht); ++$i) {
+for ($i = 0; $i < count($planet->frachtraum->fracht); ++$i) {
     $balken = '';
     $tausend = floor($planet->frachtraum->fracht[$i]->anzahl / 1000);
     $hundert = floor(($planet->frachtraum->fracht[$i]->anzahl - $tausend * 1000) / 100);

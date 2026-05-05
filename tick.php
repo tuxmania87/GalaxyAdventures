@@ -30,7 +30,7 @@ $abfrage = mysqli_query($verindung,"SELECT * FROM schiffe s, bauplan b WHERE s.k
 while ($energie = mysqli_fetch_array($abfrage))
     $outarray[] = $energie["id"];
 
-for ($g = 0; $g < sizeof($outarray); $g++) {
+for ($g = 0; $g < count($outarray); $g++) {
     $eschiff = new Schiffe($outarray[$g]);
     echo $eschiff->id." <br />";
     $eamount = $eschiff->energieoutput;
@@ -61,8 +61,8 @@ $liste = Bauplan_Gebaude::getCompleteListe();
 
 //reverse map  Res -> Factory
 $map = array();
-for ($i = 0; $i < sizeof($liste); $i++) {
-    for ($j = 0; $j < sizeof($liste[$i]->produziert->fracht); $j++) {
+for ($i = 0; $i < count($liste); $i++) {
+    for ($j = 0; $j < count($liste[$i]->produziert->fracht); $j++) {
         if ($liste[$i]->produziert->fracht[$j]->anzahl > 0) {
             $map[$liste[$i]->produziert->fracht[$j]->id][] = $liste[$i]->id;
         }
@@ -71,14 +71,14 @@ for ($i = 0; $i < sizeof($liste); $i++) {
 
 
 
-//while(sizeof($already_leaf < $prod_count)) {
+//while(count($already_leaf < $prod_count)) {
 //for ($ssd = 0; $ssd < 2; $ssd++) {
-for ($i = 0; $i < sizeof($liste); $i++) {
+for ($i = 0; $i < count($liste); $i++) {
 
 
     //is_productive?
     $produktiv = false;
-    for ($j = 1; $j < sizeof($liste[$i]->produziert->fracht); $j++) {
+    for ($j = 1; $j < count($liste[$i]->produziert->fracht); $j++) {
         if ($liste[$i]->produziert->fracht[$j]->anzahl > 0) {
             $produktiv = true;
         }
@@ -90,10 +90,10 @@ for ($i = 0; $i < sizeof($liste); $i++) {
         $n->data = $liste[$i]->id;
         $n->next = new Menge();
 
-        for ($j = 1; $j < sizeof($liste[$i]->braucht->fracht); $j++) {
+        for ($j = 1; $j < count($liste[$i]->braucht->fracht); $j++) {
             if ($liste[$i]->braucht->fracht[$j]->anzahl > 0) {
 
-                for ($h = 0; $h < sizeof($map[$liste[$i]->braucht->fracht[$j]->id]); $h++) {
+                for ($h = 0; $h < count($map[$liste[$i]->braucht->fracht[$j]->id]); $h++) {
                     $n->next->add($map[$liste[$i]->braucht->fracht[$j]->id][$h]);
                 }
             }
@@ -106,11 +106,11 @@ $leaf_nodes = array();
 $round_nodes = array(0);
 $runden = array();
 
-while (sizeof($round_nodes) > 0) {
+while (count($round_nodes) > 0) {
 
     $round_nodes = array();
 
-    for ($i = 0; $i < sizeof($nodelist); $i++) {
+    for ($i = 0; $i < count($nodelist); $i++) {
         if ($nodelist[$i]->next->is_Empty() && !in_array($nodelist[$i]->data, $leaf_nodes)) {
             $round_nodes[] = $nodelist[$i]->data;
             //$leaf_nodes[] = $nodelist[$i]->data;
@@ -120,9 +120,9 @@ while (sizeof($round_nodes) > 0) {
     $runden[] = $round_nodes;
 
     //prepare for next round
-    for ($i = 0; $i < sizeof($nodelist); $i++) {
+    for ($i = 0; $i < count($nodelist); $i++) {
         if (!$nodelist[$i]->next->is_Empty()) {
-            for ($j = 0; $j < sizeof($round_nodes); $j++) {
+            for ($j = 0; $j < count($round_nodes); $j++) {
                 $nodelist[$i]->next->del($round_nodes[$j]);
             }
         }
@@ -143,13 +143,13 @@ while ($r = mysqli_fetch_array($q)) {
     $t_fracht = array();
     $glob_energy = 0;
 //get energy producters
-    for ($i = 1; $i < sizeof($planet->feld); $i++) {
+    for ($i = 1; $i < count($planet->feld); $i++) {
         if ($planet->feld[$i]->bau->produziert->fracht[0]->anzahl > 0 &&
                 $planet->feld[$i]->aktiv == 1 && $planet->feld[$i]->rest_bauzeit == 0) {
             $create = true;
             $t_array = array();
             //echo " <br />" . $planet->feld[$i]->bau->name;
-            for ($j = 0; $j < sizeof($planet->frachtraum->fracht); $j++) {
+            for ($j = 0; $j < count($planet->frachtraum->fracht); $j++) {
                 if ($planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl > 0) {
                     //echo $planet->feld[$i]->bau->braucht->fracht[$j + 1]->name;
                     if ($planet->frachtraum->fracht[$j]->anzahl < $planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl) {
@@ -175,7 +175,7 @@ while ($r = mysqli_fetch_array($q)) {
 
 //DEBUG echo "E: ".$glob_energy;
 
-    $cp_array = array_fill(0, sizeof($planet->frachtraum->fracht) + 1, 0);
+    $cp_array = array_fill(0, count($planet->frachtraum->fracht) + 1, 0);
 
     foreach ($t_fracht as $key => $value) {
         $cp_array[$key] = $value;
@@ -194,13 +194,13 @@ while ($r = mysqli_fetch_array($q)) {
 
     //TODO: round_nodes contains building ID that have to be handeled by
     // Iterating over planet field list in linear time times O(n)= n * log n
-    for ($k = 0; $k < sizeof($runden); $k++) {
-        for ($i = 1; $i < sizeof($planet->feld); $i++) {
+    for ($k = 0; $k < count($runden); $k++) {
+        for ($i = 1; $i < count($planet->feld); $i++) {
             if (in_array($planet->feld[$i]->bau->id, $runden[$k]) && $planet->feld[$i]->aktiv == 1 && $planet->feld[$i]->rest_bauzeit == 0) {
                 echo $planet->id . " -- " . $planet->feld[$i]->name . "\n";
                 //do we have all necessairy stuff?
                 $stuff_control = true;
-                for ($j = 0; $j < sizeof($planet->frachtraum->fracht); $j++) {
+                for ($j = 0; $j < count($planet->frachtraum->fracht); $j++) {
                     if ($planet->frachtraum->fracht[$j]->anzahl < $planet->feld[$i]->bau->braucht->fracht[$j + 1]->anzahl) {
                         $stuff_control = false;
                     }
@@ -211,7 +211,7 @@ while ($r = mysqli_fetch_array($q)) {
 
                 if ($stuff_control) {
                     //yep we can build it
-                    for ($j = 0; $j < sizeof($planet->frachtraum->fracht); $j++) {
+                    for ($j = 0; $j < count($planet->frachtraum->fracht); $j++) {
                         echo "we handle " . $planet->feld[$i]->bau->name . " in k=" . $k . " i=" . $i . " j=" . $j . "\n";
                         echo $planet->feld[$i]->bau->produziert->fracht[$j + 1]->name . " -- " . $planet->feld[$i]->bau->produziert->fracht[$j + 1]->anzahl . "\n";
                         $planet->frachtraum->fracht[$j]->anzahl += $planet->feld[$i]->bau->produziert->fracht[$j + 1]->anzahl;
@@ -236,7 +236,7 @@ while ($r = mysqli_fetch_array($q)) {
 
 //upgrade von gebäuden    
 //nach diesem Block wird das Panetenobjekt abgebaut
-    for($i=1;$i< sizeof($planet->feld);$i++) {
+    for($i=1;$i< count($planet->feld);$i++) {
         if($planet->feld[$i]->rest_bauzeit > 0) {
             $planet->feld[$i]->rest_bauzeit--;
             if($planet->feld[$i]->rest_bauzeit == 0) {

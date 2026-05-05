@@ -1,12 +1,13 @@
 <?php
 // Test auf Tick
 include_once 'connect.php';
+if (file_exists('config.php')) include_once 'config.php';
 $verbindung = get_verbindung();
 
 $tm = mysqli_query($verbindung, 'SELECT * FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)') or exit($verbindung->error);
 while ($tm2 = mysqli_fetch_array($tm)) {
     if ($tm2['status'] == 1) {
-        header('Location: http://www.keinerspieltmitmir.de/devga/maintick.php');
+        header('Location: ' . (defined('GA_TICK_URL') ? GA_TICK_URL : 'maintick.php'));
         exit;
     }
 }
@@ -14,24 +15,24 @@ while ($tm2 = mysqli_fetch_array($tm)) {
 // endetest
 session_start();
 $beta = 0;
-$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".$_SESSION['Id']."'");
+$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".intval(\$_SESSION['Id'])."'");
 $tm = mysqli_fetch_array($tm);
 $beta = $tm[0];
 
 $tm = mysqli_query($verbindung, 'SELECT * FROM `gamestatus` WHERE id=(SELECT max(id) FROM `gamestatus`)') or exit($verbindung->error);
 while ($tm2 = mysqli_fetch_array($tm)) {
     if ($tm2['status'] == 'offline' && $beta == 0) {
-        // header ("Location: http://www.keinerspieltmitmir.de/devga/wartung.php");
+        // header('Location: ' . (defined('GA_BASE_URL') ? GA_BASE_URL : '') . '/wartung.php');
         // exit;
     }
 }
 
-$ich_temp = mysqli_query($verbindung, "SELECT level FROM account WHERE id='".$_SESSION['Id']."'");
+$ich_temp = mysqli_query($verbindung, "SELECT level FROM account WHERE id='".intval(\$_SESSION['Id'])."'");
 $ich_temp = mysqli_fetch_array($ich_temp);
 $ich_temp = $ich_temp[0];
 
 if ($ich_temp >= 4) {
-    $tm = mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".$_SESSION['Id']."'") or exit($verbindung->error);
+    $tm = mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".intval(\$_SESSION['Id'])."'") or exit($verbindung->error);
     while ($tm2 = mysqli_fetch_array($tm)) {
         header('Location: move.php');
         exit;

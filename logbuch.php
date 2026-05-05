@@ -42,7 +42,7 @@ echo '<br /><br />';
 if($modus==1) {
 
 echo '<table class="bordered"><tr><td><a href="logbuch.php?modus=',$modus,'&order=',$ordervar=='1D'?'1A':'1D','">Verursacher</a></td><td>Wo</td><td><a href="logbuch.php?modus=',$modus,'&order=',$ordervar=='3D'?'3A':'3D','">Typ</a></td><td><a href="logbuch.php?modus=',$modus,'&order=',$ordervar=='4D'?'4A':'4D','">Tatzeit</a></td><td>Abhandlung</td></tr>';
-$abfrage=mysqli_query($verbindung,"SELECT * FROM logbuch WHERE klasse='Eingang' AND initiator != '".$_SESSION["Id"]."' AND betroffener='$me' ORDER BY $ordervar1");
+$abfrage=mysqli_query($verbindung,"SELECT * FROM logbuch WHERE klasse='Eingang' AND initiator != '".intval(\$_SESSION["Id"])."' AND betroffener='$me' ORDER BY $ordervar1");
 while($log=mysqli_fetch_array($abfrage)) {
 $zaehler++;
 if($zaehler>=1+($seite-1)*25 && $zaehler<=$seite*25) {
@@ -61,7 +61,7 @@ echo '</table>';
 
 if($modus==2) {
 echo '<table class="bordered"><tr><td><a href="logbuch.php?modus=',$modus,'&order=',$ordervar=='1D'?'1A':'1D','">Betroffener</a></td><td>Wo</td><td><a href="logbuch.php?modus=',$modus,'&order=',$ordervar=='3D'?'3A':'3D','">Typ</a></td><td><a href="logbuch.php?modus=',$modus,'&order=',$ordervar=='4D'?'4A':'4D','">Tatzeit</a></td><td>Abhandlung</td></tr>';
-$abfrage=mysqli_query($verbindung,"SELECT * FROM logbuch WHERE klasse='Ausgang' AND betroffener != '".$_SESSION["Id"]."' AND initiator='$me' ORDER BY $ordervar1");
+$abfrage=mysqli_query($verbindung,"SELECT * FROM logbuch WHERE klasse='Ausgang' AND betroffener != '".intval(\$_SESSION["Id"])."' AND initiator='$me' ORDER BY $ordervar1");
 while($log=mysqli_fetch_array($abfrage)) {
 $zaehler++;
 if($zaehler>=1+($seite-1)*25 && $zaehler<=$seite*25) {

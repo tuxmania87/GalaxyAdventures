@@ -36,8 +36,9 @@ if ($_POST["sent"] == 1 && $_POST["einverstanden"] == 'on') {
     if ($existName == 0) {
         $accpasswort = getpass();
         echo 'Erfolgreich registriert, Passwort wird zugesendet';
-        $message = "Du wurdest erfolgreich registriert!\n\n Dein Name lautet: $accname \n Dein Passwort lautet: $accpasswort .\n\n Link zum einloggen: http://www.galaxy-adventures.net/ \n\n sollte es Probleme geben wende dich an: den Administrator \n Das GA - Team";
-        mail($accemail, "Willkommen beim Browser Game - Galaxy Adventures!", $message, "From: GA-Registrierung <noreply@galaxy-adventures.net>");
+        $message = "Du wurdest erfolgreich registriert!\n\n Dein Name lautet: $accname \n Dein Passwort lautet: $accpasswort .\n\n Link zum einloggen: " . (defined('GA_BASE_URL') ? GA_BASE_URL : '.') . "/
+ \n\n sollte es Probleme geben wende dich an: den Administrator \n Das GA - Team";
+        mail($accemail, "Willkommen beim Browser Game - Galaxy Adventures!", $message, "From: GA-Registrierung <" . (defined('GA_MAIL_FROM') ? GA_MAIL_FROM : 'noreply@example.com') . ">");
         echo '<a href="login.php">zum login</a>';
         $pass = $accpasswort;
         $accpasswort = md5($accpasswort);
@@ -62,7 +63,7 @@ if ($_POST["sent"] == 1 && $_POST["einverstanden"] == 'on') {
                     <tr><td>Name:</td><td><input type="text" name="name"></td></tr>
                     <tr><td>email-Adresse:</td><td><input type="text" name="email"</td></tr>
                 </table>
-                Der Account wird nicht nur f&uuml;r das Spiel erstellt. Gleichzeitig wird ein Account im <a href="http://forum.galaxy-adventures.net/"><b><font color="yellow"> >Forum< </font></b></a> eingerichtet und ein Account im <a href="http://bugs.galaxy-adventures.net"><b><font color="yellow"> >Bugtracker< </font></b></a> indem ihr Bugs melden k&ouml;nnt.<br /><br />
+                Der Account wird nicht nur f&uuml;r das Spiel erstellt. Gleichzeitig wird ein Account im <a href="#"><b><font color="yellow"> >Forum< </font></b></a> eingerichtet und ein Account im <a href="#"><b><font color="yellow"> >Bugtracker< </font></b></a> indem ihr Bugs melden k&ouml;nnt.<br /><br />
                 Hebt desshalb eure Accountinformationen gut auf. Wenn man sein Passwort im Spiel &auml;ndert, &auml;ndert es sich <b>NICHT</b> gleichzeitig im Forum oder Bugtracker.<br /><br />
                 Im folgenden die AGB's des Spiels:<br />
                 <input type="hidden" name="sent" value="1">
@@ -86,7 +87,7 @@ DIE AGB's / Regeln
 
 &sect;8   Jedes Mitglied darf nur einen Account besitzen. Mehrfach-Accounts ("Multis") werden gesperrt oder respektlos gel&ouml;scht.
 
-&sect;9   Spieler, die sich eine Internetverbindung teilen oder gr&ouml;&szlig;tenteils am selben Computer GA spielen (aus div. Gr&uuml;nden), sollen sich bitte beim Admin melden, Multi@keinerspieltmitmir.de. Jene Angaben sind freiwillig, vors&auml;tzlich gemachte Falschangaben k&ouml;nnen jedoch zur L&ouml;schung des Accounts f&uuml;hren. Die Daten werden nicht an Dritte weitergegeben.
+&sect;9   Spieler, die sich eine Internetverbindung teilen oder gr&ouml;&szlig;tenteils am selben Computer GA spielen (aus div. Gr&uuml;nden), sollen sich bitte beim Admin melden, " . (defined('GA_ADMIN_EMAIL') ? GA_ADMIN_EMAIL : 'admin@example.com') . ". Jene Angaben sind freiwillig, vors&auml;tzlich gemachte Falschangaben k&ouml;nnen jedoch zur L&ouml;schung des Accounts f&uuml;hren. Die Daten werden nicht an Dritte weitergegeben.
 
 &sect;10  Auf alle spielinternen Verluste, die durch serverseitige Fehler entstanden sind, besteht <u>kein</u> Anrecht auf Wiedergutschrift. Derartige Fehler d&uuml;rfen nicht missbraucht werden und sind unverz&uuml;glich per E-Mail oder im Forum zu melden.
 

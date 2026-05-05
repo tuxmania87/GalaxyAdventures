@@ -20,8 +20,8 @@ echo '<a href="editsystem.php?pinsel=',$_GET["pinsel"],'&system=',$_GET["system"
 //Berechnungen
 if(ctype_digit($_GET["dx"]) && $_GET["dx"]>-25 && ctype_digit($_GET["dy"]) && $_GET["dy"]>-25)
 	{		//loeschen
-	mysqli_query($verbindung, "DELETE FROM planeten WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='".$system->id."'");
-	mysqli_query($verbindung, "DELETE FROM weltraum WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='".$system->id."'");
+	mysqli_query($verbindung, "DELETE FROM planeten WHERE x='".intval($_GET["dx"])."' AND y='".intval($_GET["dy"])."' AND system='".$system->id."'");
+	mysqli_query($verbindung, "DELETE FROM weltraum WHERE x='".intval($_GET["dx"])."' AND y='".intval($_GET["dy"])."' AND system='".$system->id."'");
 	}
 
 
@@ -33,59 +33,59 @@ if(ctype_digit($_GET["sx"]) && $_GET["sx"]>-25 && ctype_digit($_GET["sy"]) && $_
 	if($klasse=='P' || $klasse=='W') 
 	{
 	switch ($typ) {
-		case "m": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','".$_GET["system"]."','2','20','20','300','0','0','m','noname','1','planet.jpg')") or die(mysqli_error($verbindung));
+		case "m": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','".intval($_GET["system"])."','2','20','20','300','0','0','m','noname','1','planet.jpg')") or die(mysqli_error($verbindung));
 				mysqli_query($verbindung, "INSERT INTO `planet2` (`feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES('0-0-i', '0-0-i', '0-0-i', '0-0-g', '0-0-g', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-d', '0-0-f', '0-0-g', '0-0-f', '0-0-m', '0-0-f', '0-0-m', '0-0-g', '0-0-f', '0-0-f', '0-0-d', '0-0-f', '0-0-d', '0-0-m', '0-0-m', '0-0-g', '0-0-g', '0-0-w', '0-0-g', '0-0-d', '0-0-g', '0-0-w', '0-0-g', '0-0-g', '0-0-f', '0-0-d', '0-0-w', '0-0-f', '0-0-g', '0-0-g', '0-0-i', '0-0-i', '0-0-g', '0-0-f', '0-0-g', '0-0-g', '0-0-i', '0-0-g', '0-0-g', '0-0-i')");
 				break;
-		case "l": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','".$_GET["system"]."','2','20','20','300','0','0','l','noname','1','lava.jpg')") or die(mysqli_error($verbindung));
+		case "l": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','".intval($_GET["system"])."','2','20','20','300','0','0','l','noname','1','lava.jpg')") or die(mysqli_error($verbindung));
 				mysqli_query($verbindung, "INSERT INTO `planet2` ( `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES( '0-0-l', '0-0-l', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-l', '0-0-l', '0-0-s', '0-0-l', '0-0-l', '0-0-v', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-s', '0-0-v', '0-0-s', '0-0-l', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-s', '0-0-l', '0-0-v', '0-0-s', '0-0-l', '0-0-l', '0-0-s', '0-0-v', '0-0-l', '0-0-v', '0-0-v', '0-0-l', '0-0-s', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-l', '0-0-l')");
 				break;
-		case "i": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','".$_GET["system"]."','2','20','20','300','0','0','i','noname','1','eisplanet.jpg')") or die(mysqli_error($verbindung));
+		case "i": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','".intval($_GET["system"])."','2','20','20','300','0','0','i','noname','1','eisplanet.jpg')") or die(mysqli_error($verbindung));
 				mysqli_query($verbindung, "INSERT INTO `planet2` (`feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES ( '0-0-i-60-1', '0-0-is-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-fl-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-is-60-1', '0-0-i-60-1', '0-0-im-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-im-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-fl-60-1', '0-0-fl-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-im-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-im-60-1', '0-0-i-60-1', '0-0-fl-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-is-60-1', '0-0-fl-60-1', '0-0-i-60-1', '0-0-fl-60-1', '0-0-i-60-1', '0-0-i-60-1', '0-0-is-60-1', '0-0-i-60-1')");
 				break;
-		case "z": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','".$_GET["system"]."','2','20','20','300','0','0','z','noname','1','wuste.jpg')") or die(mysqli_error($verbindung));
+		case "z": mysqli_query($verbindung, "INSERT INTO planeten (x,y,system,besitzer,energie,maxenergie,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','".intval($_GET["system"])."','2','20','20','300','0','0','z','noname','1','wuste.jpg')") or die(mysqli_error($verbindung));
 				mysqli_query($verbindung, "INSERT INTO `planet2` ( `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES ('0-0-d', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-dm', '0-0-dm', '0-0-d', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-d', '0-0-dm', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-dm', '0-0-d', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-d', '0-0-dm', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-d', '0-0-d', '0-0-d')");
 				break;
-		case "d": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','d','".$system->id."')"); break;
-		case "dk": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','dk','".$system->id."')"); break;
-		case "e": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','e','".$system->id."')"); break;
-		case "ek": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','ek','".$system->id."')"); break;
-		case "x": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','x','".$system->id."')"); break;
-		case "metrion": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','metrion','".$system->id."')"); break;
-		case "radio": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','radio','".$system->id."')"); break;
-		case "b": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b','".$system->id."')"); break;
-		case "g": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','g','".$system->id."')"); break;
-		case "p": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','p','".$system->id."')"); break;
-		case "blau": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','blau','".$system->id."')"); break;
-		case "b1": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b1','".$system->id."')"); break;
-		case "b2": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b2','".$system->id."')"); break;
-		case "b3": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b3','".$system->id."')"); break;
-		case "b4": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b4','".$system->id."')"); break;
-		case "gelb": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','gelb','".$system->id."')"); break;
-		case "orange": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','orange','".$system->id."')"); break;
-		case "rot": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','rot','".$system->id."')"); break;
-		case "r1": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','r1','".$system->id."')"); break;
-		case "r2": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','r2','".$system->id."')"); break;
-		case "r3": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','r3','".$system->id."')"); break;
-		case "r4": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','r4','".$system->id."')"); break;
-		case "weiss": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','weiss','".$system->id."')"); break;
-		case "bs": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','bs','".$system->id."')"); break;
-		case "rs": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','rs','".$system->id."')"); break;
-		case "lm": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','lm','".$system->id."')"); 
+		case "d": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','d','".$system->id."')"); break;
+		case "dk": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','dk','".$system->id."')"); break;
+		case "e": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','e','".$system->id."')"); break;
+		case "ek": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','ek','".$system->id."')"); break;
+		case "x": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','x','".$system->id."')"); break;
+		case "metrion": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','metrion','".$system->id."')"); break;
+		case "radio": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','radio','".$system->id."')"); break;
+		case "b": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','b','".$system->id."')"); break;
+		case "g": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','g','".$system->id."')"); break;
+		case "p": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','p','".$system->id."')"); break;
+		case "blau": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','blau','".$system->id."')"); break;
+		case "b1": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','b1','".$system->id."')"); break;
+		case "b2": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','b2','".$system->id."')"); break;
+		case "b3": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','b3','".$system->id."')"); break;
+		case "b4": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','b4','".$system->id."')"); break;
+		case "gelb": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','gelb','".$system->id."')"); break;
+		case "orange": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','orange','".$system->id."')"); break;
+		case "rot": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','rot','".$system->id."')"); break;
+		case "r1": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','r1','".$system->id."')"); break;
+		case "r2": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','r2','".$system->id."')"); break;
+		case "r3": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','r3','".$system->id."')"); break;
+		case "r4": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','r4','".$system->id."')"); break;
+		case "weiss": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','weiss','".$system->id."')"); break;
+		case "bs": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','bs','".$system->id."')"); break;
+		case "rs": mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','rs','".$system->id."')"); break;
+		case "lm": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','lm','".$system->id."')"); 
 				 mysqli_query($verbindung, "INSERT INTO planet2 () VALUES ()");
 				 break;
-		case "mm": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','mm','".$system->id."')"); 
+		case "mm": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','mm','".$system->id."')"); 
 				 mysqli_query($verbindung, "INSERT INTO planet2 () VALUES ()");
 				 break;
-		case "om": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','om','".$system->id."')"); 
+		case "om": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','om','".$system->id."')"); 
 				mysqli_query($verbindung, "INSERT INTO planet2 () VALUES ()");
 				break;
-		case "gasi": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','gasi','".$system->id."')"); 
+		case "gasi": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','gasi','".$system->id."')"); 
 				mysqli_query($verbindung, "INSERT INTO planet2 () VALUES ()");
 				break;
-		case "gasj": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','gasj','".$system->id."')"); 
+		case "gasj": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','gasj','".$system->id."')"); 
 				mysqli_query($verbindung, "INSERT INTO planet2 () VALUES ()");
 				break;
-		case "gass": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','gass','".$system->id."')"); 
+		case "gass": mysqli_query($verbindung, "INSERT INTO planeten (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','gass','".$system->id."')"); 
 				mysqli_query($verbindung, "INSERT INTO planet2 () VALUES ()");
 				break;
 		default: echo 'not yet implemented!'; break;

@@ -45,8 +45,8 @@ $planetc=$planetc[0];
 $mondc=$mondc[0];
 
 //Mondbegrenzung
-$mond1 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=38 AND E.uid='".$_SESSION["Id"]."'")) >= 1 ? true: false ;
-$mond2 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=40 AND E.uid='".$_SESSION["Id"]."'")) >= 1 ? true: false ;
+$mond1 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=38 AND E.uid='".intval(\$_SESSION["Id"])."'")) >= 1 ? true: false ;
+$mond2 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=40 AND E.uid='".intval(\$_SESSION["Id"])."'")) >= 1 ? true: false ;
 
 $grenzemond = $mond1?1:0 + $mond2?1:0;
 
@@ -77,10 +77,10 @@ $basisfeld=array("4","5","13","18","26","27","29","31","33","34","39","40","43",
 $basisfeld2=array("1","2","3","4","8","9","10","12","15","21","23","24","26","28","33","34","35","37","38","40","41","42","43","45","46","47","48","49","50");
 $basisfeld3=array("3","4","10","14","15","18","22","24","26","27","31","34","37","43","44","45");
 $basisfeld4=array("1","3","4","6","7","8","9","10","11","12","13","14","16","18","19","20","21","22","23","25","26","27","30","31","33","34","36","38","39","40","41","42","45","47","48","50");
-$rand_wert=rand(0,sizeof($basisfeld));
-$rand_wert2=rand(0,sizeof($basisfeld2));
-$rand_wert3=rand(0,sizeof($basisfeld3));
-$rand_wert4=rand(0,sizeof($basisfeld4));
+$rand_wert=rand(0,count($basisfeld));
+$rand_wert2=rand(0,count($basisfeld2));
+$rand_wert3=rand(0,count($basisfeld3));
+$rand_wert4=rand(0,count($basisfeld4));
 if(isset($pid)) {
 $plan=new Planeten($pid);
 

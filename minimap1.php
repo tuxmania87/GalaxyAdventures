@@ -11,7 +11,7 @@ include_once("connect.php");
 
 echo '<table border="0" cellspacing="0" cellpadding="0" height="15px" width="15px" style="border-spacing:0pt;">';
 $systeme=array("bblaublau","bblaugelb","bblauorange","bblaurot","bblauschwarz","bblauweiss","blau","blaubig","blaublau","brotblau","brotgelb","brotorange","brotrot","brotschwarz","brotweiss","gelb","gelbblau","gelbgelb","gelbweiss","orange","orangegelb","orangeorange","orangeweiss","rot","rotbig","rotblau","rotgelb","rotorange","rotrot","rotweiss","weiss","weissblau");
-for($i=0;$i<sizeof($systeme);$i++)
+for($i=0;$i<count($systeme);$i++)
 	$systeme[$i]=$systeme[$i].".jpg";
 $code=array(0=>"A",
 		    1=>"B",

@@ -40,7 +40,7 @@ if ($betray) {
         $k = new Bauplan_Schiffe($oid);
 
         for ($i = 0; $i < $an; ++$i) {
-            mysqli_query($verbindung, "insert into schiffe (besitzer,x,y,system,klasse,typ,hull,warpkern,name) values ('".$_SESSION['Id']."','".$ox."','".$oy."','".$osys."','".$k->klasse."','s','".$k->maxhull."','".$k->maxwarpkern."','noname')") or exit($verbindung->error);
+            mysqli_query($verbindung, "insert into schiffe (besitzer,x,y,system,klasse,typ,hull,warpkern,name) values ('".intval(\$_SESSION['Id'])."','".$ox."','".$oy."','".$osys."','".$k->klasse."','s','".$k->maxhull."','".$k->maxwarpkern."','noname')") or exit($verbindung->error);
         }
     }
 
@@ -54,7 +54,7 @@ if ($betray) {
     $l = Bauplan_Schiffe::getList();
     echo '<table class="invitetable" style="text-align:center;">';
     echo '<tr><th>ID</th><th>Name</th><th>Bild</th><th>Hülle</th><th>Schilde</th><th>Phaser</th><th>Gondeln</th><th>Lager</th><th>EPS</th><th>Reaktor</th><th>Warpkern</th><th>Flugkosten</th><th>LRS</th><th>baubar von Spielern</th></tr>';
-    for ($i = 0; $i < sizeof($l); ++$i) {
+    for ($i = 0; $i < count($l); ++$i) {
         echo '<tr><td><input type="radio" name="porderid" value="'.$l[$i]->id.'" /></td><td>'.$l[$i]->klasse.'</td><td><img src="'.$l[$i]->bild.'" border="0" /></td><td>'.$l[$i]->maxhull.'</td><td>'.$l[$i]->maxschilde.'</td><td>'.$l[$i]->laser.' ('.$l[$i]->maxphaser.')</td><td>'.$l[$i]->maxgondeln.'</td><td>'.$l[$i]->lager.'</td><td>'.$l[$i]->maxenergie.'</td><td>'.$l[$i]->energieoutput.'</td>';
         echo '<td>'.$l[$i]->maxwarpkern.'</td><td>'.$l[$i]->flugkosten.'</td><td>'.$l[$i]->lrs.'</td><td>'.bool2string($l[$i]->siedler).'</td></tr>';
     }

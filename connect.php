@@ -95,7 +95,7 @@ function bubblesort($feld)
     $getauscht = false;
     while ($getauscht) {
         $getauscht = false;
-        for ($i = 0; $i < sizeof($feld) - 1; ++$i) {
+        for ($i = 0; $i < count($feld) - 1; ++$i) {
             if ($feld[$i] > $feld[$i + 1]) {
                 $h = $feld[$i];
                 $feld[$i] = $feld[$i + 1];

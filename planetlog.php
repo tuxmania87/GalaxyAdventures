@@ -11,14 +11,14 @@ $schiff=new schiff($row["id"]);
 
 //echo 'TESTECHO: ',$schiff->$inhalt[$i],' !!! ',$inhalt[$i],'<br />';
 
-for($i=0;$i<sizeof($inhalt);$i++) {
-if($i!=sizeof($inhalt)-1) $valuestring.='\''.$schiff->$inhalt[$i].'\',';
-if($i==sizeof($inhalt)-1) $valuestring.='\''.$schiff->$inhalt[$i].'\'';
+for($i=0;$i<count($inhalt);$i++) {
+if($i!=count($inhalt)-1) $valuestring.='\''.$schiff->$inhalt[$i].'\',';
+if($i==count($inhalt)-1) $valuestring.='\''.$schiff->$inhalt[$i].'\'';
 }
 
-for($i=0;$i<sizeof($inhalt);$i++) {
-if($i!=sizeof($inhalt)-1) $firststring.=$inhalt[$i].',';
-if($i==sizeof($inhalt)-1) $firststring.=$inhalt[$i];
+for($i=0;$i<count($inhalt);$i++) {
+if($i!=count($inhalt)-1) $firststring.=$inhalt[$i].',';
+if($i==count($inhalt)-1) $firststring.=$inhalt[$i];
 }
 $datum=date("Y-m-d H:i:s");
 mysqli_query($verbindung, "INSERT INTO planetenlog (was,datum,pid,$firststring) VALUES ('autolog','$datum','$pid',$valuestring)") or die(mysqli_error($verbindung));

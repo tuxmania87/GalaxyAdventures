@@ -1,7 +1,7 @@
 <?php
 
 $systeme=array("bblaublau","bblaugelb","bblauorange","bblaurot","bblauschwarz","bblauweiss","blau","blaubig","blaublau","brotblau","brotgelb","brotorange","brotrot","brotschwarz","brotweiss","gelb","gelbblau","gelbgelb","gelbweiss","orange","orangegelb","orangeorange","orangeweiss","rot","rotbig","rotblau","rotgelb","rotorange","rotrot","rotweiss","weiss","weissblau");
-for($i=0;$i<sizeof($systeme);$i++)
+for($i=0;$i<count($systeme);$i++)
 	$systeme[$i]=$systeme[$i].".jpg";
 $code=array(0=>"A",
 		    1=>"B",
@@ -41,11 +41,11 @@ $code=array(0=>"A",
 
 echo '<table>';
 
-for($i=0;$i<sizeof($systeme);$i++)
+for($i=0;$i<count($systeme);$i++)
 echo '<tr><td><img src="',$systeme[$i],'" border="0" /></td><td>',$code[$i],'</td></tr>';
 
 $bilder=array("nebel.jpg","erz.jpg","green.jpg","deut.jpg","schwarzesloch.jpg","pulsar.jpg","limes.jpg");
-for($i=0;$i<sizeof($bilder);$i++)
+for($i=0;$i<count($bilder);$i++)
 echo '<tr><td><img src="',$bilder[$i],'" border="0" /></td><td>',$i+1,'</td></tr>';
 
 echo '</table>';

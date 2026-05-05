@@ -414,7 +414,7 @@ class Forschungen
             $this->dauer = $r['dauer'];
 
             $t_var = explode('/', $r['pre']);
-            for ($j = 0; $j < sizeof($t_var); ++$j) {
+            for ($j = 0; $j < count($t_var); ++$j) {
                 if (ctype_digit($t_var[$j])) {
                     $this->pre[] = new Forschungen($t_var[$j]);
                 }
@@ -490,7 +490,7 @@ class Channel
     {
         $l = [];
         $verbindung = get_verbindung();
-        $q = mysqli_query($verbindung, "select id from channel where public=1 or id in (select cid from channelabo where status=1 and uid='".session_id()."') or   founder = ".$_SESSION['Id'].'            order by id') or exit(mysqli_error($verbindung));
+        $q = mysqli_query($verbindung, "select id from channel where public=1 or id in (select cid from channelabo where status=1 and uid='".session_id()."') or   founder = ".intval(\$_SESSION['Id']).'            order by id') or exit(mysqli_error($verbindung));
         while ($r = mysqli_fetch_array($q)) {
             $dummy = new Channel($r['id']);
             $l[] = $dummy;
@@ -524,7 +524,7 @@ class Frachtraum
     public function __toString()
     {
         $result = "";
-        for ($i = 0; $i < sizeof($this->fracht); ++$i) {
+        for ($i = 0; $i < count($this->fracht); ++$i) {
             if($this->fracht[$i]->anzahl > 0 ){
                 $result .= $this->fracht[$i]->name .': ';
                 $result .= $this->fracht[$i]->anzahl.'<br>';
@@ -537,9 +537,9 @@ class Frachtraum
     public function dump()
     {
         $r = '';
-        for ($i = 0; $i < sizeof($this->fracht); ++$i) {
+        for ($i = 0; $i < count($this->fracht); ++$i) {
             $r .= $this->fracht[$i]->anzahl;
-            $r .= ($i == sizeof($this->fracht) - 1 ? '' : '/');
+            $r .= ($i == count($this->fracht) - 1 ? '' : '/');
         }
 
         return $r;
@@ -616,11 +616,11 @@ class Frachtraum
 
         $dbstring = '';
         $dbstring2 = '';
-        for ($i = 0; $i < sizeof($this->fracht); ++$i) {
+        for ($i = 0; $i < count($this->fracht); ++$i) {
             $dbstring .= $this->fracht[$i]->anzahl;
-            $dbstring .= ($i == sizeof($this->fracht) - 1 ? '' : '/');
+            $dbstring .= ($i == count($this->fracht) - 1 ? '' : '/');
             $dbstring2 .= $this->fracht[$i]->max;
-            $dbstring2 .= ($i == sizeof($this->fracht) - 1 ? '' : '/');
+            $dbstring2 .= ($i == count($this->fracht) - 1 ? '' : '/');
         }
 
         if ($saveplace == 'konto') {
@@ -633,7 +633,7 @@ class Frachtraum
     public function gesamt()
     {
         $t = 0;
-        for ($i = 0; $i < sizeof($this->fracht); ++$i) {
+        for ($i = 0; $i < count($this->fracht); ++$i) {
             $t += $this->fracht[$i]->anzahl;
         }
 
@@ -913,7 +913,7 @@ class Rohling
     {
         $verbindung = get_verbindung();
         if ($modus == 1) {
-            for ($i = 0; $i < sizeof($this->frachtraum->fracht); ++$i) {
+            for ($i = 0; $i < count($this->frachtraum->fracht); ++$i) {
                 $aus = false;
                 if ($feld[$i] > 0) {
                     $ausgabe = '<br />Beamen: '.$this->frachtraum->fracht[$i]->name.': ';
@@ -986,7 +986,7 @@ class Rohling
             if ($ziel->schildstatus == 1 && $ziel->besitzer->id != $this->besitzer->id && !in_array($this->besitzer->id, $ziel->besitzer->vertrag('handel'))) {
                 return 11;
             }
-            for ($i = 0; $i < sizeof($this->frachtraum->fracht); ++$i) {
+            for ($i = 0; $i < count($this->frachtraum->fracht); ++$i) {
                 $aus = false;
                 if ($feld[$i] > 0) {
                     $aus = true;
@@ -1073,7 +1073,7 @@ class Rohling
                 return 11;
             }
             $konto = new Konto($this->besitzer->id);
-            for ($i = 0; $i < sizeof($ziel->frachtraum->fracht); ++$i) {
+            for ($i = 0; $i < count($ziel->frachtraum->fracht); ++$i) {
                 $aus = false;
                 if ($feld[$i] > 0) {
                     $aus = true;
@@ -1106,7 +1106,7 @@ class Rohling
 
         if ($modus == 4) { // FERG HIN
             $konto = new Konto($this->besitzer->id);
-            for ($i = 0; $i < sizeof($this->frachtraum->fracht); ++$i) {
+            for ($i = 0; $i < count($this->frachtraum->fracht); ++$i) {
                 $aus = false;
                 if ($feld[$i] > 0) {
                     $ausgabe = '<br />Beamen: '.$this->frachtraum->fracht[$i]->name.': ';
@@ -1611,7 +1611,7 @@ class Schiffe extends Rohling
             return 22;
         }
         echo 'gepl&uuml;ndert:<br />';
-        for ($i = 0; $i < sizeof($ziel->frachtraum->fracht); ++$i) {
+        for ($i = 0; $i < count($ziel->frachtraum->fracht); ++$i) {
             $menge = $ziel->frachtraum->fracht[$i]->anzahl;
             if ($this->frachtraum->gesamt() + $menge > $this->frachtraum->max) {
                 $menge = $this->frachtraum->max - $this->frachtraum->gesamt();
@@ -1629,7 +1629,7 @@ class Schiffe extends Rohling
         }
 
         // QUESTITEMS
-        for ($i = 0; $i < sizeof($ziel->qitems); ++$i) {
+        for ($i = 0; $i < count($ziel->qitems); ++$i) {
             $abfrage = mysqli_query($verbindung, "SELECT erfolge.id FROM erfolge,quests WHERE erfolge.erledigt=0 AND erfolge.uid='".$this->besitzer->id."' AND erfolge.qid='".$ziel->qitems[$i]."' AND erfolge.qid=quests.id AND erfolge.anzahl<quests.max");
             while ($row = mysqli_fetch_array($abfrage)) {
                 $qst = new Quest($row[0]);
@@ -1652,7 +1652,7 @@ class Schiffe extends Rohling
             $gefunden = true;
         }
 
-        if ((!$gefunden && (sizeof($ziel->qitems) == 0)) || $delme) {
+        if ((!$gefunden && (count($ziel->qitems) == 0)) || $delme) {
             mysqli_query($verbindung, "DELETE FROM schiffe WHERE id='".$ziel->id."'");
             $ziel = null;
         }
@@ -1691,7 +1691,7 @@ class Schiffe extends Rohling
             $parray = [];
 
             $l = $cfeld->getShips();
-            for ($i = 0; $i < sizeof($l); ++$i) {
+            for ($i = 0; $i < count($l); ++$i) {
                 if (
                     $l[$i]->energie >= 1 && $l[$i]->besitzer->id != $this->besitzer->id
                     && $l[$i]->besitzer->id != 2 && $l[$i]->phaser < $l[$i]->maxphaser
@@ -1706,13 +1706,13 @@ class Schiffe extends Rohling
                 $parray[] = $row['id'];
             }
 
-            for ($i = 0; $i < sizeof($parray); ++$i) {
+            for ($i = 0; $i < count($parray); ++$i) {
                 $shp = new Planeten($parray[$i]);
                 if (($shp->besitzer->allianz->id == 0 || ($shp->besitzer->allianz->id > 0 && $shp->besitzer->allianz->id != $this->besitzer->allianz->id)) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('nap')) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('verteidigung'))) {
                     $shp->feuern($this, 1 + $shp->defense * 10);
                 }
             }
-            for ($i = 0; $i < sizeof($sarray); ++$i) {
+            for ($i = 0; $i < count($sarray); ++$i) {
                 $shp = &$sarray[$i];
                 if (($shp->besitzer->allianz->id == 0 || ($shp->besitzer->allianz->id > 0 && $shp->besitzer->allianz->id != $this->besitzer->allianz->id)) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('nap')) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('verteidigung'))) {
                     $shp->feuern($this, 1 + $shp->defense * 10);
@@ -1725,7 +1725,7 @@ class Schiffe extends Rohling
             $parray = [];
             // alle moegloichen schiffe ( in dem sektor ) in einem array sammelm
             $t_schiffe = &$cfeld->getShips();
-            for ($i = 0; $i < sizeof($t_schiffe); ++$i) {
+            for ($i = 0; $i < count($t_schiffe); ++$i) {
                 if ($t_schiffe[$i]->energie > 0 && $t_schiffe[$i]->besitzer->id != 2 && $t_schiffe[$i]->besitzer->id != $this->besitzer->id && $t_schiffe[$i]->phaser < $t_schiffe[$i]->maxphaser && $t_schiffe[$i]->laser > 0) {
                     $sarray[] = $t_schiffe[$i];
                 }
@@ -1736,14 +1736,14 @@ class Schiffe extends Rohling
                 $parray[] = $row['id'];
             }
 
-            for ($i = 0; $i < sizeof($parray); ++$i) {
+            for ($i = 0; $i < count($parray); ++$i) {
                 $shp = new Planeten($parray[$i]);
 
                 if (($shp->besitzer->allianz->id == 0 || ($shp->besitzer->allianz->id > 0 && $shp->besitzer->allianz->id != $this->besitzer->allianz->id)) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('nap')) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('verteidigung')) && (in_array($ziel3->besitzer->id, $shp->besitzer->vertrag('verteidigung')) || ($shp->besitzer->allianz->id > 0 && $shp->besitzer->allianz->id == $ziel3->besitzer->allianz->id) || ($shp->besitzer->id == $ziel3->besitzer->id))) {
                     $shp->feuern($this, 1 + $shp->defense * 10);
                 }
             }
-            for ($i = 0; $i < sizeof($sarray); ++$i) {
+            for ($i = 0; $i < count($sarray); ++$i) {
                 $shp = &$sarray[$i];
                 if (($shp->besitzer->allianz->id == 0 || ($shp->besitzer->allianz->id > 0 && $shp->besitzer->allianz->id != $this->besitzer->allianz->id)) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('nap')) && !in_array($this->besitzer->id, $shp->besitzer->vertrag('verteidigung')) && (in_array($ziel3->besitzer->id, $shp->besitzer->vertrag('verteidigung')) || ($shp->besitzer->allianz->id > 0 && $shp->besitzer->allianz->id == $ziel3->besitzer->allianz->id) || ($shp->besitzer->id == $ziel3->besitzer->id))) {
                     $shp->feuern($this, 1 + $shp->defense * 10);
@@ -1974,7 +1974,7 @@ class Schiffe extends Rohling
               while($treffer=mysqli_fetch_array($horchquery)) array_push($horcharray,$treffer["id"]);
 
               $datum=date("Y-m-d H:i:s");
-              for($a=0;$a<sizeof($horcharray);$a++) { $ich=$horcharray[$a]; mysqli_query($verbindung, "INSERT INTO horchlog (datum,img,besitzer,klasse,ich,x,y) VALUES ('$datum','$schiff->img','$schiff->besitzer','$schiff->klasse','$ich','$schiff->x','$schiff->y')") or die(mysqli_error($verbindung)); }
+              for($a=0;$a<count($horcharray);$a++) { $ich=$horcharray[$a]; mysqli_query($verbindung, "INSERT INTO horchlog (datum,img,besitzer,klasse,ich,x,y) VALUES ('$datum','$schiff->img','$schiff->besitzer','$schiff->klasse','$ich','$schiff->x','$schiff->y')") or die(mysqli_error($verbindung)); }
 
               $abfrage=mysqli_query($verbindung, "SELECT * FROM weltraum WHERE (typ='b' OR typ='rs' OR typ='bs') AND x=".$this->position->x." AND y=".$this->position->y." AND `system`=".$this->position->system->id);
               while($tmp=mysqli_fetch_array($abfrage)) $nebel=true;
@@ -2026,7 +2026,7 @@ class Schiffe extends Rohling
         if ($this->dock > 0 && $this->dock != $target->id) {
             return 18;
         }
-        if (sizeof($target->dockfeld()) == $target->maxdock) {
+        if (count($target->dockfeld()) == $target->maxdock) {
             return 19;
         }
         if ($this->energie < 1) {
@@ -2410,12 +2410,12 @@ class Bauplan_Gebaude
             $this->prelevel = $r['prelevel'];
 
             $tvar = explode('/', $r['bild']);
-            for ($i = 0; $i < sizeof($tvar); ++$i) {
+            for ($i = 0; $i < count($tvar); ++$i) {
                 $this->bild[] = $tvar[$i];
             }
 
             $tvar = explode('/', $r['untergrund']);
-            for ($i = 0; $i < sizeof($tvar); ++$i) {
+            for ($i = 0; $i < count($tvar); ++$i) {
                 $this->untergrund[] = new Planetenfeld($tvar[$i]);
             }
 
@@ -2780,7 +2780,7 @@ class Gebaude
         } else {
             // get correct imgae index
             $t_index = -1;
-            for ($i = 0; $i < sizeof($this->bau->untergrund); ++$i) {
+            for ($i = 0; $i < count($this->bau->untergrund); ++$i) {
                 if ($this->bau->untergrund[$i]->id == $this->untergrund->id) {
                     $t_index = $i;
                 }

@@ -15,7 +15,7 @@ while ($tm2 = mysqli_fetch_array($tm)) {
 // endetest
 session_start();
 $beta = 0;
-$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".$_SESSION['Id']."'");
+$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".intval(\$_SESSION['Id'])."'");
 $tm = mysqli_fetch_array($tm);
 $beta = $tm[0];
 
@@ -185,9 +185,9 @@ if (isset($_GET['pid']) && ctype_digit($_GET['pid'])) {
         exit;
     }
     // alle schiffe verschieben
-    mysqli_query($verbindung, "UPDATE schiffe SET orbit=1,system='".$t->position->system->id."',x='".$t->position->x."',y='".$t->position->y."' WHERE besitzer='".$_SESSION['Id']."'");
+    mysqli_query($verbindung, "UPDATE schiffe SET orbit=1,system='".$t->position->system->id."',x='".$t->position->x."',y='".$t->position->y."' WHERE besitzer='".intval(\$_SESSION['Id'])."'");
     // planetenoberfl�che kopieren
-    $oldpl = mysqli_query($verbindung, "SELECT id FROM planeten WHERE besitzer='".$_SESSION['Id']."'");
+    $oldpl = mysqli_query($verbindung, "SELECT id FROM planeten WHERE besitzer='".intval(\$_SESSION['Id'])."'");
     $oldpl = mysqli_fetch_array($oldpl);
     $oldpl = $oldpl[0];
     $old = new Planeten($oldpl);
@@ -201,7 +201,7 @@ if (isset($_GET['pid']) && ctype_digit($_GET['pid'])) {
     $t->frachtraum = $old->frachtraum;
     $t->frachtraum->id2 = $pid;
     $t->frachtraum->save();
-    mysqli_query($verbindung, "UPDATE planeten SET energie='".$old->maxenergie."',maxenergie='".$old->maxenergie."',name='".$old->name."',heimat=1,besitzer='".$_SESSION['Id']."' WHERE id='".$t->id."'");
+    mysqli_query($verbindung, "UPDATE planeten SET energie='".$old->maxenergie."',maxenergie='".$old->maxenergie."',name='".$old->name."',heimat=1,besitzer='".intval(\$_SESSION['Id'])."' WHERE id='".$t->id."'");
     $old->sprengen();
     echo '<meta http-equiv="refresh" content="0;url=main.php">';
 }
@@ -209,7 +209,7 @@ if (isset($_GET['pid']) && ctype_digit($_GET['pid'])) {
 if ($ich->level <= 3) {
     exit;
 }
-if (mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".$_SESSION['Id']."'")) == 0) {
+if (mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".intval(\$_SESSION['Id'])."'")) == 0) {
     exit;
 }
 

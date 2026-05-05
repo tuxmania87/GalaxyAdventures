@@ -55,12 +55,12 @@ function drawMinimapPart($abschnitt, $dim, $outname)
 
             // echo $i." ".$j."\n";
 
-            // echo 'DEBUG '.$i.' | '.$j.' '.$f->bild.' ending '.strtolower($split[sizeof($split) - 1])."\n";
+            // echo 'DEBUG '.$i.' | '.$j.' '.$f->bild.' ending '.strtolower($split[count($split) - 1])."\n";
 
-            if (strtolower($split[sizeof($split) - 1]) == 'png') {
+            if (strtolower($split[count($split) - 1]) == 'png') {
                 $piece = imagecreatefrompng('images/'.$f->bild);
             }
-            if (strtolower($split[sizeof($split) - 1]) == 'jpg') {
+            if (strtolower($split[count($split) - 1]) == 'jpg') {
                 $piece = imagecreatefromjpeg('images/'.$f->bild);
             }
 

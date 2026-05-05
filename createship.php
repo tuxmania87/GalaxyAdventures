@@ -58,7 +58,7 @@ if (!is_null($pid) && !is_null($fid)) {
         AND  p.skillbau = 1
     ';
 
-    if (mysqli_num_rows(mysqli_query($verbindung, sprintf($query, $_SESSION['Id']))) == 0) {
+    if (mysqli_num_rows(mysqli_query($verbindung, sprintf($query, intval($_SESSION['Id'])))) == 0) {
         $betray = true;
     }
 }
@@ -81,7 +81,7 @@ if ($betray) {
 
             // check Waren
             $buildit = true;
-            for ($i = 0; $i < sizeof($p->frachtraum->fracht); ++$i) {
+            for ($i = 0; $i < count($p->frachtraum->fracht); ++$i) {
                 if ($p->frachtraum->fracht[$i]->anzahl < $b->kosten->fracht[$i + 1]->anzahl) {
                     $buildit = false;
                 }
@@ -89,7 +89,7 @@ if ($betray) {
 
             if ($buildit && $p->energie >= $b->kosten->fracht[0]->anzahl) {
                 // we can build now
-                for ($i = 0; $i < sizeof($p->frachtraum->fracht); ++$i) {
+                for ($i = 0; $i < count($p->frachtraum->fracht); ++$i) {
                     $p->frachtraum->fracht[$i]->anzahl -= $b->kosten->fracht[$i + 1]->anzahl;
                 }
                 $p->energie -= $b->kosten->fracht[0]->anzahl;
@@ -135,7 +135,7 @@ if ($betray) {
             while ($r = mysqli_fetch_array($q)) {
                 $t = new Bauplan_Schiffe($r['klasse']);
                 echo '<tr><td><input type="radio" name="pschiff" value="'.$t->klasse.'" /></td><td>'.$t->klasse.'</td><td><img src="'.$t->bild.'" border="0" /></td><td><table>';
-                for ($i = 0; $i < sizeof($t->kosten->fracht); ++$i) {
+                for ($i = 0; $i < count($t->kosten->fracht); ++$i) {
                     if ($t->kosten->fracht[$i]->anzahl > 0) {
                         echo '<tr><td>'.$t->kosten->fracht[$i]->name.'</td><td><img src="images/misc/'.$t->kosten->fracht[$i]->bild.'" border="0" /></td><td>'.$t->kosten->fracht[$i]->anzahl.'</td></tr>';
                     }

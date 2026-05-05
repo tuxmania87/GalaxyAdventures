@@ -1,2 +1,4 @@
 config.json
 dump.sql
+# Lokale Konfiguration
+config.php

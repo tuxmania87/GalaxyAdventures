@@ -30,7 +30,7 @@ if(isset($_GET["aktivieren"]) && ctype_digit($_GET["aktivieren"]) && ($_GET["akt
 
 if(isset($_GET["destroy"])) {
     $ausgabe ="";
-    for($i=0;$i<sizeof($planet->frachtraum->fracht);$i++) {
+    for($i=0;$i<count($planet->frachtraum->fracht);$i++) {
         
         if($planet->frachtraum->gesamt() + floor($feld->bau->baukosten->fracht[$i+1]->anzahl/2) <= $planet->frachtraum->max) {
             $planet->frachtraum->fracht[$i]->anzahl += floor($feld->bau->baukosten->fracht[$i+1]->anzahl/2);
@@ -75,7 +75,7 @@ echo '<tr><th>Bild</th><td><img src="images/buildings/' . $feld->bild . '" borde
 echo '<tr><th>Untergrund</th><td><img src="images/buildings/' . $feld->untergrund->bild . '" border="0" /></td></tr>';
 echo '<tr><th>Kosten je Tick</th><td>';
 echo '<table>';
-for ($i = 0; $i < sizeof($feld->bau->braucht->fracht); $i++) {
+for ($i = 0; $i < count($feld->bau->braucht->fracht); $i++) {
     if ($feld->bau->braucht->fracht[$i]->anzahl > 0) {
         echo '<tr><td>' . $feld->bau->braucht->fracht[$i]->name . '</td><td><img src="images/misc/' .
         $feld->bau->braucht->fracht[$i]->bild . '" border="0" /></td><td>' . $feld->bau->braucht->fracht[$i]->anzahl . '</td></tr>';
@@ -85,7 +85,7 @@ echo '</table>';
 echo '</td></tr>';
 echo '<tr><th>Produktion je Tick</th><td>';
 echo '<table>';
-for ($i = 0; $i < sizeof($feld->bau->produziert->fracht); $i++) {
+for ($i = 0; $i < count($feld->bau->produziert->fracht); $i++) {
     if ($feld->bau->produziert->fracht[$i]->anzahl > 0) {
         echo '<tr><td>' . $feld->bau->produziert->fracht[$i]->name . '</td><td><img src="images/misc/' .
         $feld->bau->produziert->fracht[$i]->bild . '" border="0" /></td><td>' . $feld->bau->produziert->fracht[$i]->anzahl . '</td></tr>';

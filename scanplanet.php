@@ -105,7 +105,7 @@ if ($betray) {
         $inhalt = ['rohstoffa', 'rohstoffb', 'rohstoffc', 'rohstoffd', 'isochips', 'tritanium', 'dili', 'antimaterie', 'deuterium', 'npcborg', 'npcrom', 'npcfer', 'npcfod', 'npckling', 'npccard'];
         $inhaltcap = ['Baustoff', 'Duranium', 'Erz', 'Sorium', 'Isochips', 'Tritanium', 'Dilithium', 'Antimaterie', 'Deuterium', 'Vinkulum', 'Ale', 'Latinum', 'Ch�teau Picard', 'Blutwein', 'Taspar Eier'];
         $inhaltimg = ['baustoff.png', 'duranium.png', 'erz.png', 'sorium.png', 'isochips.png', 'tritanium.png', 'dili.png', 'antimaterie.png', 'deuterium.png', 'vinkulum.png', 'ale.png', 'latinum.png', 'chateau.png', 'blutwein.png', 'eier.png'];
-        for ($i = 0; $i < sizeof($inhalt); ++$i) {
+        for ($i = 0; $i < count($inhalt); ++$i) {
             if ($target->$inhalt[$i] > 0) {
                 echo '<tr><td>',$inhaltcap[$i],'</td><td><img src="images/misc/',$inhaltimg[$i],'" border="0" /></td><td>',$target->$inhalt[$i],'</td></tr>';
             }

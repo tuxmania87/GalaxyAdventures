@@ -38,7 +38,7 @@ if (isset($_GET['dorid']) && ctype_digit($_GET['dorid'])) {
     $todo = new Forschungen($dorid);
 
     $cando = true;
-    for ($i = 0; $i < sizeof($todo->pre); ++$i) {
+    for ($i = 0; $i < count($todo->pre); ++$i) {
         $map = new MappedForschungen($_SESSION['Id'], $todo->pre[$i]->id);
         if ($map->status != 1) {
             $cando = false;
@@ -49,7 +49,7 @@ if (isset($_GET['dorid']) && ctype_digit($_GET['dorid'])) {
     if ($cando && ($planet->frachtraum->fracht[4]->anzahl >= $todo->kosten) && mysqli_num_rows($q) == 0) {
         $planet->frachtraum->fracht[4]->anzahl -= $todo->kosten;
         $planet->frachtraum->save();
-        mysqli_query($verbindung, "insert into mapforschung (uid,fid,hash,status) values ('".$_SESSION['Id']."','".$todo->id."','".$pid.'/'.$fid."','".($todo->dauer + 1)."')");
+        mysqli_query($verbindung, "insert into mapforschung (uid,fid,hash,status) values ('".intval(\$_SESSION['Id'])."','".$todo->id."','".$pid.'/'.$fid."','".($todo->dauer + 1)."')");
         echo '<span class="success">'.$todo->name.' wird erforscht</span>';
         echo '<meta http-equiv="refresh" content="1; URL=forschung.php?pid='.$pid.'&fid='.$fid.'">';
         exit;
@@ -70,7 +70,7 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
     echo '<tr><th>Benötigt</th><td><ul>';
 
     if (!is_null($f->pre)) {
-        for ($i = 0; $i < sizeof($f->pre); ++$i) {
+        for ($i = 0; $i < count($f->pre); ++$i) {
             $color = 'grey';
 
             $mapped = new MappedForschungen($_SESSION['Id'], $f->pre[$i]->id);
@@ -82,7 +82,7 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
                 $ready = true;
                 // var_dump($f->pre[$i]->pre);
 
-                for ($j = 0; $j < sizeof($f->pre[$i]->pre); ++$j) {
+                for ($j = 0; $j < count($f->pre[$i]->pre); ++$j) {
                     $t_mapped = new MappedForschungen($_SESSION['Id'], $f->pre[$i]->pre[$j]->id);
 
                     if ($t_mapped->status != 1) {
@@ -98,7 +98,7 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
 
             echo '<li><a href="forschung.php?fid='.$fid.'&pid='.$pid.'&rid='.$f->pre[$i]->id.'"><span style="color:'.$color.';">'.$f->pre[$i]->name.'</span></a></li>';
         }
-        if (sizeof($f->pre) == 0) {
+        if (count($f->pre) == 0) {
             echo '<li>-</li>';
         }
 
@@ -107,18 +107,18 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
         echo '<tr><th>Ermöglicht</th><td><ul>';
         $l = Forschungen::getList();
         $liste = [];
-        for ($i = 0; $i < sizeof($l); ++$i) {
+        for ($i = 0; $i < count($l); ++$i) {
             if (is_null($l[$i]->pre)) {
                 continue;
             }
-            for ($j = 0; $j < sizeof($l[$i]->pre); ++$j) {
+            for ($j = 0; $j < count($l[$i]->pre); ++$j) {
                 if ($l[$i]->pre[$j]->id == $f->id) {
                     $liste[] = $l[$i];
                 }
             }
         }
 
-        for ($i = 0; $i < sizeof($liste); ++$i) {
+        for ($i = 0; $i < count($liste); ++$i) {
             $color = 'grey';
 
             $mapped = new MappedForschungen($_SESSION['Id'], $liste[$i]->id);
@@ -130,7 +130,7 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
                 $ready = true;
                 // var_dump($f->pre[$i]->pre);
 
-                for ($j = 0; $j < sizeof($liste[$i]->pre); ++$j) {
+                for ($j = 0; $j < count($liste[$i]->pre); ++$j) {
                     $t_mapped = new MappedForschungen($_SESSION['Id'], $liste[$i]->pre[$j]->id);
 
                     if ($t_mapped->status != 1) {
@@ -146,7 +146,7 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
 
             echo '<li><a href="forschung.php?fid='.$fid.'&pid='.$pid.'&rid='.$liste[$i]->id.'"><span style="color:'.$color.';">'.$liste[$i]->name.'</span></a></li>';
         }
-        if (sizeof($liste) == 0) {
+        if (count($liste) == 0) {
             echo '<li>-</li>';
         }
 
@@ -164,14 +164,14 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
             echo '<tr><th>Bild</th><td><img src="images/buildings/'.$t_build->bild[0].'" border="0" /></td></tr>';
             echo '<tr><th>Untergrund</th><td>';
 
-            for ($i = 0; $i < sizeof($t_build->untergrund); ++$i) {
+            for ($i = 0; $i < count($t_build->untergrund); ++$i) {
                 echo '<img src="images/buildings/'.$t_build->untergrund[$i]->bild.'" border="0" />';
             }
 
             echo '</td></tr>';
             echo '<tr><th>Kosten je Tick</th><td>';
             echo '<table>';
-            for ($i = 0; $i < sizeof($t_build->braucht->fracht); ++$i) {
+            for ($i = 0; $i < count($t_build->braucht->fracht); ++$i) {
                 if ($t_build->braucht->fracht[$i]->anzahl > 0) {
                     echo '<tr><td>'.$t_build->braucht->fracht[$i]->name.'</td><td><img src="images/misc/'.
                     $t_build->braucht->fracht[$i]->bild.'" border="0" /></td><td>'.$t_build->braucht->fracht[$i]->anzahl.'</td></tr>';
@@ -181,7 +181,7 @@ if (isset($_GET['rid']) && ctype_digit($_GET['rid'])) {
             echo '</td></tr>';
             echo '<tr><th>Produktion je Tick</th><td>';
             echo '<table>';
-            for ($i = 0; $i < sizeof($t_build->produziert->fracht); ++$i) {
+            for ($i = 0; $i < count($t_build->produziert->fracht); ++$i) {
                 if ($t_build->produziert->fracht[$i]->anzahl > 0) {
                     echo '<tr><td>'.$t_build->produziert->fracht[$i]->name.'</td><td><img src="images/misc/'.
                     $t_build->produziert->fracht[$i]->bild.'" border="0" /></td><td>'.$t_build->produziert->fracht[$i]->anzahl.'</td></tr>';
@@ -250,7 +250,7 @@ Mit Hilfe der Forschung ist es dir möglich verschiedene neue Gebäude und Schif
 
     $l = Forschungen::getList();
 
-    for ($i = 0; $i < sizeof($l); ++$i) {
+    for ($i = 0; $i < count($l); ++$i) {
         $mapped = new MappedForschungen($_SESSION['Id'], $l[$i]->id);
         if ($mapped->status == 1) {
             echo '<tr><td><span style="color:green;">'.$l[$i]->name.'</span></td>';
@@ -258,7 +258,7 @@ Mit Hilfe der Forschung ist es dir möglich verschiedene neue Gebäude und Schif
             echo '<tr><td><span style="color:red;">'.$l[$i]->name.'</span></td>';
         } else {
             $ready = true;
-            for ($j = 0; $j < sizeof($l[$i]->pre); ++$j) {
+            for ($j = 0; $j < count($l[$i]->pre); ++$j) {
                 $t_mapped = new MappedForschungen($_SESSION['Id'], $l[$i]->pre[$j]->id);
                 if ($t_mapped->status != 1) {
                     $ready = false;

@@ -9,7 +9,7 @@ header ("Location: http://www.keinerspieltmitmir.de/devga/main.php");
 exit;
 }
 }
-// mysqli_close($verbindung); // war: mysql_close($db)
+
 //endetest
 session_start();
 ?>

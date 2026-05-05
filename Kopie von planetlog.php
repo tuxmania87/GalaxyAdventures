@@ -8,14 +8,14 @@ $pid=$row["id"];
 $valuestring="";
 $schiff=new schiff();
 $schiff->getData($row["id"]);
-for($i=0;$i<sizeof($inhalt);$i++) {
-if($i!=sizeof($inhalt)-1) $valuestring.="'$inhalt[$i]',";
-if($i==sizeof($inhalt)-1) $valuestring.="'$inhalt[$i]'";
+for($i=0;$i<count($inhalt);$i++) {
+if($i!=count($inhalt)-1) $valuestring.="'$inhalt[$i]',";
+if($i==count($inhalt)-1) $valuestring.="'$inhalt[$i]'";
 }
 $firststring="";
-for($i=0;$i<sizeof($inhalt);$i++) {
-if($i!=sizeof($inhalt)-1) $firststring.="$inhalt,";
-if($i<sizeof($inhalt)-1) $firststring.=$inhalt;
+for($i=0;$i<count($inhalt);$i++) {
+if($i!=count($inhalt)-1) $firststring.="$inhalt,";
+if($i<count($inhalt)-1) $firststring.=$inhalt;
 }
 mysqli_query($verbindung, "INSERT INTO planetenlog (pid,$firststring) VALUES ('$pid',$valuestring)") or die(mysqli_error($verbindung));
 }

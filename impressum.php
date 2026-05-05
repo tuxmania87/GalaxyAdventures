@@ -14,9 +14,10 @@ Bernburgerstrasse. 18
 </td>
 
 <td>
-Internet: http://www.galaxy-adventures.net/
+Internet: " . (defined('GA_BASE_URL') ? GA_BASE_URL : '.') . "/
+
 <br>
-E-Mail: admin@galaxy-adventures.net
+E-Mail: " . (defined('GA_ADMIN_EMAIL') ? GA_ADMIN_EMAIL : 'admin@example.com') . "
 <br>
 ICQ: (auf Anfrage)
 </td>
@@ -59,7 +60,7 @@ Helferlein
 </td></tr>
 <tr><td bgcolor="#300000" colspan="2">Hinweis</td></tr>
 <tr><td>
-Star Trek™ is a registered trademark of Paramount Pictures.<br />
+Star Trekï¿½ is a registered trademark of Paramount Pictures.<br />
 This site is strictly non-profit.<br />
 No copyright infringement is intended.<br />
 All other Content is copyrighted by the siteowner,<br />

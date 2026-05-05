@@ -155,7 +155,7 @@ if ($_GET["do"] == 14) {
 
 if (isset($_GET["defense"]) && ctype_digit($_GET["defense"])) {
     $schiff->defense = $_GET["defense"];
-    mysqli_query($verbindung, "update schiffe set defend='" . $_GET["defense"] . "' where id=" . $schiff->id);
+    mysqli_query($verbindung, "update schiffe set defend='" . intval($_GET["defense"]) . "' where id=" . $schiff->id);
 }
 
 //feuern
@@ -459,7 +459,7 @@ if ($cur_feld->feld->hide) {
 //Transwarp Knoten
 
 $cur_ships = $cur_feld->getShips();
-for ($i = 0; $i < sizeof($cur_ships); $i++) {
+for ($i = 0; $i < count($cur_ships); $i++) {
     if ($cur_ships[$i]->klasse == "Transwarphub") {
         echo '<tr><th>' . $cur_ships[$i]->klasse . '</th><td><img src="' . $cur_ships[$i]->bild . '" border="0" /></td>';
         echo "<td>";
@@ -606,7 +606,7 @@ if (mysqli_num_rows($display_test1) > 0 || mysqli_num_rows($display_test2) > 0) 
         $cfeld = new Weltraum($schiff->position->x, $schiff->position->y, $schiff->position->system->id, $schiff->position->system->id > 0);
         $l = $cfeld->getShips();
 
-        for ($i = 0; $i < sizeof($l); $i++) {
+        for ($i = 0; $i < count($l); $i++) {
             $tempschiff = &$l[$i];
             if ($tempschiff->besitzer->id == $ich->besitzer->id ||
                     ( $tempschiff->tarnung == 0 ) && $tempschiff->id != $schiff->id) {
@@ -704,7 +704,7 @@ echo '<div><h4>Lagerraum</h4><br /><table class="invitetable" style=\"text-align
 echo '<tr><th>Lagerraum</th><th style="text-align:center;" colspan="3">' . $schiff->frachtraum->gesamt() . '/' . $schiff->frachtraum->max . ' Frei: ' . ($schiff->frachtraum->max - $schiff->frachtraum->gesamt());
 echo '</th></tr>';
 //lager anzeige
-for ($i = 0; $i < sizeof($schiff->frachtraum->fracht); $i++) {
+for ($i = 0; $i < count($schiff->frachtraum->fracht); $i++) {
 
     $balken = "";
     $tausend = floor($schiff->frachtraum->fracht[$i]->anzahl / 1000);

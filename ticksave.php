@@ -12,7 +12,7 @@ $inhalt=array("rohstoffa","rohstoffb","rohstoffc","rohstoffd","isochips","tritan
 $inhaltcap=array("Baustoff","Duranium","Erz","Sorium","Isochips","Tritanium","Dilithium","Antimaterie","Deuterium","Vinkulum","Plasma","Latinuum","Earl Grey");
 $inhaltcode=array("ra","rb","rc","rd","iso","trit","dili","anti","deut","nborg","nrom","nfer","nfod");
 $gesamt=0;
-for($p=0;$p<sizeof($inhalt);$p++) $gesamt+=$objekt->$inhalt[$p];
+for($p=0;$p<count($inhalt);$p++) $gesamt+=$objekt->$inhalt[$p];
 return $gesamt;
 }
 
@@ -215,7 +215,7 @@ while($rem=mysqli_fetch_array($rememberquery)) {
 $mail1=$rem["email"];
 $name1=$rem["name"];
 $message="Hallo $name1,\n\nDu bekommst diese Mail weil du seit 56 Ticks (7 Tagen) dich nicht mehr bei Galaxy Adventures gemeldet hast. Dies soll nur eine kleine Erinnerung sein, dass dein Account noch existiert ;). Solltest du kein Interesse mehr an Galaxy-Adventures 2 haben und weitere 56 Ticks verstreichen, so wird dein Account geloescht und alle deine Daten aus der Datenbank entfernt.\nIch wuensche dir viel Spass\n\ncremetorte";
-mail($mail1,"Erinnerung - 7 Tage", $message,"From: GA-Team <noreply@galaxy-adventures.net>");
+mail($mail1,"Erinnerung - 7 Tage", $message,"From: GA-Team <" . (defined('GA_MAIL_FROM') ? GA_MAIL_FROM : 'noreply@example.com') . ">");
 }
 
 //loeschung
@@ -226,7 +226,7 @@ $mail1=$rem["email"];
 $name1=$rem["name"];
 $id1=$rem["id"];
 $message="Hallo $name1,\n\nDu bekommst diese Mail weil du seit 112 Ticks (14 Tagen) dich nicht mehr bei Galaxy Adventures gemeldet hast. \nDein Account wurde geloescht. Ich hoffe du hattest Spass in Galaxy-Adventures.\nIch wuensche dir viel Spass\n\ncremetorte";
-mail($mail1,"Loeschung - 14 Tage", $message,"From: GA-Team <noreply@galaxy-adventures.net>");
+mail($mail1,"Loeschung - 14 Tage", $message,"From: GA-Team <" . (defined('GA_MAIL_FROM') ? GA_MAIL_FROM : 'noreply@example.com') . ">");
 mysqli_query($verbindung, "INSER INTO mail (empfaenger,absender,neu) VALUES ('1','2','1')");
 //mysqli_query($verbindung, "DELETE FROM account WHERE id='$id1'");
 }

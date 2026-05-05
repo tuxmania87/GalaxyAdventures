@@ -53,7 +53,7 @@ echo 'Eintragen in: ';
 
 
     echo '<select name="netz">';
-    for ($i = 0; $i < sizeof($list); $i++) {
+    for ($i = 0; $i < count($list); $i++) {
         echo '<option value="' . $list[$i]->id . '" ';
         if ($list[$i]->id == $channel)
             echo 'selected="true"';
