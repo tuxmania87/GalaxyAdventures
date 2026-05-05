@@ -9,10 +9,9 @@ $me=new konto(); $me->getData($self);
 $inhalt=array("rohstoffa","rohstoffb","rohstoffc","rohstoffd","isochips","tritanium","dili","antimaterie","deuterium","npcborg","npcrom","npcfer","npcfod","npckling","npccard");
 $inhaltcap=array("Baustoff","Duranium","Erz","Sorium","Isochips","Tritanium","Dilithium","Antimaterie","Deuterium","Vinkulum","Ale","Latinum","Château Picard","Blutwein","Taspar Eier");
 
-//CHEATSCHUTZ
-$betray=false;
-if(!isset($_SESSION["Id"])) $betray=true;
-if($betray) echo 'Es ist ein Fehler aufgetreten (System.Exception(1))'; else {
+include_once 'auth.php';
+$userId = requireLogin();
+{
 //b
 
 if($_POST["bietbool"]==1 && ctype_digit($_POST["handelid"]) && ctype_digit($_POST["gebottext"])) { 	//bieten

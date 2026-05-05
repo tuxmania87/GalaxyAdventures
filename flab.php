@@ -3,21 +3,13 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
-//CHEATSCHUTZ ANFANG
+include_once 'auth.php';
+requireLogin();
+$pid = requireIntParam('pid');
+$fid = requireIntParam('fid');
+$do = $_POST['do'] ?? null;
+{
 
-$pid=$_GET["pid"];
-$fid=$_GET["fid"];
-$do=$_POST["do"];
-
-
-$betray=false;;
-if(!ctype_digit($pid)) $betray=true;
-if(!ctype_digit($fid)) $betray=true;
-
-
-if($betray) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
-
-//CHEATSCHUTZ ENDE
 
 
 $id=$_SESSION["Id"];

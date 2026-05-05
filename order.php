@@ -3,23 +3,14 @@
 include 'head.php';
 include 'navlogged.php';
 include 'klassen.php';
-
-// CHEATSCHUTZ ANFANG
-
 $verbindung = get_verbindung();
 
 function bool2string($a)
 {
     return $a ? 'ja' : 'nein';
 }
-
-$betray = false;
-if ($_SESSION['Id'] > 900) {
-    $betray = true;
-}
-if ($betray) {
-    echo 'Du bist nicht <a href="login.php">eingeloggt</a> oder du versucht auf fremde Accounts zuzugreifen...';
-} else {
+if ($_SESSION['Id'] > 900) exit('Kein Zugriff.');
+{
     if (isset($_POST['orderx']) && !ctype_digit($_POST['orderx'])) {
         exit('Betrugsversuch');
     }

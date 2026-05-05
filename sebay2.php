@@ -7,12 +7,10 @@ $inhalt=array("rohstoffa","rohstoffb","rohstoffc","rohstoffd","isochips","tritan
 $inhaltcap=array("Baustoff","Duranium","Erz","Sorium","Isochips","Tritanium","Dilithium","Antimaterie","Deuterium","Vinkulum","Ale","Latinum","Château Picard","Blutwein","Taspar Eier");
 
 $aid=$_GET["aid"];
-//CHEATSCHUTZ
-$betray=false;
-if(!ctype_digit($aid)) $betray=true;
-if(!isset($_SESSION["Id"])) $betray=true;
-
-if($betray) echo 'Es ist ein Fehler aufgetreten (System.Exception(1))'; else {
+include_once 'auth.php';
+$userId = requireLogin();
+$aid = requireIntParam('aid');
+{
 //
 
 

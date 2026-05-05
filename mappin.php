@@ -2,22 +2,13 @@
 include("head.php");
 include("navlogged.php");
 include_once("connect.php");
-//CHEATSCHUTZ ANFANG
-
-
-$betray=false;
-$testid=$_GET["from"];
-if(!isset($testid)) $testid=$_GET["pid"];
-$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysqli_fetch_array($tmp))
-if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
-
-if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
-
-//CHEATSCHUTZ ENDE
-
-
-
+include_once 'auth.php';
+$userId = requireLogin();
+$fromId = requireIntParam('from');
+$tmp = mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$fromId'");
+while ($testtmp = mysqli_fetch_array($tmp))
+    if ($userId != $testtmp['besitzer']) exit('Fehler: Nicht dein Schiff.');
+{
 $fromid=$_GET["from"];
 $toid=$_GET["to"];
 $from=new schiff();

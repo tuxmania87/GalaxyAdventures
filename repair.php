@@ -3,23 +3,15 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
-$id=$_SESSION["Id"];
-$pid=$_GET["pid"];
-$sid=$_POST["sid"];
-if(!isset($_POST["sid"])) $sid=$_GET["sid"];
-
-//Betray
-$betray=false;
-if(!ctype_digit($pid)) $betray=true;
-if(!ctype_digit($sid) && $sid>0) $betray=true;
-
-if($betray) echo "No Valid ID."; else 
+include_once 'auth.php';
+$userId = requireLogin();
+$pid = requireIntParam('pid');
+$sid = isset($_POST['sid']) ? requireIntParam('sid', 'POST') : optionalIntParam('sid');
 {
 
 $planet=new Planeten($pid);
 if(isset($sid)) $schiff=new Schiffe($sid);
-if($schiff->besitzer->id!=$_SESSION["Id"] || $planet->besitzer->id!=$_SESSION["Id"]) $betray=false;
-if($betray) echo "Betray Failure."; else
+if ($schiff->besitzer->id !== $userId || $planet->besitzer->id !== $userId) exit('Fehler: Nicht dein Schiff/Planet.');
 {
 
 if($_POST["sent"]==1) { 		//Schiff reparieren

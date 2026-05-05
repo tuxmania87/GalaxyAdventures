@@ -3,27 +3,16 @@
 include("head.php");
 include("navlogged.php");
 include("klassen.php");
-//CHEATSCHUTZ ANFANG
 $selfid = $_SESSION["Id"];
 
 $verbindung = get_verbindung();
 
-$betray = false;
-if (!ctype_digit($_GET["brief"]))
-    $betray = true;
-if ($_SESSION["Id"] <= 0)
-    $betray = true;
-if (!$betray) {
-    
-}
-if (!ctype_digit($_GET["brief"]))
-    die();
+// Auth bereits via requireLogin() und requireIntParam() erledigt
 
-//CHEATSCHUTZ ENDE
 
 
 $id = 1;
-$postid = $_GET["brief"];
+$postid = $briefId;
 $postquery = mysqli_query($verbindung,"SELECT * FROM mail WHERE id='$postid'"); //id einsetzen
 while ($post = mysqli_fetch_array($postquery)) {    //Abfrage der accountdaten
     $abs = new Account($post["absender"]);

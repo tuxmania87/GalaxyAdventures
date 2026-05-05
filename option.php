@@ -3,17 +3,11 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
-//CHEATSCHUTZ ANFANG
+include_once 'auth.php';
+$id = requireLogin();
+{
 
-$verbindung = get_verbindung();
 
-$betray=false;
-if($_SESSION["Id"]<=0) $betray=true;
-if($betray) { echo 'Du bist nicht <a href="login.php">eingeloggt</a> oder du versucht auf fremde Accounts zuzugreifen...'; } else {
-
-//CHEATSCHUTZ ENDE
-
-$id=$_SESSION["Id"];
 $ich=new Account($id);
 //Fall4 Beschreibung ändern
 if($_POST["sent"]==4) {

@@ -3,19 +3,15 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
-//CHEATSCHUTZ ANFANG
-
-$pid=$_GET["pid"];
-$fid=$_GET["fid"];
-
-$betray=false;
-if(!ctype_digit($pid) || !ctype_digit($fid)) die("Fehler: ID ung&uuml;ltig!"); 
-$tmp=mysqli_query($verbindung, "SELECT besitzer FROM planeten WHERE id='$pid'");
-while($testtmp=mysqli_fetch_array($tmp))
-if($_SESSION["Id"] != $testtmp["besitzer"]) die("Fehler: Besitzer-ID ung&uuml;tig");
+include_once 'auth.php';
+$userId = requireLogin();
+$pid = requireIntParam('pid');
+$fid = requireIntParam('fid');
+$tmp = mysqli_query($verbindung, "SELECT besitzer FROM planeten WHERE id='$pid'");
+while ($testtmp = mysqli_fetch_array($tmp))
+    if ($userId != $testtmp["besitzer"]) die("Fehler: Besitzer-ID ung&uuml;tig");
 
 
-//CHEATSCHUTZ ENDE
 
 
 $do=$_POST["do"];

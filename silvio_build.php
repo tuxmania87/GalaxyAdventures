@@ -22,14 +22,6 @@ if($ich->id==6) { $npcware='Ale'; $npcname='Imperialer Senat'; $npcbild='npcrom'
 if($ich->id==7) { $npcware='Blutwein'; $npcname='Grosse Halle'; $npcbild='npckling'; }
 if($ich->id==8) { $npcware='Taspar Eier'; $npcname='Detapa-Rat'; $npcbild='npccard'; }
 
-//CHEATSCHUTZ ANFANG
-
-
-$betray=false;
-
-
-
-//CHEATSCHUTZ ENDE
 
 
 

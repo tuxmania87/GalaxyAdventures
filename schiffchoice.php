@@ -3,18 +3,9 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
-//CHEATSCHUTZ ANFANG
-
-$verbindung = get_verbindung();
-
-$betray = false;
-if ($_SESSION["Id"] <= 0)
-    $betray = true;
-if ($betray) {
-    echo 'Du bist nicht <a href="login.php">eingeloggt</a> oder du versucht auf fremde Accounts zuzugreifen...';
-} else {
-
-//CHEATSCHUTZ ENDE
+include_once 'auth.php';
+$userId = requireLogin();
+{
 
     $order = $_GET["order"];
     $tt = "";

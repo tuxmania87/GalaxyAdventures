@@ -5,17 +5,9 @@ include 'klassen.php';
 include_once 'connect.php';
 
 $verbindung = get_verbindung();
-// CHEATSCHUTZ ANFANG
-
-$betray = false;
-if ($_SESSION['Id'] <= 0) {
-    exit('Du bist nicht <a href="login.php">eingeloggt</a> oder du versucht auf fremde Accounts zuzugreifen...');
-}
-
-// CHEATSCHUTZ ENDE
-
-$ich = new Account($_SESSION['Id']);
-$allianz = $ich->allianz->id;
+include_once 'auth.php';
+$ich = getLoggedInAccount();
+$allianz = \$ich->allianz->id;
 
 $do = $_POST['do'];
 

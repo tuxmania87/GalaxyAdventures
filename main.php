@@ -4,8 +4,6 @@ include("head.php");
 include("navlogged.php");
 include("klassen.php");
 
-//CHEATSCHUTZ ANFANG
-//CHEATSCHUTZ ENDE
 
 $id = $_SESSION["Id"];
 

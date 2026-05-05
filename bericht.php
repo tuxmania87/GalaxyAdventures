@@ -3,22 +3,13 @@ include("head.php");
 include("navlogged.php");
 include_once("connect.php");
 
-$id=$_SESSION["Id"];
-$sid=$_GET["sid"];
-
-//BETRAY
-$betray=false;
-if(!($id>0)) $betray=true;
-
-if(ctype_digit($sid)) { 
-$schiff=new schiff($sid); 
-if($schiff->besitzer!=$_SESSION["Id"]) $betray=true;
-if($schiff->klasse!='Horchposten') $betray=true;
-} else $betray=true;
-
-//ENDE
-
-if($betray) echo 'Es ist ein Fehler aufgetreten...'; else {
+include_once 'auth.php';
+$userId = requireLogin();
+$sid = requireIntParam('sid');
+$schiff = new schiff($sid);
+if ($schiff->besitzer !== $userId) exit('Fehler: Nicht dein Schiff.');
+if ($schiff->klasse !== 'Horchposten') exit('Fehler: Kein Horchposten.');
+{
 
 echo '<h3>Bericht des Horchposten im Sektor ',$schiff->x,'/',$schiff->y,'</h3>';
 echo '<table class="bordered2"><tr><td>Datum</td><td>Bild</td><td>Klasse</td><td>Besitzer</td><td>Sektor</td></tr>';

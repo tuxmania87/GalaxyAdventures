@@ -4,32 +4,16 @@ include 'head.php';
 include 'navlogged.php';
 include 'klassen.php';
 
-// CHEATSCHUTZ ANFANG
-
-$verbindung = get_verbindung();
-
-$pid = $_GET['pid'];
-$fid = $_GET['fid'];
-
-if (!ctype_digit($pid)) {
-    exit('Fehler: ID not valid');
-}
-if (!ctype_digit($fid)) {
-    exit('Fehler: ID not valid');
-}
+include_once 'auth.php';
+requireLogin();
+$pid = requireIntParam('pid');
+$fid = requireIntParam('fid');
 $planet = new Planeten($pid);
-
 $feld = new Gebaude($pid, $fid);
-
 if (!$feld->bau->forschung || $feld->rest_bauzeit > 0) {
-    exit('Fehler: keine Forschung möglich');
+    exit('Fehler: Forschung nicht möglich.');
 }
-
-if ($planet->besitzer->id != $_SESSION['Id']) {
-    exit('Fehler:');
-}
-
-// CHEATSCHUTZ ENDE
+requireOwnership($planet->besitzer->id, 'Planet');
 // aktiveren
 
 if (isset($_GET['dorid']) && ctype_digit($_GET['dorid'])) {

@@ -2,19 +2,16 @@
 include("head.php");
 include("navlogged.php");
 include_once("connect.php");
-//CHEATSCHUTZ ANFANG
 
 
-$betray=false;
-$testid=$_GET["sid"];
-if(!isset($testid)) $testid=$_GET["pid"];
-$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysqli_fetch_array($tmp))
-if($_COOKIE["Id"] != $testtmp["besitzer"]) $betray=true;
+include_once 'auth.php';
+$userId = requireLogin(); // War: $_COOKIE['Id'] - Bug gefixt auf Session
+$sid = requireIntParam('sid');
+$tmp = mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$sid'");
+while ($testtmp = mysqli_fetch_array($tmp))
+    if ($userId != $testtmp['besitzer']) exit('Fehler: Nicht dein Schiff.');
+{
 
-if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
-
-//CHEATSCHUTZ ENDE
 
 $do=$_POST["do"];
 $pid=$_GET["pid"];

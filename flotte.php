@@ -5,21 +5,12 @@ include("navlogged.php");
 include("klassen.php");
 
 die("Flottenverwaltung deaktiviert!");
-//CHEATSCHUTZ ANFANG
-
-
-$betray = false;
-$testid = $_GET["fid"];
-if (!ctype_digit($_GET["do"]) && isset($_GET["do"]) && $_GET["do"][0] != 6)
-    $betray = true;
-if (!ctype_digit($_GET["fid"]))
-    $betray = true;
-
-if ($betray) {
-    die("ERROR!");
+include_once 'auth.php';
+requireLogin();
+$fid = requireIntParam('fid');
+if (isset($_GET['do']) && !ctype_digit($_GET['do']) && $_GET['do'][0] != '6') {
+    exit('Fehler: Ungültiger Parameter.');
 }
-
-//CHEATSCHUTZ ENDE
 $selfid = $_SESSION["Id"];
 $ich = new Account($_SESSION["Id"]);
 $fid = $_GET["fid"];
