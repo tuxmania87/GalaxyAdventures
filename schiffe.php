@@ -11,6 +11,20 @@ if (ctype_digit($sid)) {
     $schiff = new Schiffe($sid);
 }
 include_once 'auth.php';
+
+/**
+ * Gibt HTML-Farbspan für Hüllenstärke zurück.
+ */
+function hullColor(int $hull, int $maxhull): string
+{
+    if ($maxhull <= 0) return '';
+    $ratio = $hull / $maxhull;
+    if ($ratio <= 0.2) return 'color:red;';
+    if ($ratio <= 0.5) return 'color:yellow;';
+    return '';
+}
+
+
 $ich = getLoggedInAccount();
 $sid = requireIntParam('sid');
 if ($schiff->typ != 's') exit('Fehler: Ungültiger Schiffstyp.');
@@ -45,32 +59,24 @@ if ((isset($_GET["x"]) && isset($_GET["y"])
     if ($diffx != 0 && $diffy != 0 && $_POST["do"] != 7 && $_GET["do"] != 7) {
         echo "<span style=\"color:red;font-weight:bold;\">Du kannst nur geradlinig navigieren!</span>";
     } else {
-        if ($diffx > 0) {
+        if ($_POST['do'] == 7) {
+            $richtung = 'v';
+            $anzahl = 1;
+        } elseif ($_GET['do'] == 7) {
+            $richtung = 's';
+            $anzahl = 1;
+        } elseif ($diffx > 0) {
             $richtung = 'l';
             $anzahl = $diffx;
-        }
-        if ($diffx < 0) {
+        } elseif ($diffx < 0) {
             $richtung = 'r';
-            $anzahl = $diffx * -1;
-        }
-        if ($diffy > 0) {
+            $anzahl = abs($diffx);
+        } elseif ($diffy > 0) {
             $richtung = 'o';
             $anzahl = $diffy;
-        }
-        if ($diffy < 0) {
+        } elseif ($diffy < 0) {
             $richtung = 'u';
-            $anzahl = $diffy * -1;
-        }
-
-
-        if ($_POST["do"] == 7) {
-            $richtung = "v";
-            $anzahl = 1;
-        }
-
-        if ($_GET["do"] == 7) {
-            $richtung = "s";
-            $anzahl = 1;
+            $anzahl = abs($diffy);
         }
 
         for ($i = 0; $i < $anzahl; $i++) {
@@ -150,55 +156,16 @@ if (isset($_GET["defense"]) && ctype_digit($_GET["defense"])) {
 }
 
 //feuern
-if ($_GET["do"] == 3) {
-
-    $ziel = explode("-", $_GET["opfer"]);
-    $zieltyp = $ziel[0];
-    $zielid = $ziel[1];
-    if (!ctype_digit($zielid))
-        die("Error 42");
-    if ($zieltyp == 'P') {
-        $ziel = new Planeten($zielid);
-        $schiff->feuern($ziel, 0);
-    }
-    if ($zieltyp == 'S') {
-        $ziel = new Schiffe($zielid);
-        $schiff->feuern($ziel, 0);
-    }
-}
-
-if ($_GET["do"] == 30) {
-
-    $ziel = explode("-", $_GET["opfer"]);
-    $zieltyp = $ziel[0];
-    $zielid = $ziel[1];
-    if (!ctype_digit($zielid))
-        die("Error 42");
-    if ($zieltyp == 'P') {
-        $ziel = new Planeten($zielid);
-        $schiff->feuern($ziel, 10);
-    }
-    if ($zieltyp == 'S') {
-        $ziel = new Schiffe($zielid);
-        $schiff->feuern($ziel, 10);
-    }
-}
-
-if ($_GET["do"] == 31) {
-
-    $ziel = explode("-", $_GET["opfer"]);
-    $zieltyp = $ziel[0];
-    $zielid = $ziel[1];
-    if (!ctype_digit($zielid))
-        die("Error 42");
-    if ($zieltyp == 'P') {
-        $ziel = new Planeten($zielid);
-        $schiff->feuern($ziel, 20);
-    }
-    if ($zieltyp == 'S') {
-        $ziel = new Schiffe($zielid);
-        $schiff->feuern($ziel, 20);
-    }
+// Feuern: do=3 (Phaser), do=30 (Photonen), do=31 (Quanten)
+$feuermodi = [3 => 0, 30 => 10, 31 => 20];
+$do_get = intval($_GET['do'] ?? 0);
+if (isset($feuermodi[$do_get]) && isset($_GET['opfer'])) {
+    $opfer  = explode('-', $_GET['opfer']);
+    $typ    = $opfer[0] ?? '';
+    $zielid = isset($opfer[1]) && ctype_digit($opfer[1]) ? intval($opfer[1]) : null;
+    if ($zielid === null) exit('Fehler: Ungültiges Ziel.');
+    $ziel = ($typ === 'P') ? new Planeten($zielid) : new Schiffe($zielid);
+    $schiff->feuern($ziel, $feuermodi[$do_get]);
 }
 
 if ($_GET["do"] == "aufladen" /*&& $_SESSION["Id"] == 1*/) {
@@ -211,13 +178,11 @@ if ($_POST["do"] == 2) {
     $amount = $_POST["schilde"];
     echo $schiff->fehler[($schiff->schildaufladen($amount))];
 }
-//alarstufe
-if ($_GET["do"] == '6g')
-    $schiff->alarmstufe = 'green';
-if ($_GET["do"] == '6y')
-    $schiff->alarmstufe = 'yellow';
-if ($_GET["do"] == '6r')
-    $schiff->alarmstufe = 'red';
+// Alarmstufe
+$alarmMap = ['6g' => 'green', '6y' => 'yellow', '6r' => 'red'];
+if (isset($alarmMap[$_GET['do'] ?? ''])) {
+    $schiff->alarmstufe = $alarmMap[$_GET['do']];
+}
 mysqli_query($verbindung, "UPDATE schiffe SET alarmstufe='$schiff->alarmstufe' WHERE id='$schiff->id'");
 //ENDE CODE abahndkungen
 
@@ -259,20 +224,9 @@ if ($eoutput == 0) {
 
 echo '</td><td>', $schiff->gondeln, '/', $schiff->maxgondeln, '</td><td>', $schiff->laser, ' (', $schiff->phaser, '/', $schiff->maxphaser, ')</td><td>' . $schiff->torpedohitze . '/' . $schiff->maxtorpedohitze . '</td>';
 
-$t_color = "";
-$t_color2 = "";
-
-if ($schiff->hull / $schiff->maxhull <= 0.5 && $schiff->hull / $schiff->maxhull > 0.2) {
-    $t_color = '<span style="color:yellow;">';
-    $t_color2 = "</span>";
-}
-
-if ($schiff->hull / $schiff->maxhull <= 0.2) {
-    $t_color = '<span style="color:red;">';
-    $t_color2 = "</span>";
-}
-
-echo '<td>'. $t_color.  $schiff->hull . $t_color2 . '/'. $schiff->maxhull. '</td><td>';
+$hullStyle = hullColor($schiff->hull, $schiff->maxhull);
+echo '<td>' . ($hullStyle ? '<span style="' . $hullStyle . '">' : '') . $schiff->hull
+   . ($hullStyle ? '</span>' : '') . '/' . $schiff->maxhull . '</td><td>';
 echo ($schiff->schildstatus == 1) ? '<span style="color:yellow;">' : '<span style="color:silver;">';
 echo $schiff->schilde, '/', $schiff->maxschilde, '</span></td>';
 
@@ -417,20 +371,19 @@ if ($schiff->skill->erz == 1 && $cur_feld->feld->erz > 0) {
 
 if ($schiff->frachtraum->fracht[10]->anzahl > 0 || $schiff->frachtraum->fracht[11]->anzahl > 0) {
     echo '<tr><th>Verteidigung</th><td style="text-align:left;">';
-    if ($schiff->defense == 0) {
-        echo '<img src="images/misc/phaserh.png" border="0" /> <span style="color:green;font-weight:bold;">Phaser</span><br />';
-        echo '<a href="schiffe.php?sid=' . $schiff->id . '&defense=1"><img src="images/misc/photonh.png" border="0" /> Photonentorpedos</a><br />';
-        echo '<a href="schiffe.php?sid=' . $schiff->id . '&defense=2"><img src="images/misc/quantenh.png" border="0" /> Quantentorpedos</a>';
-    }
-    if ($schiff->defense == 1) {
-        echo '<a href="schiffe.php?sid=' . $schiff->id . '&defense=0"><img src="images/misc/phaserh.png" border="0" /> Phaser</a><br />';
-        echo '<img src="images/misc/photonh.png" border="0" /> <span style="color:green;font-weight:bold;">Photonentorpedos</span><br />';
-        echo '<a href="schiffe.php?sid=' . $schiff->id . '&defense=2"><img src="images/misc/quantenh.png" border="0" /> Quantentorpedos</a>';
-    }
-    if ($schiff->defense == 2) {
-        echo '<a href="schiffe.php?sid=' . $schiff->id . '&defense=0"><img src="images/misc/phaserh.png" border="0" /> Phaser</a><br />';
-        echo '<a href="schiffe.php?sid=' . $schiff->id . '&defense=1"><img src="images/misc/photonh.png" border="0" /> Photonentorpedos</a><br />';
-        echo '<img src="images/misc/quantenh.png" border="0" /> <span style="color:green;font-weight:bold;">Quantentorpedos</span>';
+    $waffen = [
+        0 => ['bild' => 'phaserh',  'name' => 'Phaser'],
+        1 => ['bild' => 'photonh',  'name' => 'Photonentorpedos'],
+        2 => ['bild' => 'quantenh', 'name' => 'Quantentorpedos'],
+    ];
+    foreach ($waffen as $idx => $waffe) {
+        $img = '<img src="images/misc/' . $waffe['bild'] . '.png" border="0" /> ';
+        if ($schiff->defense === $idx) {
+            echo $img . '<span style="color:green;font-weight:bold;">' . $waffe['name'] . '</span>';
+        } else {
+            echo '<a href="schiffe.php?sid=' . $schiff->id . '&defense=' . $idx . '">' . $img . $waffe['name'] . '</a>';
+        }
+        if ($idx < 2) echo '<br />';
     }
 }
 
@@ -615,20 +568,9 @@ if (mysqli_num_rows($display_test1) > 0 || mysqli_num_rows($display_test2) > 0) 
                 echo '</td>';
                 echo '<td>', $tempschiff->name, ' <span style="color:silver;">(', $tempschiff->id, ')</span></td><td><a href="userinfo.php?id=', $tempschiff->besitzer->id, '">', $tempschiff->besitzer->nickname, '</a></td>';
 
-                $t_color = "";
-                $t_color2 = "";
-                echo $tempschiff->id."<br>";
-                if ($tempschiff->hull / $tempschiff->maxhull <= 0.5 && $tempschiff->hull / $tempschiff->maxhull > 0.2) {
-                    $t_color = '<span style="color:yellow;">';
-                    $t_color2 = "</span>";
-                }
-
-                if ($tempschiff->hull / $tempschiff->maxhull <= 0.2) {
-                    $t_color = '<span style="color:red;">';
-                    $t_color2 = "</span>";
-                }
-
-                echo '<td>' . $t_color . $tempschiff->hull . $t_color2 . '/' . $tempschiff->maxhull . '</td><td>';
+                $hullStyle2 = hullColor($tempschiff->hull, $tempschiff->maxhull);
+                echo '<td>' . ($hullStyle2 ? '<span style="' . $hullStyle2 . '">' : '') . $tempschiff->hull
+                   . ($hullStyle2 ? '</span>' : '') . '/' . $tempschiff->maxhull . '</td><td>';
                 echo ($tempschiff->schildstatus == 1) ? '<span style="color:yellow;">' : '<span style="color:silver;">';
                 echo $tempschiff->schilde, '/', $tempschiff->maxschilde, '</span></td>';
                 echo '<td><a class="button scan" onmouseover="Tip(\'<b>Scannen...</b><br />Scannt das Schiff und zeigt seine Waren an.\')" onmouseout="UnTip()" href="schiffscan.php?sid=', $sid, '&tid=', $tempschiff->id, '"><span>S</span></a></td>';
@@ -733,5 +675,4 @@ $bu = new Button("", "Selbstzerst&ouml;rung");
 $bu->printme();
 echo '</form>';
 
-include("foot.php");
-?>
+

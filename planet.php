@@ -23,15 +23,10 @@ requireOwnership($planet->besitzer->id, 'Planet');
 $ich = new Account($_SESSION['Id']);
 $oflaeche = $planet->typ == 'm' || $planet->typ == 'l' || $planet->typ == 'i' || $planet->typ == 'z' ? 50 : 24;
 
-// alarstufe
-if ($_GET['do'] == '13g') {
-    $planet->alarmstufe = 'green';
-}
-if ($_GET['do'] == '13y') {
-    $planet->alarmstufe = 'yellow';
-}
-if ($_GET['do'] == '13r') {
-    $planet->alarmstufe = 'red';
+// Alarmstufe
+$alarmMap = ['13g' => 'green', '13y' => 'yellow', '13r' => 'red'];
+if (isset($alarmMap[$_GET['do'] ?? ''])) {
+    $planet->alarmstufe = $alarmMap[$_GET['do']];
 }
 mysqli_query($verbindung, "UPDATE planeten SET alarmstufe='$planet->alarmstufe' WHERE id='$planet->id'");
 
