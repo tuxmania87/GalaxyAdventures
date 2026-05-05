@@ -11,8 +11,8 @@ $anfeld = array();
 $tempstring = "";
 $behandelt = false;
 if ($_GET["to"] == 'Allianz' || $_GET["to"] == 'allianz' || $_POST["empfaenger"] == 'Allianz' || $_POST["empfaenger"] == 'allianz') {
-    $abfrage = mysql_query("SELECT id FROM account WHERE allianz='" . $ich->allianz->id . "' AND allianz>0");
-    while ($row = mysql_fetch_array($abfrage))
+    $abfrage = mysqli_query($verbindung, "SELECT id FROM account WHERE allianz='" . $ich->allianz->id . "' AND allianz>0");
+    while ($row = mysqli_fetch_array($abfrage))
         $anfeld[] = $row[0];
     $behandelt = true;
 }
@@ -44,10 +44,10 @@ if ($_POST["send"] == 1 && $_POST["empfaenger"] == '-3') {
     if ($betreff == '')
         $betreff = "kein betreff";
 
-    $abfrage23 = mysql_query("SELECT * FROM account");
-    while ($tmp23 = mysql_fetch_array($abfrage23)) {
+    $abfrage23 = mysqli_query($verbindung, "SELECT * FROM account");
+    while ($tmp23 = mysqli_fetch_array($abfrage23)) {
         $ttid = $tmp23["id"];
-        mysql_query("INSERT INTO mail (
+        mysqli_query($verbindung, "INSERT INTO mail (
 empfaenger ,
 absender ,
 betreff ,
@@ -72,7 +72,7 @@ if ($_POST["send"] == 1 && $_POST["empfaenger"] != '-3') {
         $inhalt = pruefetext($_POST["inhalt"]);
         if ($betreff == '')
             $betreff = "kein betreff";
-        mysql_query("INSERT INTO mail (
+        mysqli_query($verbindung, "INSERT INTO mail (
 empfaenger ,
 absender ,
 betreff ,

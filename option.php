@@ -19,7 +19,7 @@ $ich=new Account($id);
 if($_POST["sent"]==4) {
 $beschreibung=($_POST["bla"]);
 changeit($beschreibung);
-mysqli_query($verbindung, "UPDATE account SET beschreibung='$beschreibung' WHERE id='$id'") or die(mysql_error());
+mysqli_query($verbindung, "UPDATE account SET beschreibung='$beschreibung' WHERE id='$id'") or die(mysqli_error($verbindung));
 echo 'Beschreibung ge&auml;ndert.';
 }
 

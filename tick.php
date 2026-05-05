@@ -284,7 +284,7 @@ x.energieverlust >0
   //0 bis 8
   for ($ct = 0; $ct <= 8; $ct++) {
   $zinslimes = $ct > 3 ? 150 : 300;
-  mysql_query("UPDATE konto SET " . $inhalt[$ct] . "=ceil(" . $inhalt[$ct] . "*0.9) WHERE besitzer>9 AND " . $inhalt[$ct] . ">$zinslimes");
+  mysqli_query($verbindung, "UPDATE konto SET " . $inhalt[$ct] . "=ceil(" . $inhalt[$ct] . "*0.9) WHERE besitzer>9 AND " . $inhalt[$ct] . ">$zinslimes");
   } */
 
 
@@ -306,8 +306,8 @@ while ($rem = mysqli_fetch_array($rememberquery)) {
     $id1 = $rem["id"];
     $message = "Hallo $name1,\n\nDu bekommst diese Mail weil du seit 70 Ticks (14 Tagen) dich nicht mehr bei Galaxy Adventures gemeldet hast. \nDein Account wurde geloescht. Ich hoffe du hattest Spass in Galaxy-Adventures.\nIch wuensche dir viel Spass\n\ncremetorte";
     //mail($mail1, "Loeschung - 14 Tage", $message, "From: GA-Team <gasupport@keinerspieltmitmir.de>");
-    //mysql_query("INSERT INTO mail (empfaenger,absender,neu) VALUES ('1','2','1')");
-    //mysql_query("DELETE FROM account WHERE id='$id1'");
+    //mysqli_query($verbindung, "INSERT INTO mail (empfaenger,absender,neu) VALUES ('1','2','1')");
+    //mysqli_query($verbindung, "DELETE FROM account WHERE id='$id1'");
 }
 
 //Gondeln reseten
@@ -329,14 +329,14 @@ while ($foo = mysqli_fetch_array($abfrage)) {
 
 //Nebel Abfragen
 /*
-  $abfrage=mysql_query("SELECT id FROM schiffe WHERE orbit=0 AND besitzer!=2");
-  while($row=mysql_fetch_array($abfrage))
+  $abfrage=mysqli_query($verbindung, "SELECT id FROM schiffe WHERE orbit=0 AND besitzer!=2");
+  while($row=mysqli_fetch_array($abfrage))
   {
   $shp=new Schiffe($row[0]);
   $feld=new Feld($shp->position->x,$shp->position->y,$shp->position->system->id);
   if($feld->was=='Weltraum')
   switch ($feld->typ) {
-  case "g": mysql_query("UPDATE schiffe SET schilde=ROUND(schilde*1.1) WHERE id='".$shp->id-"'"); break;
+  case "g": mysqli_query($verbindung, "UPDATE schiffe SET schilde=ROUND(schilde*1.1) WHERE id='".$shp->id-"'"); break;
   case "b":
   case "radio":
   case "metrion":

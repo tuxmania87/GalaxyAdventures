@@ -28,15 +28,15 @@ $fid = $_GET["fid"];
 
 if ($fid == 0) {
 
-    $testfrage = mysql_query("SELECT * FROM flotte WHERE besitzer='$selfid'");
-    while ($flott = mysql_fetch_array($testfrage))
+    $testfrage = mysqli_query($verbindung, "SELECT * FROM flotte WHERE besitzer='$selfid'");
+    while ($flott = mysqli_fetch_array($testfrage))
         echo 'Flotte: ', $flott["name"], ' --> <a href="flotte.php?fid=', $flott["id"], '">Flotte ausw&auml;hlen</a><br />';
 } else {
 
     $schiffe = array();
 
-    $abfrage = mysql_query("SELECT id FROM schiffe WHERE flotte='$fid'");
-    while ($t1 = mysql_fetch_array($abfrage))
+    $abfrage = mysqli_query($verbindung, "SELECT id FROM schiffe WHERE flotte='$fid'");
+    while ($t1 = mysqli_fetch_array($abfrage))
         array_push($schiffe, $t1["id"]);
 
     $prufbool = true;
@@ -49,9 +49,9 @@ if ($fid == 0) {
 
     if ($prufbool) {
         echo 'Alle deine Schiffe wurden vernichtet!';
-        mysql_query("DELETE FROM flotte WHERE id=',$fid,'");
-        mysql_query("DELETE FROM flotte WHERE id='" . $fid . "'");
-        mysql_query("UPDATE schiffe SET flotte=0 WHERE flotte='$fid'");
+        mysqli_query($verbindung, "DELETE FROM flotte WHERE id=',$fid,'");
+        mysqli_query($verbindung, "DELETE FROM flotte WHERE id='" . $fid . "'");
+        mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='$fid'");
     } else {
 
 
@@ -69,7 +69,7 @@ if ($fid == 0) {
                   $text="Flotte von ".($xx->besitzer)." greift dich in Sektor ".$xx->x."|".$xx->y." an!";
                   $wer=$xx->besitzer; $wen=$enemy->besitzer; $wann=date("Y-m-d H:i:s");
 
-                  mysql_query("INSERT INTO logbuch (was,wann,wer,wen) VALUES ('$text','$wann','$wer','$wen')") or die(mysql_error());
+                  mysqli_query($verbindung, "INSERT INTO logbuch (was,wann,wer,wen) VALUES ('$text','$wann','$wer','$wen')") or die(mysqli_error($verbindung));
                  */
 //HINSCHIESSEN
                 echo "<h3>Angriff</h3>";
@@ -80,15 +80,15 @@ if ($fid == 0) {
 //zurückschiessen
                 $enemyf = array();
                 $enemyfp = array();
-                $fabfrage = mysql_query("SELECT * FROM schiffe WHERE system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' AND orbit='" . $schiff->position->orbit . "' AND besitzer!='" . $schiff->besitzer->id . "' AND energie>0 AND phaser<maxphaser AND laser>0");
-                while ($frow = mysql_fetch_array($fabfrage)) {
+                $fabfrage = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' AND orbit='" . $schiff->position->orbit . "' AND besitzer!='" . $schiff->besitzer->id . "' AND energie>0 AND phaser<maxphaser AND laser>0");
+                while ($frow = mysqli_fetch_array($fabfrage)) {
                     $tschiff = new Schiffe($frow["id"]);
                     if (!in_array($schiff->besitzer->id, $tschiff->besitzer->vertrag("nap")) && !in_array($schiff->besitzer->id, $tschiff->besitzer->vertrag("frieden")) && (($tschiff->besitzer->allianz->id > 0 && $tschiff->besitzer->allianz->id != $schiff->besitzer->allianz->id) || $tschiff->besitzer->allianz->id == 0) && ((in_array($enemy->besitzer->id, $tschiff->besitzer->vertrag("verteidigung"))) || ($enemy->besitzer->allianz->id == $tschiff->besitzer->allianz->id && $tschiff->besitzer->allianz->id > 0) || ($enemy->besitzer->id == $tschiff->besitzer->id)))
                         $enemyf[] = $frow["id"];
                 }
 
-                $fabfrage = mysql_query("SELECT * FROM planeten WHERE system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' AND besitzer!='" . $schiff->besitzer->id . "' AND energie>0  AND laser>0");
-                while ($frow = mysql_fetch_array($fabfrage)) {
+                $fabfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' AND besitzer!='" . $schiff->besitzer->id . "' AND energie>0  AND laser>0");
+                while ($frow = mysqli_fetch_array($fabfrage)) {
                     $tschiff = new Planeten($frow["id"]);
                     if ($tschiff->position->orbit == 1 && !in_array($schiff->besitzer->id, $tschiff->besitzer->vertrag("nap")) && !in_array($schiff->besitzer->id, $tschiff->besitzer->vertrag("frieden")) && (($tschiff->besitzer->allianz->id > 0 && $tschiff->besitzer->allianz->id != $schiff->besitzer->allianz->id) || $tschiff->besitzer->allianz->id == 0) && ((in_array($enemy->besitzer->id, $tschiff->besitzer->vertrag("verteidigung"))) || ($enemy->besitzer->allianz->id == $tschiff->besitzer->allianz->id && $tschiff->besitzer->allianz->id > 0) || ($enemy->besitzer->id == $tschiff->besitzer->id)))
                         $enemyfp[] = $frow["id"];
@@ -140,7 +140,7 @@ if ($fid == 0) {
                 die("Fehler ( 70 )");
             $testschiff = new Schiffe($addid);
             if ($testschiff->besitzer->id == $_SESSION["Id"]) {
-                mysql_query("UPDATE schiffe SET flotte='$fid' WHERE id='$addid'");
+                mysqli_query($verbindung, "UPDATE schiffe SET flotte='$fid' WHERE id='$addid'");
                 $schiffe[] = $addid;
             }
         }
@@ -153,7 +153,7 @@ if ($fid == 0) {
                 die("Fehler ( 70 )");
             $testschiff = new Schiffe($delid);
             if ($testschiff->besitzer->id == $_SESSION["Id"]) {
-                mysql_query("UPDATE schiffe SET flotte='0' WHERE id='$delid'");
+                mysqli_query($verbindung, "UPDATE schiffe SET flotte='0' WHERE id='$delid'");
                 $neufeld = array();
                 for ($i = 0; $i < sizeof($schiffe); $i++)
                     if ($schiffe[$i] != $delid)
@@ -166,8 +166,8 @@ if ($fid == 0) {
 //<form action="flotte.php?fid=2" method="post"><td><input type="hidden" name="do" value="31"><input type="hidden" name="delid" value="8"><input type="submit" value="entfernen"></td></form>
 
         if (sizeof($schiffe) == 0) {
-            mysql_query("DELETE FROM flotte WHERE id='" . $fid . "'");
-            mysql_query("UPDATE schiffe SET flotte=0 WHERE flotte='$fid'");
+            mysqli_query($verbindung, "DELETE FROM flotte WHERE id='" . $fid . "'");
+            mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='$fid'");
             die("Flotte existiert nicht (mehr).");
         }
 //ende schiff entfernen
@@ -178,7 +178,7 @@ if ($fid == 0) {
                 if ($schiff->energie > 0 && $schiff->schilde > 0 && $schiff->schildstatus == 0) {
                     $schiff->energie--;
                     $schiff->schildstatus = 1;
-                    mysql_query("UPDATE schiffe SET energie='" . $schiff->energie . "',schildstatus='" . $schiff->schildstatus . "',schilde='" . $schiff->schilde . "' WHERE id='" . $schiff->id . "'");
+                    mysqli_query($verbindung, "UPDATE schiffe SET energie='" . $schiff->energie . "',schildstatus='" . $schiff->schildstatus . "',schilde='" . $schiff->schilde . "' WHERE id='" . $schiff->id . "'");
                 }
             }
 
@@ -186,7 +186,7 @@ if ($fid == 0) {
             for ($i = 0; $i < sizeof($schiffe); $i++) {
                 $schiff = new Schiffe($schiffe[$i]);
                 $schiff->schildstatus = 0;
-                mysql_query("UPDATE schiffe SET schildstatus='0' WHERE id='" . $schiff->id . "'");
+                mysqli_query($verbindung, "UPDATE schiffe SET schildstatus='0' WHERE id='" . $schiff->id . "'");
             }
 
 
@@ -238,7 +238,7 @@ if ($fid == 0) {
 
 //verteilen
             for ($i = 0; $i < sizeof($schiffe); $i++) {
-                mysql_query("UPDATE schiffe SET energie='" . $mengeS . "' WHERE id='" . $schiffe[$i] . "'");
+                mysqli_query($verbindung, "UPDATE schiffe SET energie='" . $mengeS . "' WHERE id='" . $schiffe[$i] . "'");
                 $gesamtE-=$mengeS;
             }
             echo 'Restenergie: ', $gesamtE, '<br />';
@@ -249,13 +249,13 @@ if ($fid == 0) {
                 if ($puffer > $gesamtE) {
                     echo $sch->name, ' (', $sch->id, ') erh&auml;lt ', $gesamtE, ' Energie<br />';
                     $puffer = 0;
-                    mysql_query("UPDATE schiffe SET energie=energie+" . $gesamtE . " WHERE id='" . $sch->id . "'");
+                    mysqli_query($verbindung, "UPDATE schiffe SET energie=energie+" . $gesamtE . " WHERE id='" . $sch->id . "'");
                     $gesamtE = 0;
                 }
                 if ($puffer > 0) {
                     $gesamtE-=$puffer;
                     echo $sch->name, ' (', $sch->id, ') erh&auml;lt ', $puffer, ' Energie<br />';
-                    mysql_query("UPDATE schiffe SET energie=energie+" . $puffer . " WHERE id='" . $sch->id . "'");
+                    mysqli_query($verbindung, "UPDATE schiffe SET energie=energie+" . $puffer . " WHERE id='" . $sch->id . "'");
                 }
             }
         }  //ende e aufteile
@@ -269,7 +269,7 @@ if ($fid == 0) {
                     $sch->alarmstufe = 'yellow';
                 if ($_GET["do"] == '6r')
                     $sch->alarmstufe = 'red';
-                mysql_query("UPDATE schiffe SET alarmstufe='$sch->alarmstufe' WHERE id='$sch->id'");
+                mysqli_query($verbindung, "UPDATE schiffe SET alarmstufe='$sch->alarmstufe' WHERE id='$sch->id'");
             }
         }
 //ende alarmstufen	
@@ -327,8 +327,8 @@ if ($fid == 0) {
 
         if ($_GET["do"] == 20)   //flotte loeschen
             if ($schiff->besitzer->id == $_SESSION["Id"]) {
-                mysql_query("UPDATE schiffe SET flotte=0 WHERE flotte='" . $fid . "' AND besitzer='" . $_SESSION["Id"] . "'");
-                mysql_query("DELETE FROM flotte WHERE id='" . $fid . "'");
+                mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='" . $fid . "' AND besitzer='" . $_SESSION["Id"] . "'");
+                mysqli_query($verbindung, "DELETE FROM flotte WHERE id='" . $fid . "'");
                 die("zur <a href=\"flotte.php?fid=0\">Flotten&uuml;bersicht</a>");
             }
 
@@ -376,8 +376,8 @@ if ($fid == 0) {
                     $tmpx = $schiff->position->x + $j;
                     $tmpy = $schiff->position->y + $i;
                     $ttip = "";
-                    $abfrage = mysql_query("SELECT * FROM weltraum WHERE x='$tmpx' AND y='$tmpy' AND system='" . $schiff->position->system->id . "'");
-                    while ($tmp = mysql_fetch_array($abfrage)) {
+                    $abfrage = mysqli_query($verbindung, "SELECT * FROM weltraum WHERE x='$tmpx' AND y='$tmpy' AND system='" . $schiff->position->system->id . "'");
+                    while ($tmp = mysqli_fetch_array($abfrage)) {
 
                         if ($tmp["typ"] == 'h')
                             $bild = 'hstation.jpg';
@@ -474,16 +474,16 @@ if ($fid == 0) {
                     $sysbild = "";
 
                     if ($schiff->position->system->id == 0) {
-                        $abfragexy = mysql_query("SELECT * FROM systeme WHERE x='$tmpx' AND y='$tmpy'");
-                        while ($tmpxy = mysql_fetch_array($abfragexy)) {
+                        $abfragexy = mysqli_query($verbindung, "SELECT * FROM systeme WHERE x='$tmpx' AND y='$tmpy'");
+                        while ($tmpxy = mysqli_fetch_array($abfragexy)) {
                             $gna = $tmpxy[4];
                             $sysbild = "" . $gna;
                             $ttip = "'" . $tmpxy["name"] . "'";
                         }
                     }
 
-                    $abfrage = mysql_query("SELECT * FROM planeten WHERE x='$tmpx' AND y='$tmpy' AND system='" . $schiff->position->system->id . "'");
-                    while ($tmp = mysql_fetch_array($abfrage)) {
+                    $abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE x='$tmpx' AND y='$tmpy' AND system='" . $schiff->position->system->id . "'");
+                    while ($tmp = mysqli_fetch_array($abfrage)) {
                         if ($tmp["typ"] == 'm')
                             if ($tmp["besitzer"] == 2)
                                 $ttip = 'munbesiedelt'; else
@@ -516,8 +516,8 @@ if ($fid == 0) {
                             $bild = 'gass.jpg';
                     }
                     //Tooltip test
-                    $abfrage = mysql_query("SELECT * FROM schiffe WHERE x='$tmpx' AND y='$tmpy'  AND system='" . $schiff->position->system->id . "'");
-                    while ($tmp = mysql_fetch_array($abfrage))
+                    $abfrage = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE x='$tmpx' AND y='$tmpy'  AND system='" . $schiff->position->system->id . "'");
+                    while ($tmp = mysqli_fetch_array($abfrage))
                         $counter++;
                     if ($ttip == '')
                         $ttip = 'weltall';
@@ -592,8 +592,8 @@ if ($fid == 0) {
         echo '</td><td style="vertical-align:top;"><table class="bordered">';
 
         $nebel = false;
-        $gegnerab = mysql_query("SELECT * FROM schiffe WHERE x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' AND orbit='" . $schiff->position->orbit . "' AND typ='b'");
-        while ($gegner = mysql_fetch_array($gegnerab))
+        $gegnerab = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' AND orbit='" . $schiff->position->orbit . "' AND typ='b'");
+        while ($gegner = mysqli_fetch_array($gegnerab))
             $nebel = true;
 
 //deutbool
@@ -607,8 +607,8 @@ if ($fid == 0) {
 
 //endedeut bool
 
-        $gegnerab = mysql_query("SELECT * FROM weltraum WHERE (typ='dk' OR typ='d') AND system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "'");
-        while ($gegner = mysql_fetch_array($gegnerab)) {
+        $gegnerab = mysqli_query($verbindung, "SELECT * FROM weltraum WHERE (typ='dk' OR typ='d') AND system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "'");
+        while ($gegner = mysqli_fetch_array($gegnerab)) {
             if ($gegner["typ"] == 'd' && $deutbool)
                 echo '<tr><form action="flotte.php?fid=', $fid, '" method="post"><td><img src="images/misc/deut.jpg" border="0" /></td><td>dichtes<br />Deuteriumfeld</td><td><input type="text" name="deutanzahl" size="6" value="(energie)" /></td><td><input type="submit" value="einsaugen" /><input type="hidden" name="do" value="7" /></td></form></tr>';
             if ($gegner["typ"] == 'dk' && $deutbool)
@@ -620,8 +620,8 @@ if ($fid == 0) {
             echo '</tr>';
         }
 
-        $gegnerab = mysql_query("SELECT * FROM weltraum WHERE (typ='ek' OR typ='e') AND system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "'");
-        while ($gegner = mysql_fetch_array($gegnerab)) {
+        $gegnerab = mysqli_query($verbindung, "SELECT * FROM weltraum WHERE (typ='ek' OR typ='e') AND system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "'");
+        while ($gegner = mysqli_fetch_array($gegnerab)) {
             if ($gegner["typ"] == 'e' && $erzbool)
                 echo '<tr><form action="flotte.php?fid=', $fid, '" method="post"><td><img src="images/misc/erz.jpg" border="0" /></td><td>dichtes<br />Asteroidenfeld</td><td><input type="text" name="erzanzahl" size="6" value="(energie)" /></td><td><input type="submit" value="abbauen" /><input type="hidden" name="do" value="9" /></td></form></tr>';
             if ($gegner["typ"] == 'ek' && $erzbool)
@@ -634,8 +634,8 @@ if ($fid == 0) {
         }
 
 
-        $gegnerab = mysql_query("SELECT * FROM planeten WHERE system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' $string1");
-        while ($gegner = mysql_fetch_array($gegnerab)) {
+        $gegnerab = mysqli_query($verbindung, "SELECT * FROM planeten WHERE system='" . $schiff->position->system->id . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' $string1");
+        while ($gegner = mysqli_fetch_array($gegnerab)) {
             $usr = new Account($gegner["besitzer"]);
             if ($gegner["typ"] == 'm' && $schiff->position->orbit == 0)
                 echo '<tr><td><img src="images/misc/planet.gif" border="0" /></td><td>', $gegner["name"], '(', $gegner["id"], ')</td><td>', ($usr->nickname), '</td><td><a href="flotte.php?fid=', $fid, '&do=2&dir=v">IN ORBIT EINTRETEN</a></td></tr>';
@@ -658,8 +658,8 @@ if ($fid == 0) {
                 echo '<tr><td><img src="images/misc/wuste.jpg" border="0" /></td><td>', $gegner["name"], '(', $gegner["id"], ')</td><td>', ($usr->nickname), '</td><td>', $gegner["schildstatus"] == 1 ? '<span style="color:yellow;">' : '<span>', $gegner["schilde"], '/', $gegner["maxschilde"], '</span></td>', $gegner["schildstatus"] == 1 ? '<form action="flotte.php?fid=' . $fid . '" method="post"><td><input type="hidden" name="opfertyp" value="planet"><input type="hidden" name="opferid" value="' . $gegner["id"] . '"><input type="submit" value="F"></td></form>' : '', '<td><a href="flotte.php?fid=', $fid, '&do=2&dir=v">AUS ORBIT AUSTRETEN</a></td></tr>';
         }
 
-        $gegnerab = mysql_query("SELECT * FROM systeme WHERE x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' $string1");
-        while ($gegner = mysql_fetch_array($gegnerab)) {
+        $gegnerab = mysqli_query($verbindung, "SELECT * FROM systeme WHERE x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' $string1");
+        while ($gegner = mysqli_fetch_array($gegnerab)) {
 //System
             if ($schiff->position->system->id == 0) {  //Eintreten
                 $sys = new System($gegner["id"]);
@@ -671,8 +671,8 @@ if ($fid == 0) {
             echo '<tr><td><img src="images/systems/', $sys->bild, '" border="0" /></td><td>', $sys->name, '-System (', $sys->id, ')</td><td>Niemand (2)</td><td><a href="flotte.php?fid=', $fid, '&do=2&dir=s">ausfliegen</a></td></tr>';
         }
 
-        $gegnerab = mysql_query("SELECT * FROM schiffe WHERE tarnung=0 AND system='" . $schiff->position->system->id . "' AND orbit='" . $schiff->position->orbit . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' $string1");
-        while ($gegner = mysql_fetch_array($gegnerab)) {
+        $gegnerab = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE tarnung=0 AND system='" . $schiff->position->system->id . "' AND orbit='" . $schiff->position->orbit . "' AND x='" . $schiff->position->x . "' AND y='" . $schiff->position->y . "' $string1");
+        while ($gegner = mysqli_fetch_array($gegnerab)) {
             if (!$nebel) {
                 $tgegner = new Schiffe($gegner["id"]);
                 if ($gegner["typ"] == 's' && $gegner["orbit"] == $schiff->position->orbit) {

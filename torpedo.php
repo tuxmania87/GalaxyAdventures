@@ -14,8 +14,8 @@ if (!ctype_digit($pid))
     $betray = true;
 if (!ctype_digit($fid))
     $betray = true;
-$tmp = mysql_query("SELECT besitzer FROM schiffe WHERE id='$pid'");
-while ($testtmp = mysql_fetch_array($tmp))
+$tmp = mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$pid'");
+while ($testtmp = mysqli_fetch_array($tmp))
     if ($_SESSION["Id"] != $testtmp["besitzer"])
         $betray = true;
 
@@ -27,8 +27,8 @@ if ($betray) {
     $aktPlanet = new schiff($pid);
 //FELDNUMMER 
     $feldnummer = "feld" . $fid;
-    $aktFeld = mysql_query("SELECT $feldnummer FROM planet2 WHERE pid='$pid'");
-    $aktFeld = mysql_fetch_array($aktFeld);
+    $aktFeld = mysqli_query($verbindung, "SELECT $feldnummer FROM planet2 WHERE pid='$pid'");
+    $aktFeld = mysqli_fetch_array($aktFeld);
     $aktFeld = $aktFeld[0];
 
     splitfeld($aktFeld, $a, $b, $c, $d, $e);
@@ -46,20 +46,20 @@ if ($betray) {
             $e = 1;
             $continue = false;
         }
-        mysql_query("UPDATE planet2 SET $feldnummer='$newvar1' WHERE pid='$pid'");
+        mysqli_query($verbindung, "UPDATE planet2 SET $feldnummer='$newvar1' WHERE pid='$pid'");
     }
 
 
     if ($_POST["produktion"] == 'photonen') {
         $e = 1;
         $newvar = $a . "-" . $b . "-" . $c . "-" . $d . "-1";
-        mysql_query("UPDATE planet2 SET $feldnummer='$newvar' WHERE pid='$pid'");
+        mysqli_query($verbindung, "UPDATE planet2 SET $feldnummer='$newvar' WHERE pid='$pid'");
     }
 
     if ($_POST["produktion"] == 'quanten') {
         $e = 2;
         $newvar = $a . "-" . $b . "-" . $c . "-" . $d . "-2";
-        mysql_query("UPDATE planet2 SET $feldnummer='$newvar' WHERE pid='$pid'");
+        mysqli_query($verbindung, "UPDATE planet2 SET $feldnummer='$newvar' WHERE pid='$pid'");
     }
 
     $aktPlanet->setData();

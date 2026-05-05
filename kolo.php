@@ -17,8 +17,8 @@ $testid=$_GET["sid"];
 if(!isset($testid)) $testid=$_GET["pid"];
 if(!ctype_digit($_GET["sid"])) $betray=true;
 if($schiff->typ!='s') $betray=true;
-$tmp=mysql_query("SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysql_fetch_array($tmp))
+$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
+while($testtmp=mysqli_fetch_array($tmp))
 if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
 
 if($betray) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
@@ -27,26 +27,26 @@ if($betray) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Account
 
 //ALT
 
-$test=mysql_query("SELECT * FROM planeten WHERE besitzer=2 AND x='".$schiff->position->x."' AND y='".$schiff->position->y."' AND system='".$schiff->position->system->id."'");
-while($t1=mysql_fetch_array($test))
+$test=mysqli_query($verbindung, "SELECT * FROM planeten WHERE besitzer=2 AND x='".$schiff->position->x."' AND y='".$schiff->position->y."' AND system='".$schiff->position->system->id."'");
+while($t1=mysqli_fetch_array($test))
 {
 if($schiff->skill->erz==1) {
 
 $tpl=new Planeten($t1["id"]);
 
 $check1=0;
-$testplanet=mysql_query("SELECT COUNT(*) FROM planeten WHERE typ NOT LIKE '_m' AND besitzer='$id'");
-$testmond=mysql_query("SELECT COUNT(*) FROM planeten WHERE typ LIKE '_m' AND besitzer='$id'");
+$testplanet=mysqli_query($verbindung, "SELECT COUNT(*) FROM planeten WHERE typ NOT LIKE '_m' AND besitzer='$id'");
+$testmond=mysqli_query($verbindung, "SELECT COUNT(*) FROM planeten WHERE typ LIKE '_m' AND besitzer='$id'");
 
-$planetc=mysql_fetch_array($testplanet);
-$mondc=mysql_fetch_array($testmond);
+$planetc=mysqli_fetch_array($testplanet);
+$mondc=mysqli_fetch_array($testmond);
 
 $planetc=$planetc[0];
 $mondc=$mondc[0];
 
 //Mondbegrenzung
-$mond1 = mysql_num_rows(mysql_query("SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=38 AND E.uid='".$_SESSION["Id"]."'")) >= 1 ? true: false ;
-$mond2 = mysql_num_rows(mysql_query("SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=40 AND E.uid='".$_SESSION["Id"]."'")) >= 1 ? true: false ;
+$mond1 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=38 AND E.uid='".$_SESSION["Id"]."'")) >= 1 ? true: false ;
+$mond2 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=40 AND E.uid='".$_SESSION["Id"]."'")) >= 1 ? true: false ;
 
 $grenzemond = $mond1?1:0 + $mond2?1:0;
 
@@ -65,10 +65,10 @@ if($mondc >= $grenzemond && $tpl->typ[1]=='m') die("Du kannst nur maximal ".$gre
 
 //echo ($t1["typ"]=='l') ,'  - ', $check1<=4 ,'  - ', $schiff->energie>=10 ,'  - ', $schiff->frachtraum->baustoff>=200 ,' -  ', $schiff->frachtraum->duranium>=100;
 
-if($schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysql_query("UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid' AND besitzer=2"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
-/*if($t1["typ"]=='l' && $check1<=4 && $schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysql_query("UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid'"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
-if($t1["typ"]=='i' && $check1<=4 && $schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysql_query("UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid'"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
-if($t1["typ"]=='z' && $check1<=4 && $schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysql_query("UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid'"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
+if($schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysqli_query($verbindung, "UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid' AND besitzer=2"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
+/*if($t1["typ"]=='l' && $check1<=4 && $schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysqli_query($verbindung, "UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid'"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
+if($t1["typ"]=='i' && $check1<=4 && $schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysqli_query($verbindung, "UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid'"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
+if($t1["typ"]=='z' && $check1<=4 && $schiff->energie>=10 && $schiff->frachtraum->baustoff>=200 && $schiff->frachtraum->duranium>=100) { $pid=$t1["id"]; mysqli_query($verbindung, "UPDATE planeten SET besitzer='$id',baustoff=200,duranium=100 WHERE id='$pid'"); $done=1; $schiff->frachtraum->baustoff-=200; $schiff->frachtraum->duranium-=100; $schiff->energie-=10; }
 */
 
 $schiff->frachtraum->save();

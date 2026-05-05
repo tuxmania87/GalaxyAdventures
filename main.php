@@ -26,8 +26,8 @@ while ($account2 = mysqli_fetch_array($postquery2))    //Abfrage der accountdate
     $checkmail = true;
 
 /* $checklog=false;
-  $logquery2=mysql_query("SELECT * FROM logbuch WHERE wen='$id' AND neu=1"); //id einsetzen
-  while($account3=mysql_fetch_array($logquery2)) 			//Abfrage der accountdaten
+  $logquery2=mysqli_query($verbindung, "SELECT * FROM logbuch WHERE wen='$id' AND neu=1"); //id einsetzen
+  while($account3=mysqli_fetch_array($logquery2)) 			//Abfrage der accountdaten
   $checklog=true;
  */
 $checkvertrag = false;

@@ -10,8 +10,8 @@ $fid=$_GET["fid"];
 
 $betray=false;
 if(!ctype_digit($pid) || !ctype_digit($fid)) die("Fehler: ID ung&uuml;ltig!"); 
-$tmp=mysql_query("SELECT besitzer FROM planeten WHERE id='$pid'");
-while($testtmp=mysql_fetch_array($tmp))
+$tmp=mysqli_query($verbindung, "SELECT besitzer FROM planeten WHERE id='$pid'");
+while($testtmp=mysqli_fetch_array($tmp))
 if($_SESSION["Id"] != $testtmp["besitzer"]) die("Fehler: Besitzer-ID ung&uuml;tig");
 
 

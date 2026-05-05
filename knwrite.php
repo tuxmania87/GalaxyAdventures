@@ -26,7 +26,7 @@ if ($_POST["do"] == 1) {
     $text = $_POST["text"];
     changeit($text);
     if ($id > 0) {
-        mysql_query("INSERT INTO kn (datum,autor,text,bezug,channel) VALUES ('$datum','$id','$text','$bezug','$channel')") or die(mysql_error());
+        mysqli_query($verbindung, "INSERT INTO kn (datum,autor,text,bezug,channel) VALUES ('$datum','$id','$text','$bezug','$channel')") or die(mysqli_error($verbindung));
         echo '<meta http-equiv="Refresh" CONTENT="0;URL=knread.php?channel=', $channel, '">';
     } else
         echo 'nicht eingeloggt';
@@ -65,8 +65,8 @@ echo 'Eintragen in: ';
 
 if ($pid > 0) {
     echo 'Du beziehst dich auf:<br />';
-    $abfrage = mysql_query("SELECT * FROM kn where channel=".$channel." AND id=" . $pid . " ORDER BY id DESC");
-    while ($t = mysql_fetch_array($abfrage)) {
+    $abfrage = mysqli_query($verbindung, "SELECT * FROM kn where channel=".$channel." AND id=" . $pid . " ORDER BY id DESC");
+    while ($t = mysqli_fetch_array($abfrage)) {
         $tid = $t["autor"];
         $blub = new Account($t["autor"]);
         $avatar = $blub->bild;

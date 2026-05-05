@@ -16,45 +16,45 @@ $schiff->rohstoffd-=10;
 $schiff->setData($schiff->id);
 $schiff->getData($schiff->id);
 $lastid=checkforlastid('schiffe')+1;
-mysql_query("INSERT INTO schiffe (klasse,skillbase,id,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('Raumtation','1','$lastid','4','$fid','100','2000','2000','1000','1000','50','noname','$accid','green','$schiff->x','$schiff->y','1000','1000','100','images/siedlerbase.png','1500','$schiff->orbit')") or die(mysql_error());
-mysql_query("INSERT INTO schiffsmodule (sid,a1,a2,a3,b1,b2) VALUES ('$lastid','-1','-1','-1','-1','-1')");
+mysqli_query($verbindung, "INSERT INTO schiffe (klasse,skillbase,id,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('Raumtation','1','$lastid','4','$fid','100','2000','2000','1000','1000','50','noname','$accid','green','$schiff->x','$schiff->y','1000','1000','100','images/siedlerbase.png','1500','$schiff->orbit')") or die(mysqli_error($verbindung));
+mysqli_query($verbindung, "INSERT INTO schiffsmodule (sid,a1,a2,a3,b1,b2) VALUES ('$lastid','-1','-1','-1','-1','-1')");
 echo 'Schiff gebaut!';
 $gebaut=true;
 } else echo 'Nicht genug Rohstoffe!';
 }
 
 if($job==2) { 	//Schiff 3 bauen
-mysql_query("INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/klingbase.png','15000','$schiff->orbit')") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/klingbase.png','15000','$schiff->orbit')") or die(mysqli_error($verbindung));
 echo 'Schiff gebaut!';
 $gebaut=true;
 }
 
 if($job==3) { 	//Schiff 3 bauen
-mysql_query("INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/fodbase.png','15000','$schiff->orbit')") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/fodbase.png','15000','$schiff->orbit')") or die(mysqli_error($verbindung));
 echo 'Schiff gebaut!';
 $gebaut=true;
 }
 
 if($job==4) { 	//Schiff 3 bauen
-mysql_query("INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/rombase.png','15000','$schiff->orbit')") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/rombase.png','15000','$schiff->orbit')") or die(mysqli_error($verbindung));
 echo 'Schiff gebaut!';
 $gebaut=true;
 }
 
 if($job==5) { 	//Schiff 3 bauen
-mysql_query("INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/klingbase.png','15000','$schiff->orbit')") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/klingbase.png','15000','$schiff->orbit')") or die(mysqli_error($verbindung));
 echo 'Schiff gebaut!';
 $gebaut=true;
 }
 
 if($job==6) { 	//Schiff 3 bauen
-mysql_query("INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/ferbase.png','15000','$schiff->orbit')") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/ferbase.png','15000','$schiff->orbit')") or die(mysqli_error($verbindung));
 echo 'Schiff gebaut!';
 $gebaut=true;
 }
 
 if($job==7) { 	//Schiff 3 bauen
-mysql_query("INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/cardbase.png','15000','$schiff->orbit')") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO schiffe (typ,klasse,skillbase,rohstoffa,rohstoffb,deuterium,hull,maxhull,schilde,maxschilde,laser,name,besitzer,alarmstufe,x,y,energie,maxenergie,energieoutput,img,lager,orbit) VALUES ('s','Raumtation','1','100','100','100','20000','20000','10000','10000','500','noname','$accid','green','$schiff->x','$schiff->y','10000','10000','1000','images/cardbase.png','15000','$schiff->orbit')") or die(mysqli_error($verbindung));
 echo 'Schiff gebaut!';
 $gebaut=true;
 }

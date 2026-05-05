@@ -52,7 +52,7 @@ if ($betray)
                         $schiff->warpkern+=(50 * $rate);
                         echo 'Dein Warpkern wurde aufgeladen!';
                         $schiff->frachtraum->save();
-                        mysql_query("UPDATE schiffe SET warpkern='" . $schiff->warpkern . "' WHERE id='" . $schiff->id . "'") or die(mysql_error());
+                        mysqli_query($verbindung, "UPDATE schiffe SET warpkern='" . $schiff->warpkern . "' WHERE id='" . $schiff->id . "'") or die(mysqli_error($verbindung));
                     } else
                         echo $error, '<br />';
                     break;
@@ -67,7 +67,7 @@ if ($betray)
                       $schiff->warpkern+=$rate;
                       $schiff->frachtraum->save();
                       echo "Warpkern wurde erfolgreich um $rate aufgeladen!<br />";
-                      mysql_query("UPDATE schiffe SET warpkern='" . $schiff->warpkern . "' WHERE id='" . $schiff->id . "'") or die(mysql_error());
+                      mysqli_query($verbindung, "UPDATE schiffe SET warpkern='" . $schiff->warpkern . "' WHERE id='" . $schiff->id . "'") or die(mysqli_error($verbindung));
                   } else {
                       echo "Nicht genug Deuterium vorhanden. Benötigt: ".($rate*2)."<br />";
                   }
@@ -86,7 +86,7 @@ if ($betray)
                       $schiff->warpkern+=$rate*5;
                       $schiff->frachtraum->save();
                       echo "Warpkern wurde erfolgreich um ".($rate*5)." aufgeladen!<br />";
-                      mysql_query("UPDATE schiffe SET warpkern='" . $schiff->warpkern . "' WHERE id='" . $schiff->id . "'") or die(mysql_error());
+                      mysqli_query($verbindung, "UPDATE schiffe SET warpkern='" . $schiff->warpkern . "' WHERE id='" . $schiff->id . "'") or die(mysqli_error($verbindung));
                   } else {
                       echo "Nicht genug Plasma vorhanden. Benötigt: ".($rate)."<br />";
                   }

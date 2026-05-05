@@ -18,28 +18,28 @@ if ($_GET["kategorie"] == 'quest')
 
 echo '<br /><table class="invitetable" style="text-align:center;"><tr><th>Typ</th><th>Initiator</th><th>Adressat</th></tr>';
 if ($_GET["kategorie"] == 'nap')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND nap=1");
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND nap=1");
 if ($_GET["kategorie"] == 'defend')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND verteidigung=1");
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND verteidigung=1");
 if ($_GET["kategorie"] == 'handel')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND handel=1");
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND handel=1");
 if ($_GET["kategorie"] == 'quest')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND quest=1");
-while ($row = mysql_fetch_array($abfragevar)) {
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=1 AND quest=1");
+while ($row = mysqli_fetch_array($abfragevar)) {
     $init = new Account($row["initiator"]);
     $part = new Account($row["partner"]);
     echo '<tr><td>', $_GET["kategorie"], '</td><td>', $init->nickname, '</td><td>', $part->nickname, '</td><td><a href="vertrag.php?do=4&vid=', $row["id"], '">Vertrag aufl&ouml;sen</a></tr>';
 }
 echo '</table><br /><table class="invitetable" style="text-align:center;"><tr><th>Typ</th><th>Initiator</th><th>Adressat</th><th>Status</th></tr>';
 if ($_GET["kategorie"] == 'nap')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND nap=1");
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND nap=1");
 if ($_GET["kategorie"] == 'defend')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND verteidigung=1");
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND verteidigung=1");
 if ($_GET["kategorie"] == 'handel')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND handel=1");
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND handel=1");
 if ($_GET["kategorie"] == 'quest')
-    $abfragevar = mysql_query("SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND quest=1");
-while ($row = mysql_fetch_array($abfragevar)) {
+    $abfragevar = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE (initiator='$id' OR partner='$id') AND valid=0 AND quest=1");
+while ($row = mysqli_fetch_array($abfragevar)) {
     $init = new Account($row["initiator"]);
     $part = new Account($row["partner"]);
     echo '<tr><td>', $_GET["kategorie"], '</td><td>', $init->nickname, '</td><td>', $part->nickname, '</td>';

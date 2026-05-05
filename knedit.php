@@ -15,14 +15,14 @@ $ich = new Account($_SESSION["Id"]);
 $channel = $_GET["channel"];
 $pid = ctype_digit($_GET["pid"]) ? $_GET["pid"] : 0;
 
-$editvar = mysql_query("SELECT * FROM kn_log WHERE channel='$channel' AND pid='$pid' ORDER BY id DESC LIMIT 1");
-if (mysql_num_rows($editvar) > 0) {
-    while ($erow = mysql_fetch_array($editvar))
+$editvar = mysqli_query($verbindung, "SELECT * FROM kn_log WHERE channel='$channel' AND pid='$pid' ORDER BY id DESC LIMIT 1");
+if (mysqli_num_rows($editvar) > 0) {
+    while ($erow = mysqli_fetch_array($editvar))
         $posterid = $erow["autor"];
     $editid = $t["autor"];
 } else {
-    $editvar2 = mysql_query("SELECT autor FROM kn WHERE id='.$pid.' and channel='.$channel.'");
-    $editvar2 = mysql_fetch_array($editvar2);
+    $editvar2 = mysqli_query($verbindung, "SELECT autor FROM kn WHERE id='.$pid.' and channel='.$channel.'");
+    $editvar2 = mysqli_fetch_array($editvar2);
     $posterid = $editvar2[0];
 }
 
@@ -41,7 +41,7 @@ if ($_POST["do"] == 1) {
     changeit($text);
 
     if ($id > 0) {
-        mysql_query("UPDATE kn SET datum='$datum',autor='" . $_SESSION["Id"] . "',text='$text',channel='$channel' WHERE id='$pid'") or die(mysql_error());
+        mysqli_query($verbindung, "UPDATE kn SET datum='$datum',autor='" . $_SESSION["Id"] . "',text='$text',channel='$channel' WHERE id='$pid'") or die(mysqli_error($verbindung));
         echo '<meta http-equiv="Refresh" CONTENT="0;URL=knread.php?channel=', $channel, '">';
     } else
         echo 'nicht eingeloggt';
@@ -49,8 +49,8 @@ if ($_POST["do"] == 1) {
     
 }
 
-$abfrage = mysql_query("SELECT * FROM kn where channel='". $channel ."' AND id='" . $pid . "'");
-while ($row = mysql_fetch_array($abfrage)) {
+$abfrage = mysqli_query($verbindung, "SELECT * FROM kn where channel='". $channel ."' AND id='" . $pid . "'");
+while ($row = mysqli_fetch_array($abfrage)) {
     $edittext = $row["text"];
 }
 

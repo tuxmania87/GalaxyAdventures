@@ -32,7 +32,7 @@ if($error=="") {
 $planet->frachtraum->baustoff-=($hamount*2);
 $planet->frachtraum->duranium-=$hamount;
 $schiff->hull+=$hamount;
-mysql_query("UPDATE schiffe SET hull='".$schiff->hull."' WHERE id='".$schiff->id."'");
+mysqli_query($verbindung, "UPDATE schiffe SET hull='".$schiff->hull."' WHERE id='".$schiff->id."'");
 $planet->frachtraum->save();
 echo "Schiff wurde repariert!<br />";
 } else echo $error;
@@ -40,8 +40,8 @@ echo "Schiff wurde repariert!<br />";
 
 if(!isset($sid)) { //schiff waehlen
 echo '<h3>Schiff ausw&auml;hlen</h3><form action="repair.php?pid=',$planet->id,'" method="post"><select name="sid">';
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE besitzer='$id' AND (x='".$planet->position->x."' AND y='".$planet->position->y."' AND system='".$planet->position->system->id."' AND typ='s' AND orbit=1)");
-while($row=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer='$id' AND (x='".$planet->position->x."' AND y='".$planet->position->y."' AND system='".$planet->position->system->id."' AND typ='s' AND orbit=1)");
+while($row=mysqli_fetch_array($abfrage))
 echo '<option value="',$row["id"],'">',$row["name"],' Klasse:', $row["klasse"],' Energie: ',$row["energie"],'/',$row["maxenergie"],'</option>';
 echo '</select>';
 echo '<input type="submit" value="ausw&auml;hlen..." /></form>';

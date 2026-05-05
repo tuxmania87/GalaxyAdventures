@@ -24,58 +24,58 @@ if($rs[$i]!='-' && !$punkt) $nx.=$rs[$i];
 if($rs[$i]!='-' && $punkt) $ny.=$rs[$i];
 }
 
-mysql_query("DELETE FROM schiffe2 WHERE x='$nx' AND y='$ny' AND typ!='h' AND typ!='s'") or die(mysql_error());
+mysqli_query($verbindung, "DELETE FROM schiffe2 WHERE x='$nx' AND y='$ny' AND typ!='h' AND typ!='s'") or die(mysqli_error($verbindung));
 }
 
 echo '!X!',$getx,'  !Y',$gety,'<br />';
 
 if($_POST["do"]==2) { $lastid=checkforlastid('planeten')+1;
-mysql_query("INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','m','noname','1','planet.jpg')") or die(mysql_error());
-mysql_query("INSERT INTO `planet2` (`pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
+mysqli_query($verbindung, "INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','m','noname','1','planet.jpg')") or die(mysqli_error($verbindung));
+mysqli_query($verbindung, "INSERT INTO `planet2` (`pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
 ('$lastid', '0-0-i', '0-0-i', '0-0-i', '0-0-g', '0-0-g', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-d', '0-0-f', '0-0-g', '0-0-f', '0-0-m', '0-0-f', '0-0-m', '0-0-g', '0-0-f', '0-0-f', '0-0-d', '0-0-f', '0-0-d', '0-0-m', '0-0-m', '0-0-g', '0-0-g', '0-0-w', '0-0-g', '0-0-d', '0-0-g', '0-0-w', '0-0-g', '0-0-g', '0-0-f', '0-0-d', '0-0-w', '0-0-f', '0-0-g', '0-0-g', '0-0-i', '0-0-i', '0-0-g', '0-0-f', '0-0-g', '0-0-g', '0-0-i', '0-0-g', '0-0-g', '0-0-i')");
 }
 
 if($_POST["do"]==7) { $lastid=checkforlastid('planeten')+1;
-mysql_query("INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','l','noname','1','lava.jpg')");
-mysql_query("INSERT INTO `planet2` (`pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
+mysqli_query($verbindung, "INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','l','noname','1','lava.jpg')");
+mysqli_query($verbindung, "INSERT INTO `planet2` (`pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
 ('$lastid', '0-0-l', '0-0-l', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-l', '0-0-l', '0-0-s', '0-0-l', '0-0-l', '0-0-v', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-s', '0-0-v', '0-0-s', '0-0-l', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-s', '0-0-l', '0-0-v', '0-0-s', '0-0-l', '0-0-l', '0-0-s', '0-0-v', '0-0-l', '0-0-v', '0-0-v', '0-0-l', '0-0-s', '0-0-s', '0-0-s', '0-0-l', '0-0-l', '0-0-l', '0-0-l', '0-0-l')");
 }
 
 if($_POST["do"]==10) { $lastid=checkforlastid('planeten')+1;
-mysql_query("INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','z','noname','1','wuste.png')");
-mysql_query("INSERT INTO `planet2` (`id`, `pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
+mysqli_query($verbindung, "INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','z','noname','1','wuste.png')");
+mysqli_query($verbindung, "INSERT INTO `planet2` (`id`, `pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
 (NULL, '$lastid', '0-0-d', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-dm', '0-0-dm', '0-0-d', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-d', '0-0-dm', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-dm', '0-0-d', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-d', '0-0-dm', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-dm', '0-0-d', '0-0-d', '0-0-d', '0-0-d', '0-0-d', '0-0-d')");
 }
 
 
 if($_POST["do"]==11) { $lastid=checkforlastid('planeten')+1;
-mysql_query("INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','i','noname','1','eisplanet.jpg')");
-mysql_query("INSERT INTO `planet2` (`id`, `pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
+mysqli_query($verbindung, "INSERT INTO planeten (id,x,y,besitzer,lager,baustoff,duranium,typ,name,orbit,bild) VALUES ('$lastid','$postx','$posty','2','300','0','0','i','noname','1','eisplanet.jpg')");
+mysqli_query($verbindung, "INSERT INTO `planet2` (`id`, `pid`, `feld1`, `feld2`, `feld3`, `feld4`, `feld5`, `feld6`, `feld7`, `feld8`, `feld9`, `feld10`, `feld11`, `feld12`, `feld13`, `feld14`, `feld15`, `feld16`, `feld17`, `feld18`, `feld19`, `feld20`, `feld21`, `feld22`, `feld23`, `feld24`, `feld25`, `feld26`, `feld27`, `feld28`, `feld29`, `feld30`, `feld31`, `feld32`, `feld33`, `feld34`, `feld35`, `feld36`, `feld37`, `feld38`, `feld39`, `feld40`, `feld41`, `feld42`, `feld43`, `feld44`, `feld45`, `feld46`, `feld47`, `feld48`, `feld49`, `feld50`) VALUES
 (NULL, '$lastid', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-fl', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-fl', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-fl', '0-0-fl', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-fl', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-i', '0-0-fl', '0-0-i', '0-0-fl', '0-0-i', '0-0-i', '0-0-i', '0-0-i')");
 }
 
 
 
 if($_POST["do"]==3)
-mysql_query("INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','d')");
+mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','d')");
 if($_POST["do"]==4)
-mysql_query("INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','b')");
+mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','b')");
 if($_POST["do"]==5)
-mysql_query("INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','g')");
+mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','g')");
 if($_POST["do"]==6)
-mysql_query("INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','e')");
+mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','e')");
 if($_POST["do"]==8)
-mysql_query("INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','p')");
+mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','p')");
 if($_POST["do"]==9)
-mysql_query("INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','x')");
+mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ) VALUES ('$postx','$posty','x')");
 
 
 
 if($_GET["set"]==1)
 {
 $ch=false;
-$tt=mysql_query("SELECT * FROM schiffe2 WHERE typ='m' AND typ='e' AND typ='h' AND typ='d' AND typ='b' AND typ='g' AND x='$newx' AND y='$newy'");
-while($t=mysql_fetch_array($tt))
+$tt=mysqli_query($verbindung, "SELECT * FROM schiffe2 WHERE typ='m' AND typ='e' AND typ='h' AND typ='d' AND typ='b' AND typ='g' AND x='$newx' AND y='$newy'");
+while($t=mysqli_fetch_array($tt))
 $ch=true;
 if(!$ch) {
 
@@ -133,8 +133,8 @@ if($x==1+$getx && $y>1+$gety-1) echo '<tr><td>',$y,'</td>';
 if($y>=1+$gety) {
 
 $checked="";
-$abfrage=mysql_query("SELECT * FROM planeten WHERE x='$x' AND y='$y'");
-while($feld=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM planeten WHERE x='$x' AND y='$y'");
+while($feld=mysqli_fetch_array($abfrage))
 {
 $checked=$feld["typ"];
 }
@@ -150,8 +150,8 @@ echo '<form action="mapping.php?pw=klausx" method="post"><input type="hidden" na
 if($checked=='l')
 echo '<form action="mapping.php?pw=klausx" method="post"><input type="hidden" name="deldo" value="',$x,'-',$y,'"><input type="hidden" name="x1" value="',$getx,'"><input type="hidden" name="y1" value="',$gety,'"><td><input type="image" src="lava.jpg"></td></form>';
 
-$abfrage=mysql_query("SELECT * FROM weltraum WHERE x='$x' AND y='$y'");
-while($feld=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM weltraum WHERE x='$x' AND y='$y'");
+while($feld=mysqli_fetch_array($abfrage))
 {
 $checked=$feld["typ"];
 }

@@ -30,7 +30,7 @@ for($i=0; $i<$fillUpCounter; $i++ ) {
 
 echo "Number of CenterPoints: $numCenterPoints\n";
 
-mysql_query("TRUNCATE TABLE weltraum");
+mysqli_query($verbindung, "TRUNCATE TABLE weltraum");
 
 // for each center Point determine Position
 for($i=0; $i<$numCenterPoints; $i++) {
@@ -74,7 +74,7 @@ for($x = 1; $x <= $dimension; $x++) {
 		}
 
 		if(!$isCenterPoint && $centerPoints[$distance_i]["type"] !== 0 && $distance <10) {
-			mysql_query("INSERT INTO weltraum (x,y,system,typ,zielx,ziely,zielsystem) VALUES ($x,$y,0,'".$centerPoints[$distance_i]["type"]."',0,0,0)");
+			mysqli_query($verbindung, "INSERT INTO weltraum (x,y,system,typ,zielx,ziely,zielsystem) VALUES ($x,$y,0,'".$centerPoints[$distance_i]["type"]."',0,0,0)");
 		}
 		//  INSERT INTO weltraum (x,y,system,typ,zielx,ziely,zielsystem) 
 		//  VALUES ($x,$y,0,'$centerPoints["type"]',0,0,0)

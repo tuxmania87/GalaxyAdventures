@@ -51,15 +51,15 @@ $checked="";
 $ttip="";
 $done=false;
 
-	$abfrage=mysql_query("SELECT * FROM systeme WHERE x='$x' AND y='$y'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM systeme WHERE x='$x' AND y='$y'");
+	while($row=mysqli_fetch_array($abfrage))
 	{
 	echo '<td>',$code[array_search($row["bild"],$systeme)],'</td>';
 	$done=true;
 	}
 	
-	$abfrage=mysql_query("SELECT * FROM weltraum WHERE system='".$system->id."' AND x='$x' AND y='$y'");
-	while($row=mysql_fetch_array($abfrage))
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM weltraum WHERE system='".$system->id."' AND x='$x' AND y='$y'");
+	while($row=mysqli_fetch_array($abfrage))
 	{
 	if($row["typ"]=='b') echo '<td>1</td>';
 	if($row["typ"]=='e') echo '<td>2</td>';

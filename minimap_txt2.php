@@ -12,8 +12,8 @@ for($x=20;$x<=120;$x++)
 
 
 $checked="";
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ!='s' AND x='$x' AND y='$y'");
-while($feld=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ!='s' AND x='$x' AND y='$y'");
+while($feld=mysqli_fetch_array($abfrage))
 {
 $checked=$feld["typ"]!='m'?$feld["typ"]:$feld["klasse"];
 }

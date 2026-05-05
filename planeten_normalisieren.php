@@ -1,7 +1,7 @@
 <?php
 include("klassen.php");
-$abfrage=mysql_query("SELECT id FROM planeten WHERE besitzer!=2 AND besitzer > 0");
-while($row=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT id FROM planeten WHERE besitzer!=2 AND besitzer > 0");
+while($row=mysqli_fetch_array($abfrage))
 {
 $faktor=1;
 $tplanet=new Planeten($row[0]);
@@ -15,7 +15,7 @@ $c=$tplanet->feld[$i]->untergrund;
 $d=$tplanet->feld[$i]->hull;
 $e=$tplanet->feld[$i]->aktiv;
 
-if($b==0) { //alle behandlung die fertig werden müssen
+if($b==0) { //alle behandlung die fertig werden mÃ¼ssen
 if($a==2) { //lager
 $lager+=(500*$faktor); $energie+=(20*$faktor); $b=0; }
 if($a==7) { //wasserwerk
@@ -32,5 +32,5 @@ $energie+=($faktor*20); }
 }
 }
 //echo "Justierung fuer Planeten[" . $row[0] . "] Besitzer: " . $tplanet->besitzer->nickname . "<br />Energie:".$energie."<br />Lager:".$lager."<br /><br />";
-mysql_query("UPDATE planeten SET energie='$energie',maxenergie='$energie',lager='$lager' WHERE id='$tplanet->id'");
+mysqli_query($verbindung, "UPDATE planeten SET energie='$energie',maxenergie='$energie',lager='$lager' WHERE id='$tplanet->id'");
 }

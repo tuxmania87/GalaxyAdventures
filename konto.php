@@ -41,7 +41,7 @@ if(isset($_POST["kid"]) && ctype_digit($_POST["kid"])) {
             $k->frachtraum->fracht[$i]->anzahl += ceil($a->sell->fracht[$i+1]->anzahl*0.9);
         }
         $k->frachtraum->save();
-        mysql_query("delete from ebay where id =".$a->id);
+        mysqli_query($verbindung, "delete from ebay where id =".$a->id);
     } else {
         ///angebot kaufen
         $k = new Konto($_SESSION["Id"]);
@@ -49,7 +49,7 @@ if(isset($_POST["kid"]) && ctype_digit($_POST["kid"])) {
             $k->frachtraum->fracht[$i]->anzahl += $a->sell->fracht[$i+1]->anzahl;
         }
         $k->frachtraum->save();
-        mysql_query("delete from ebay where id =".$a->id);
+        mysqli_query($verbindung, "delete from ebay where id =".$a->id);
     }
     
 } 

@@ -116,7 +116,7 @@ if ($betray) {
             $wer = $angreifer->besitzer;
             $wen = $verteidiger->besitzer;
             $wann = date('Y-m-d H:i:s');
-            // mysql_query("INSERT INTO logbuch (was,wann,wer,wen) VALUES ('$text','$wann','$wer','$wen')") or die(mysql_error());
+            // mysqli_query($verbindung, "INSERT INTO logbuch (was,wann,wer,wen) VALUES ('$text','$wann','$wer','$wen')") or die(mysqli_error($verbindung));
 
             $eintrag = new Logbuch('typ', 'neu');
             $eintrag->x = $angreifer->position->x;

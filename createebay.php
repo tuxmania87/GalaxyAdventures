@@ -46,7 +46,7 @@ if($_POST["sent"] == 1) {
             if($i != sizeof($buy->fracht))
                 $dbstring2 .= "/";
         }
-        mysql_query("insert into ebay (id,anbieter,sell,buy,datum) values (NULL,'".$_SESSION["Id"]."','".$dbstring."','".$dbstring2."',NULL)") or die(mysql_error());
+        mysqli_query($verbindung, "insert into ebay (id,anbieter,sell,buy,datum) values (NULL,'".$_SESSION["Id"]."','".$dbstring."','".$dbstring2."',NULL)") or die(mysqli_error($verbindung));
         echo '<meta http-equiv="refresh" content="0; URL=konto.php">';
     }
 }

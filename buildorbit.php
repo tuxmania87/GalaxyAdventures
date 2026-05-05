@@ -9,8 +9,8 @@ include_once("connect.php");
 $betray=false;
 $testid=$_GET["sid"];
 if(!isset($testid)) $testid=$_GET["pid"];
-$tmp=mysql_query("SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysql_fetch_array($tmp))
+$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
+while($testtmp=mysqli_fetch_array($tmp))
 if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
 
 if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
@@ -32,8 +32,8 @@ $aktPlanet->getData($pid);
 
 if($sub==1)
 	{ //ausbauen
-$abfrage=mysql_query("SELECT * FROM `$modul` WHERE pid='$pid'");
-while($tmp=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM `$modul` WHERE pid='$pid'");
+while($tmp=mysqli_fetch_array($abfrage))
 {
 $getmodul = $tmp["modultyp"];
 $aktbau=$tmp["bauzeit"];
@@ -47,7 +47,7 @@ $stufe=$getmodul[5]+1; else { $stufe=$getmodul[5].$getmodul[6]; $stufe++; }
 if($stufe==1 && bezahlbar('orbit',$pid,$stufe) && $aktbau==0)
 {
 $bauzeit=3;
-mysql_query("INSERT INTO `$modul` (modultyp,pid,besitzer,bauzeit) VALUES ('orbit1','$pid','$besitzer','$bauzeit')");
+mysqli_query($verbindung, "INSERT INTO `$modul` (modultyp,pid,besitzer,bauzeit) VALUES ('orbit1','$pid','$besitzer','$bauzeit')");
 $kostenRa=kostenA('orbit',$stufe);
 $kostenRb=kostenB('orbit',$stufe);
 $aktPlanet->rohstoffa-=$kostenRa;
@@ -59,7 +59,7 @@ if($stufe==1 && !(bezahlbar('orbit',$pid,$stufe)) && $aktbau==0) echo 'Nicht gen
 if($stufe!=1 && bezahlbar('orbit',$pid,$stufe) && $aktbau==0) {
 $newmodul="orbit";$newmodul.=$stufe;
 $bauzeit=3+floor($stufe/5);
-mysql_query("UPDATE `$modul` SET modultyp='$newmodul',bauzeit='$bauzeit' WHERE pid = '$pid'");
+mysqli_query($verbindung, "UPDATE `$modul` SET modultyp='$newmodul',bauzeit='$bauzeit' WHERE pid = '$pid'");
 $kostenRa=kostenA('orbit',$stufe);
 $kostenRb=kostenB('orbit',$stufe);
 $aktPlanet->rohstoffa-=$kostenRa;
@@ -77,8 +77,8 @@ $pid = $_GET["pid"];
 $modul = "orbit";
 $modul .= $_GET["modul"];
 $checked=false;
-$abfrage=mysql_query("SELECT * FROM `$modul` WHERE pid='$pid' AND besitzer='$besitzer'");
-while($mod=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM `$modul` WHERE pid='$pid' AND besitzer='$besitzer'");
+while($mod=mysqli_fetch_array($abfrage))
 {
 $tmpvar = $mod["modultyp"]; // Abfragevar
 $checked=true;

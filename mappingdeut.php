@@ -8,11 +8,11 @@ if($_GET["set"]==1)
 $newx=$_GET["setx"];
 $newy=$_GET["sety"];
 $ch=false;
-$tt=mysql_query("SELECT * FROM schiffe WHERE typ='m' AND typ='h' AND typ='d' AND x='$newx' AND y='$newy'");
-while($t=mysql_fetch_array($tt))
+$tt=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='m' AND typ='h' AND typ='d' AND x='$newx' AND y='$newy'");
+while($t=mysqli_fetch_array($tt))
 $ch=true;
 if(!$ch)
-mysql_query("INSERT INTO schiffe (typ,x,y) VALUES ('d','$newx','$newy')") or die(mysql_error());
+mysqli_query($verbindung, "INSERT INTO schiffe (typ,x,y) VALUES ('d','$newx','$newy')") or die(mysqli_error($verbindung));
 else echo '!!ERROR!!';
 }
 $getx=$_GET["x"];
@@ -24,18 +24,18 @@ for($x=1+$getx;$x<=10+$getx;$x++)
 {
 if($x==1+$getx) echo '<tr>';
 $checked="";
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ='m' AND x='$x' AND y='$y'");
-while($feld=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='m' AND x='$x' AND y='$y'");
+while($feld=mysqli_fetch_array($abfrage))
 {
 $checked="m";
 }
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ='d' AND x='$x' AND y='$y'");
-while($feld=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='d' AND x='$x' AND y='$y'");
+while($feld=mysqli_fetch_array($abfrage))
 {
 $checked="d";
 }
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ='h' AND x='$x' AND y='$y'");
-while($feld=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ='h' AND x='$x' AND y='$y'");
+while($feld=mysqli_fetch_array($abfrage))
 {
 $checked="h";
 }

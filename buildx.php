@@ -9,8 +9,8 @@ include_once("connect.php");
 $betray=false;
 $testid=$_GET["sid"];
 if(!isset($testid)) $testid=$_GET["pid"];
-$tmp=mysql_query("SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysql_fetch_array($tmp))
+$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
+while($testtmp=mysqli_fetch_array($tmp))
 if($_SESSION["Id"] != $testtmp["besitzer"]) $betray=true;
 
 if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
@@ -33,8 +33,8 @@ $aktPlanet->name;
 
 if($sub==1)
 	{ //modul A ausbauen
-$abfrage=mysql_query("SELECT * FROM `$modul` WHERE pid='$pid'");
-while($tmp=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM `$modul` WHERE pid='$pid'");
+while($tmp=mysqli_fetch_array($abfrage))
 {
 $getmodul = $tmp["modultyp"];
 $aktbau=$tmp["bauzeit"];
@@ -48,7 +48,7 @@ $stufe=$getmodul[4]+1; else { $stufe=$getmodul[4].$getmodul[5]; $stufe++; }
 if($stufe==1 && bezahlbar('rohA',$pid,$stufe) && $aktbau==0)
 {
 $bauzeit=2;
-mysql_query("INSERT INTO `$modul` (modultyp,pid,besitzer,bauzeit) VALUES ('rohA1','$pid','$besitzer','$bauzeit')");
+mysqli_query($verbindung, "INSERT INTO `$modul` (modultyp,pid,besitzer,bauzeit) VALUES ('rohA1','$pid','$besitzer','$bauzeit')");
 $kostenRa=kostenA('rohA',$stufe);
 $kostenRb=kostenB('rohA',$stufe);
 $aktPlanet->rohstoffa-=$kostenRa;
@@ -60,7 +60,7 @@ if($stufe==1 && !(bezahlbar('rohA',$pid,$stufe)) && $aktbau==0) echo 'Nicht genu
 if($stufe!=1 && bezahlbar('rohA',$pid,$stufe) && $aktbau==0) {
 $newmodul="rohA";$newmodul.=$stufe;
 $bauzeit=2+floor($stufe/6);
-mysql_query("UPDATE `$modul` SET modultyp='$newmodul',bauzeit='$bauzeit' WHERE pid = '$pid'");
+mysqli_query($verbindung, "UPDATE `$modul` SET modultyp='$newmodul',bauzeit='$bauzeit' WHERE pid = '$pid'");
 $kostenRa=kostenA('rohA',$stufe);
 $kostenRb=kostenB('rohA',$stufe);
 $aktPlanet->rohstoffa-=$kostenRa;
@@ -73,8 +73,8 @@ $aktPlanet->getData($aktPlanet->id);
 
 if($sub==2)
 	{ //modul B ausbauen
-$abfrage=mysql_query("SELECT * FROM `$modul` WHERE pid='$pid'");
-while($tmp=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM `$modul` WHERE pid='$pid'");
+while($tmp=mysqli_fetch_array($abfrage))
 {
 $getmodul = $tmp["modultyp"];
 $aktbau=$tmp["bauzeit"];
@@ -88,10 +88,10 @@ $stufe=$getmodul[4]+1; else { $stufe=$getmodul[4].$getmodul[5]; $stufe++; }
 if($stufe==1 && bezahlbar('rohB',$pid,$stufe) && $aktbau==0)
 {
 $bauzeit=3;
-mysql_query("INSERT INTO `$modul` (modultyp,pid,besitzer,bauzeit) VALUES ('rohB1','$pid','$besitzer','$bauzeit')");
+mysqli_query($verbindung, "INSERT INTO `$modul` (modultyp,pid,besitzer,bauzeit) VALUES ('rohB1','$pid','$besitzer','$bauzeit')");
 $kostenRa=kostenA('rohB',$stufe);
 $kostenRb=kostenB('rohB',$stufe);
-mysql_query("UPDATE `schiffe` SET rohstoffa=rohstoffa-$kostenRa,rohstoffb=rohstoffb-$kostenRb WHERE id='$aktPlanet->id'");
+mysqli_query($verbindung, "UPDATE `schiffe` SET rohstoffa=rohstoffa-$kostenRa,rohstoffb=rohstoffb-$kostenRb WHERE id='$aktPlanet->id'");
 $aktPlanet->getData($aktPlanet->id);
 }
 if($stufe!=1 && bezahlbar('rohA',$pid,$stufe) && $aktbau==0)
@@ -99,10 +99,10 @@ if($stufe!=1 && bezahlbar('rohA',$pid,$stufe) && $aktbau==0)
 
 $newmodul="rohB";$newmodul.=$stufe;
 $bauzeit=3+floor($stufe/5);
-mysql_query("UPDATE `$modul` SET modultyp='$newmodul',bauzeit='$bauzeit' WHERE pid = '$pid'");
+mysqli_query($verbindung, "UPDATE `$modul` SET modultyp='$newmodul',bauzeit='$bauzeit' WHERE pid = '$pid'");
 $kostenRa=kostenA('rohB',$stufe);
 $kostenRb=kostenB('rohB',$stufe);
-mysql_query("UPDATE `schiffe` SET rohstoffa=rohstoffa-$kostenRa,rohstoffb=rohstoffb-$kostenRb WHERE id='$aktPlanet->id'");
+mysqli_query($verbindung, "UPDATE `schiffe` SET rohstoffa=rohstoffa-$kostenRa,rohstoffb=rohstoffb-$kostenRb WHERE id='$aktPlanet->id'");
 $aktPlanet->getData($aktPlanet->id);
 }
 
@@ -121,8 +121,8 @@ $pid = $_GET["pid"];
 $modul = "modul";
 $modul .= $_GET["modul"];
 $checked=false;
-$abfrage=mysql_query("SELECT * FROM `$modul` WHERE pid='$pid' AND besitzer='$besitzer'");
-while($mod=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM `$modul` WHERE pid='$pid' AND besitzer='$besitzer'");
+while($mod=mysqli_fetch_array($abfrage))
 {
 $tmpvar = $mod["modultyp"]; // Abfragevar
 $checked=true;

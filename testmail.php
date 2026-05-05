@@ -1,8 +1,8 @@
 <?php
 include_once("connect.php");
 
-$abfrage=mysql_query("SELECT * FROM account WHERE id<313");
-while($t=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM account WHERE id<313");
+while($t=mysqli_fetch_array($abfrage))
 { 
 $email=$t["email"];
 $name=$t["name"];

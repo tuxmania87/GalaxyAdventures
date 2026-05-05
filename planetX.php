@@ -8,8 +8,8 @@ include_once("connect.php");
 $betray=false;
 $testid=$_GET["sid"];
 if(!isset($testid)) $testid=$_GET["pid"];
-$tmp=mysql_query("SELECT besitzer FROM schiffe WHERE id='$testid'");
-while($testtmp=mysql_fetch_array($tmp))
+$tmp=mysqli_query($verbindung, "SELECT besitzer FROM schiffe WHERE id='$testid'");
+while($testtmp=mysqli_fetch_array($tmp))
 if($_COOKIE["Id"] != $testtmp["besitzer"]) $betray=true;
 
 if($betray && $testid > 0 ) { echo 'Du bist nicht eingeloggt oder du versucht auf fremde Accounts zuzugreifen...'; } else {
@@ -91,8 +91,8 @@ $id=$_COOKIE["Id"];
 echo '<h3>Planetname :',$aktPlanet->name,'</h3>Energie: ',$aktPlanet->energie,'/',$aktPlanet->maxenergie,' (+',$aktPlanet->energieoutput,')<br />';
 echo '<table border="1"><tr><td>Nr.</td><td>Modulname</td><td>Erzeugt A</td><td>Erzeugt B</td><td>..</td></tr>';
 //erforscht?
-$abfrageForschung=mysql_query("SELECT * FROM erforscht WHERE besitzer='$id'");
-	while($erforscht=mysql_fetch_array($abfrageForschung))
+$abfrageForschung=mysqli_query($verbindung, "SELECT * FROM erforscht WHERE besitzer='$id'");
+	while($erforscht=mysqli_fetch_array($abfrageForschung))
 		{
 		$zusatz=$erforscht["addrmodul"];
 		}
@@ -102,8 +102,8 @@ $tmpvar = "modul";
 $tmpvar .= $i;
 echo '<tr><td>Modul ',$i,'</td><td>';
 $checked=false;
-$abfrage=mysql_query("SELECT * FROM `$tmpvar` WHERE pid='$pid'");
-while($planet=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM `$tmpvar` WHERE pid='$pid'");
+while($planet=mysqli_fetch_array($abfrage))
 	{
 $tmptyp=$planet["modultyp"];
 $checked=true;
@@ -137,8 +137,8 @@ $gesamtE=0;
 //Orbitmodule
 echo '<br /><table border="1"><tr><td>Nr.</td><td>Modulname</td><td>Erzeugt Energie</td><td>..</td></tr>';
 //erforscht?
-$abfrageForschung=mysql_query("SELECT * FROM erforscht WHERE besitzer='$id'");
-	while($erforscht=mysql_fetch_array($abfrageForschung))
+$abfrageForschung=mysqli_query($verbindung, "SELECT * FROM erforscht WHERE besitzer='$id'");
+	while($erforscht=mysqli_fetch_array($abfrageForschung))
 		{
 		$zusatz=$erforscht["addomodul"];
 		}
@@ -148,8 +148,8 @@ $tmpvar = "orbit";
 $tmpvar .= $i;
 echo '<tr><td>Orbitmodul ',$i,'</td><td>';
 $checked=false;
-$abfrage=mysql_query("SELECT * FROM `$tmpvar` WHERE pid='$pid'");
-while($planet=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM `$tmpvar` WHERE pid='$pid'");
+while($planet=mysqli_fetch_array($abfrage))
 	{
 $tmptyp=$planet["modultyp"];
 $checked=true;

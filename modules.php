@@ -28,51 +28,51 @@ if($ausbau==100 && ( $modul->a1==100 || $modul->a2==100 ))  {
 if($modul->a1==100) $modul->a1='-1'; else if($modul->a2==100) $modul->a2='-1';
 $schiff->laser-=1; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET laser=laser-1 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET laser=laser-1 WHERE id='$schiff->id'");
 }
 if($ausbau==101 && $modul->a1==101 && $modul->a2==101) {
 $modul->a1='-1'; $modul->a2='-1';
 $schiff->maxphaser-=10; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxphaer=maxphaser-10 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxphaer=maxphaser-10 WHERE id='$schiff->id'");
 }
 
 if($ausbau==200 && ( $modul->d1==200 || $modul->d2==200 )) {
 if($modul->d1==200) $modul->d1='-1'; else if($modul->d2==200) $modul->d2='-1';
 $schiff->maxhull-=2; $schiff->hull=$schiff->hull>$schiff->maxhull?$schiff->maxhull:$schiff->hull; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxhull=maxhull-2,hull='".$schiff->hull."' WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxhull=maxhull-2,hull='".$schiff->hull."' WHERE id='$schiff->id'");
 }
 if($ausbau==210 && ( $modul->d1==210 || $modul->d2==210 )) {
 if($modul->d1==210) $modul->d1='-1'; else if($modul->d2==210) $modul->d2='-1';
 $schiff->maxschilde-=2; $schiff->schilde=$schiff->schilde>$schiff->maxschilde?$schiff->maxschilde:$schiff->schilde; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxschilde=maxschilde-2,schilde='$schiff->schilde' WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxschilde=maxschilde-2,schilde='$schiff->schilde' WHERE id='$schiff->id'");
 }
 if($ausbau==201 && $modul->d1==201 && $modul->d2==201) {
 $modul->d1='-1'; $modul->d2='-1'; 
 $schiff->maxhull-=5; $schiff->hull=$schiff->hull>$schiff->maxhull?$schiff->maxhull:$schiff->hull; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxhull=maxhull-5,hull='".$schiff->hull."' WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxhull=maxhull-5,hull='".$schiff->hull."' WHERE id='$schiff->id'");
 }
 if($ausbau==211 && $modul->d1==211 && $modul->d2==211) {
 $modul->d1='-1'; $modul->d2='-1'; 
 $schiff->maxschilde-=5; $schiff->schilde=$schiff->schilde>$schiff->maxschilde?$schiff->maxschilde:$schiff->schilde; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxschilde=maxschilde-5,schilde='$schiff->schilde' WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxschilde=maxschilde-5,schilde='$schiff->schilde' WHERE id='$schiff->id'");
 }
 
 if($ausbau==300 && ($modul->c1==300 || $modul->c2==300)) {
 if($modul->c1==300) $modul->c1='-1'; else if($modul->c2==300) $modul->c2='-1';
 $schiff->frachtraum->max-=50; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET lager=lager-50 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET lager=lager-50 WHERE id='$schiff->id'");
 }
 if($ausbau==301 && ($modul->c1==301 || $modul->c2==301)) {
 if($modul->c1==301) $modul->c1='-1'; else if($modul->c2==301) $modul->c2='-1';
 $schiff->maxgondeln-=10; echo 'Modul ausgebaut!';
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxgondeln=maxgondeln-10 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxgondeln=maxgondeln-10 WHERE id='$schiff->id'");
 }
 
 
@@ -86,7 +86,7 @@ if($modul->a1=='-1') $modul->a1=$einbau; else if($modul->a2=='-1') $modul->a2=$e
 $schiff->laser+=1;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET laser=laser+1 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET laser=laser+1 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 //modul 101 einbauen -> siehe Modulhandbuch
 
@@ -100,7 +100,7 @@ $modul->a2=$einbau;
 $schiff->maxphaser+=10;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxphaser=maxphaser+10 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxphaser=maxphaser+10 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 
 
@@ -115,7 +115,7 @@ $schiff->hull+=2;
 if($modul->d1=='-1') $modul->d1=$einbau; else if($modul->d2=='-1') $modul->d2=$einbau;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET hull=hull+2,maxhull=maxhull+2 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET hull=hull+2,maxhull=maxhull+2 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 
 //Modul 210
@@ -129,7 +129,7 @@ $schiff->schilde+=2;
 if($modul->d1=='-1') $modul->d1=$einbau; else if($modul->d2=='-1') $modul->d2=$einbau;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET schilde=schilde+2,maxschilde=maxschilde+2 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET schilde=schilde+2,maxschilde=maxschilde+2 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 
 
@@ -145,7 +145,7 @@ $schiff->maxhull+=5;
 $schiff->hull+=5;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET hull=hull+5,maxhull=maxhull+5 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET hull=hull+5,maxhull=maxhull+5 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 
 //modul 201 einbauen -> siehe Modulhandbuch
@@ -160,7 +160,7 @@ $schiff->maxschilde+=5;
 $schiff->schilde+=5;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET schilde=schilde+5,maxschilde=maxschilde+5 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET schilde=schilde+5,maxschilde=maxschilde+5 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 
 
@@ -174,7 +174,7 @@ if($modul->c1=='-1') $modul->c1=$einbau; else if($modul->c2=='-1') $modul->c2=$e
 $schiff->frachtraum->max+=50;
 $planet->frachtraum->save();
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET lager=lager+50 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET lager=lager+50 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 //modul 301 einbauen -> siehe Modulhandbuch
 if($einbau==301)
@@ -186,7 +186,7 @@ if($modul->c1=='-1') $modul->c1=$einbau; else if($modul->c2=='-1') $modul->c2=$e
 $schiff->maxgondeln+=10;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET maxgondeln=maxgondeln+10,maxhull=maxhull+2 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET maxgondeln=maxgondeln+10,maxhull=maxhull+2 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 
 if($einbau==302)
@@ -213,15 +213,15 @@ $schiff->maxenergie+=8;
 $schiff->energieoutput+=1;
 $planet->frachtraum->save(); 
 $modul->setData(); 
-mysql_query("UPDATE schiffe SET energieoutput=energieoutput+1,maxenergie=maxenergie+8 WHERE id='$schiff->id'");
+mysqli_query($verbindung, "UPDATE schiffe SET energieoutput=energieoutput+1,maxenergie=maxenergie+8 WHERE id='$schiff->id'");
 } else echo 'Nicht gen&uuml;gend Rohstoffe vorhanden!<br />';
 
 
 
 if(!isset($sid)) { //schiff waehlen
 echo '<h3>Schiff ausw&auml;hlen</h3><form action="modules.php?pid=',$planet->id,'" method="post"><select name="sid">';
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE besitzer='$id' AND ((x='".$planet->position->x."' AND y='".$planet->position->y."' AND system='".$planet->position->system->id."' AND typ='s' AND orbit=1) OR (skillbase=1 AND typ='s'))");
-while($row=mysql_fetch_array($abfrage)) {
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer='$id' AND ((x='".$planet->position->x."' AND y='".$planet->position->y."' AND system='".$planet->position->system->id."' AND typ='s' AND orbit=1) OR (skillbase=1 AND typ='s'))");
+while($row=mysqli_fetch_array($abfrage)) {
 $tshp=new Schiffe($abfrage["id"]);
 echo '<option value="',$row["id"],'">',$row["name"],' Energie: ',$row["energie"],'/',$row["maxenergie"],'</option>';
 }

@@ -1951,8 +1951,8 @@ class Schiffe extends Rohling
 
             mysqli_query($verbindung, "UPDATE schiffe SET gondeln='".$this->gondeln."',energie='".$this->energie."',`system`='".$this->position->system->id."',x=".$this->position->x.',y='.$this->position->y.',orbit='.$this->position->orbit." WHERE id='$this->id'") or exit($verbindung->error);
             mysqli_query($verbindung, 'UPDATE counter SET count=count+1 WHERE id=1') or exit($verbindung->error);
-            /* $abfrage2=mysql_query("SELECT * FROM schiffe WHERE id!='$this->id' AND `system`='".$this->position->system->id."' AND x=".$this->position->x." AND y=".$this->position->y." AND orbit=".$this->position->orbit);
-              while($row2=mysql_fetch_array($abfrage2))
+            /* $abfrage2=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE id!='$this->id' AND `system`='".$this->position->system->id."' AND x=".$this->position->x." AND y=".$this->position->y." AND orbit=".$this->position->orbit);
+              while($row2=mysqli_fetch_array($abfrage2))
               {
               $eintrag=new Logbuch("typ","neu");
               $eintrag->x=$this->position->x;
@@ -1970,22 +1970,22 @@ class Schiffe extends Rohling
               /*
               $lovevar=$_SESSION["Id"];
               $horcharray=array();
-              $horchquery=mysql_query("SELECT * FROM schiffe WHERE besitzer!='$lovevar' AND klasse='Horchposten' AND x>=".($this->position->x-5)." AND x<= ".($this->position->x+5) ." AND y>= ".($this->position->y-5) ." AND y<=".($this->position->y+5));
-              while($treffer=mysql_fetch_array($horchquery)) array_push($horcharray,$treffer["id"]);
+              $horchquery=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer!='$lovevar' AND klasse='Horchposten' AND x>=".($this->position->x-5)." AND x<= ".($this->position->x+5) ." AND y>= ".($this->position->y-5) ." AND y<=".($this->position->y+5));
+              while($treffer=mysqli_fetch_array($horchquery)) array_push($horcharray,$treffer["id"]);
 
               $datum=date("Y-m-d H:i:s");
-              for($a=0;$a<sizeof($horcharray);$a++) { $ich=$horcharray[$a]; mysql_query("INSERT INTO horchlog (datum,img,besitzer,klasse,ich,x,y) VALUES ('$datum','$schiff->img','$schiff->besitzer','$schiff->klasse','$ich','$schiff->x','$schiff->y')") or die(mysql_error()); }
+              for($a=0;$a<sizeof($horcharray);$a++) { $ich=$horcharray[$a]; mysqli_query($verbindung, "INSERT INTO horchlog (datum,img,besitzer,klasse,ich,x,y) VALUES ('$datum','$schiff->img','$schiff->besitzer','$schiff->klasse','$ich','$schiff->x','$schiff->y')") or die(mysqli_error($verbindung)); }
 
-              $abfrage=mysql_query("SELECT * FROM weltraum WHERE (typ='b' OR typ='rs' OR typ='bs') AND x=".$this->position->x." AND y=".$this->position->y." AND `system`=".$this->position->system->id);
-              while($tmp=mysql_fetch_array($abfrage)) $nebel=true;
+              $abfrage=mysqli_query($verbindung, "SELECT * FROM weltraum WHERE (typ='b' OR typ='rs' OR typ='bs') AND x=".$this->position->x." AND y=".$this->position->y." AND `system`=".$this->position->system->id);
+              while($tmp=mysqli_fetch_array($abfrage)) $nebel=true;
 
-              $sonnenquery=mysql_query("SELECT * FROM weltraum WHERE (typ='p' OR typ='x' OR typ='r1' OR typ='r2' OR typ='r3' OR typ='r4') AND `system`=".$this->position->system->id." AND x=".$this->position->x." AND y=".$this->position->y);
-              while($sonne=mysql_fetch_array($sonnenquery))
+              $sonnenquery=mysqli_query($verbindung, "SELECT * FROM weltraum WHERE (typ='p' OR typ='x' OR typ='r1' OR typ='r2' OR typ='r3' OR typ='r4') AND `system`=".$this->position->system->id." AND x=".$this->position->x." AND y=".$this->position->y);
+              while($sonne=mysqli_fetch_array($sonnenquery))
               {
               echo 'Dein Schiff wurde zerst&ouml;rt!'; $this->zerstoerung();
               }
 
-              mysql_query("UPDATE schiffe SET schildstatus='$this->schildstatus',energie='$this->energie',phaser='$this->phaser',gondeln='$this->gondeln',schilde='$this->schilde' WHERE id='$this->id'");
+              mysqli_query($verbindung, "UPDATE schiffe SET schildstatus='$this->schildstatus',energie='$this->energie',phaser='$this->phaser',gondeln='$this->gondeln',schilde='$this->schilde' WHERE id='$this->id'");
              */
             if (!$flotte) {
                 $this->kampftick('0', null);
@@ -2809,8 +2809,8 @@ class Gebaude
   public $aktiv = 0;
 
   function __construct($pid, $fid) {
-  $abfrage = mysql_query("SELECT * FROM planet2 WHERE id='$pid'");
-  while ($row = mysql_fetch_array($abfrage)) {
+  $abfrage = mysqli_query($verbindung, "SELECT * FROM planet2 WHERE id='$pid'");
+  while ($row = mysqli_fetch_array($abfrage)) {
   $this->pid = $pid;
   $this->fid = $fid;
   splitfeld($row["feld" . (int) $fid], $a, $b, $c, $d, $e);
@@ -2823,7 +2823,7 @@ class Gebaude
   }
 
   function save() {
-  mysql_query("UPDATE planet2 SET feld" . $this->fid . " = '" . $this->was . "-" . $this->bauzeit . "-" . $this->untergrund . "-" . $this->hull . "-" . $this->aktiv . "' WHERE id='" . $this->pid . "'") or die(mysql_error());
+  mysqli_query($verbindung, "UPDATE planet2 SET feld" . $this->fid . " = '" . $this->was . "-" . $this->bauzeit . "-" . $this->untergrund . "-" . $this->hull . "-" . $this->aktiv . "' WHERE id='" . $this->pid . "'") or die(mysqli_error($verbindung));
   //echo "UPDATE planet2 SET feld".$this->fid." = '".$this->was."-".$this->bauzeit."-".$this->untergrund."-".$this->hull."-".$this->aktiv." WHERE pid='".$this->pid."'";
   }
 
@@ -2836,8 +2836,8 @@ class Konto
 
     public function __construct($id)
     {
-        // $tt = mysql_query("SELECT * FROM konto WHERE besitzer='$id'");
-        // while ($t = mysql_fetch_array($tt)) {
+        // $tt = mysqli_query($verbindung, "SELECT * FROM konto WHERE besitzer='$id'");
+        // while ($t = mysqli_fetch_array($tt)) {
         $this->id = $id;
         $this->frachtraum = new Frachtraum($id, 'konto');
         // }

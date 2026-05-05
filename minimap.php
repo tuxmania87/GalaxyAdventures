@@ -19,8 +19,8 @@ if($x==1+$getx && $y>1+$gety-1) echo '<tr><td>',$y,'</td>';
 
 
 $checked="";
-$abfrage=mysql_query("SELECT * FROM schiffe WHERE typ!='s' AND x='$x' AND y='$y'");
-while($feld=mysql_fetch_array($abfrage))
+$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE typ!='s' AND x='$x' AND y='$y'");
+while($feld=mysqli_fetch_array($abfrage))
 {
 $checked=$feld["typ"];
 }

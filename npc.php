@@ -1,7 +1,7 @@
 <?php
 include_once("connect.php");
-mysql_query("DELETE FROM schiffe WHERE besitzer=4 AND y<20");
-mysql_query("INSERT INTO `d00704ed`.`schiffe` (
+mysqli_query($verbindung, "DELETE FROM schiffe WHERE besitzer=4 AND y<20");
+mysqli_query($verbindung, "INSERT INTO `d00704ed`.`schiffe` (
 `id` ,
 `name` ,
 `x` ,
@@ -38,7 +38,7 @@ mysql_query("INSERT INTO `d00704ed`.`schiffe` (
 VALUES (
 NULL , 'Eskorte1', '10', '11', '', '4', '100', '100', '10', '40', '1', '400', '400', '200', '200', '1', 'fregatte.gif', 'red', 's', '0', '0', '0', '0', '100', '100', '1', '0', '0', '0', 'Fregatte', '0', '0'
 )");
-mysql_query("INSERT INTO `d00704ed`.`schiffe` (
+mysqli_query($verbindung, "INSERT INTO `d00704ed`.`schiffe` (
 `id` ,
 `name` ,
 `x` ,
@@ -75,7 +75,7 @@ mysql_query("INSERT INTO `d00704ed`.`schiffe` (
 VALUES (
 NULL , 'Eskorte1', '10', '11', '', '4', '100', '100', '10', '40', '1', '400', '400', '200', '200', '1', 'fregatte.gif', 'red', 's', '0', '0', '0', '0', '100', '100', '1', '0', '0', '0', 'Fregatte', '0', '0'
 )");
-mysql_query("INSERT INTO `d00704ed`.`schiffe` (
+mysqli_query($verbindung, "INSERT INTO `d00704ed`.`schiffe` (
 `id` ,
 `name` ,
 `x` ,
@@ -112,7 +112,7 @@ mysql_query("INSERT INTO `d00704ed`.`schiffe` (
 VALUES (
 NULL , 'Eskorte1', '10', '11', '', '4', '100', '100', '10', '40', '1', '400', '400', '200', '200', '1', 'fregatte.gif', 'red', 's', '0', '0', '0', '0', '100', '100', '1', '0', '0', '0', 'Fregatte', '0', '0'
 )");
-mysql_query("INSERT INTO `d00704ed`.`schiffe` (
+mysqli_query($verbindung, "INSERT INTO `d00704ed`.`schiffe` (
 `id` ,
 `name` ,
 `x` ,
@@ -149,7 +149,7 @@ mysql_query("INSERT INTO `d00704ed`.`schiffe` (
 VALUES (
 NULL , 'Eskorte1', '10', '11', '', '4', '100', '100', '10', '40', '1', '400', '400', '200', '200', '1', 'fregatte.gif', 'red', 's', '0', '0', '0', '0', '100', '100', '1', '0', '0', '0', 'Fregatte', '0', '0'
 )");
-mysql_query("INSERT INTO `d00704ed`.`schiffe` (
+mysqli_query($verbindung, "INSERT INTO `d00704ed`.`schiffe` (
 `id` ,
 `name` ,
 `x` ,
@@ -186,7 +186,7 @@ mysql_query("INSERT INTO `d00704ed`.`schiffe` (
 VALUES (
 NULL , 'Eskorte1', '10', '11', '', '4', '100', '100', '10', '40', '1', '400', '400', '200', '200', '1', 'fregatte.gif', 'red', 's', '0', '0', '0', '0', '100', '100', '1', '0', '0', '0', 'Fregatte', '0', '0'
 )");
-mysql_query("INSERT INTO `d00704ed`.`schiffe` (
+mysqli_query($verbindung, "INSERT INTO `d00704ed`.`schiffe` (
 `id` ,
 `name` ,
 `x` ,
