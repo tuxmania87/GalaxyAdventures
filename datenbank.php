@@ -67,13 +67,13 @@ if ($_GET['kategorie'] == 'gebaude') {
         $b = new Bauplan_Gebaude($r['id']);
 
         echo '<tr><td>'.$b->id.'</td><td>';
-        for ($i = 0; $i < sizeof($b->bild); ++$i) {
+        for ($i = 0; $i < count($b->bild); ++$i) {
             echo '<img src="images/buildings/'.$b->bild[$i].'" border="0" />';
         }
         echo '</td>';
         echo '<td>'.$b->name.'</td>';
         echo '<td><table>';
-        for ($i = 0; $i < sizeof($b->baukosten->fracht); ++$i) {
+        for ($i = 0; $i < count($b->baukosten->fracht); ++$i) {
             if ($b->baukosten->fracht[$i]->anzahl > 0) {
                 echo '<tr><td>'.$b->baukosten->fracht[$i]->name.'</td>';
                 echo '<td><img src="images/misc/'.$b->baukosten->fracht[$i]->bild.'" border="0" /></td>';
@@ -82,7 +82,7 @@ if ($_GET['kategorie'] == 'gebaude') {
         }
         echo '</table></td>';
         echo '<td><table>';
-        for ($i = 0; $i < sizeof($b->braucht->fracht); ++$i) {
+        for ($i = 0; $i < count($b->braucht->fracht); ++$i) {
             if ($b->braucht->fracht[$i]->anzahl > 0) {
                 echo '<tr><td>'.$b->braucht->fracht[$i]->name.'</td>';
                 echo '<td><img src="images/misc/'.$b->braucht->fracht[$i]->bild.'" border="0" /></td>';
@@ -108,7 +108,7 @@ if ($_GET['kategorie'] == 'gebaude') {
         }
         echo '</td>';
         echo '<td><table>';
-        for ($i = 0; $i < sizeof($b->produziert->fracht); ++$i) {
+        for ($i = 0; $i < count($b->produziert->fracht); ++$i) {
             if ($b->produziert->fracht[$i]->anzahl > 0) {
                 echo '<tr><td>'.$b->produziert->fracht[$i]->name.'</td>';
                 echo '<td><img src="images/misc/'.$b->produziert->fracht[$i]->bild.'" border="0" /></td>';
@@ -120,7 +120,7 @@ if ($_GET['kategorie'] == 'gebaude') {
         echo $b->bauzeit.' Ticks';
         echo '</td>';
         echo '<td>';
-        for ($i = 0; $i < sizeof($b->untergrund); ++$i) {
+        for ($i = 0; $i < count($b->untergrund); ++$i) {
             echo '<img src="images/buildings/'.$b->untergrund[$i]->bild.'" border="0" />';
         }
         echo '</td></tr>';
@@ -135,7 +135,7 @@ if ($_GET['kategorie'] == 'rohstoffe') {
     echo '<table class="liste"><tr><th>id</th><th>Name</th><th>Bild</th></tr>';
 
     $list = Res::getList();
-    for ($i = 0; $i < sizeof($list); ++$i) {
+    for ($i = 0; $i < count($list); ++$i) {
         echo '<tr><td>'.$list[$i]->id.'<td>'.$list[$i]->name.'</td><td><img src="images/misc/'.$list[$i]->bild.'" border="0" /></td></tr>';
     }
     echo '</table><br />';
@@ -148,7 +148,7 @@ if ($_GET['kategorie'] == 'weltraum') {
     $list = Weltraumfelder::getList();
 
     echo '<table>';
-    for ($i = 0; $i < sizeof($list); ++$i) {
+    for ($i = 0; $i < count($list); ++$i) {
         if ($i % 3 == 0 || $i == 0) {
             echo '<tr>';
         }
@@ -179,7 +179,7 @@ if ($_GET['kategorie'] == 'schiffe') {
     $l = Bauplan_Schiffe::getList();
     echo '<table class="invitetable" style="text-align:center;">';
     echo '<tr><th>ID</th><th>Name</th><th>Bild</th><th>Hülle</th><th>Schilde</th><th>Phaser</th><th>Torpedo</th><th>Gondeln</th><th>Lager</th><th>EPS</th><th>Reaktor</th><th>Warpkern</th><th>Flugkosten</th><th>LRS</th><th>baubar von Spielern</th></tr>';
-    for ($i = 0; $i < sizeof($l); ++$i) {
+    for ($i = 0; $i < count($l); ++$i) {
         echo '<tr><td>'.$l[$i]->id.'</td><td>'.$l[$i]->klasse.'</td><td><img src="'.$l[$i]->bild.'" border="0" /></td><td>'.$l[$i]->maxhull.'</td><td>'.$l[$i]->maxschilde.'</td><td>'.$l[$i]->laser.' ('.$l[$i]->maxphaser.')</td><td>'.$l[$i]->maxgondeln.'</td><td>'.$l[$i]->lager.'</td><td>'.$l[$i]->maxenergie.'</td><td>'.$l[$i]->energieoutput.'</td>';
         echo '<td>'.$l[$i]->maxwarpkern.'</td><td>'.$l[$i]->flugkosten.'</td><td>'.$l[$i]->lrs.'</td><td>'.bool2string($l[$i]->siedler).'</td></tr>';
     }
@@ -190,7 +190,7 @@ if ($_GET['kategorie'] == 'systems') {
     $l = Systemfelder::getList();
     echo '<table class="invitetable" style="text-align:center;">';
     echo '<tr><th>ID</th><th>Name</th><th>Bild</th></tr>';
-    for ($i = 0; $i < sizeof($l); ++$i) {
+    for ($i = 0; $i < count($l); ++$i) {
         echo '<tr><td>'.$l[$i]->id.'</td><td>'.$l[$i]->name.'</td><td><img src="images/systems/'.$l[$i]->bild.'" border="0" /></td></tr>';
     }
     echo '</table>';

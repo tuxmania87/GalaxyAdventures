@@ -39,7 +39,7 @@ echo '<table>
 			  <td>Kommentare</td>
 			  <td>';
 			  $explode_var = explode('|',$ticket->comments);
-			  for($i=0;$i<sizeof($explode_var);$i++) {
+			  for($i=0;$i<count($explode_var);$i++) {
 				  echo '<br /><br />' . $exlode_var[$i];
 			  }
 			  echo '</td>

@@ -21,7 +21,7 @@ $types = array(
 
 $density = $density / 100.0;
 
-$fillUpCounter = sizeof($types) / $density - sizeof($types);
+$fillUpCounter = count($types) / $density - count($types);
 
 for($i=0; $i<$fillUpCounter; $i++ ) {
 	$types[] = 0;
@@ -36,7 +36,7 @@ mysqli_query($verbindung, "TRUNCATE TABLE weltraum");
 for($i=0; $i<$numCenterPoints; $i++) {
 
 	//determine type
-	$randomType = $types[rand(1,sizeof($types)-1)];
+	$randomType = $types[rand(1,count($types)-1)];
 	//determine position
 	$_p = array();
 	$_p["x"] = rand(1,$dimension);
@@ -60,7 +60,7 @@ for($x = 1; $x <= $dimension; $x++) {
 
 		$isCenterPoint = false;
 
-		for($i = 0; $i < sizeof($centerPoints); $i++) {
+		for($i = 0; $i < count($centerPoints); $i++) {
 
 			if($x == $centerPoints[$i]["x"] && $y == $centerPoints[$i]["y"]) {
 				//$isCenterPoint = true;

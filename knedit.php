@@ -41,7 +41,7 @@ if ($_POST["do"] == 1) {
     changeit($text);
 
     if ($id > 0) {
-        mysqli_query($verbindung, "UPDATE kn SET datum='$datum',autor='" . $_SESSION["Id"] . "',text='$text',channel='$channel' WHERE id='$pid'") or die(mysqli_error($verbindung));
+        mysqli_query($verbindung, "UPDATE kn SET datum='$datum',autor='" . intval(\$_SESSION["Id"]) . "',text='$text',channel='$channel' WHERE id='$pid'") or die(mysqli_error($verbindung));
         echo '<meta http-equiv="Refresh" CONTENT="0;URL=knread.php?channel=', $channel, '">';
     } else
         echo 'nicht eingeloggt';
@@ -65,7 +65,7 @@ if ($_POST["do"] == 2)
 
 
 <input type="hidden" name="do" value="2">
-<textarea name="text" rows="10" cols="50"><?php if (sizeof($_POST) > 0) echo $_POST["text"]; else echo $edittext; ?></textarea><br /><br />
+<textarea name="text" rows="10" cols="50"><?php if (count($_POST) > 0) echo $_POST["text"]; else echo $edittext; ?></textarea><br /><br />
 <input type="radio" name="do" value="2" <?php if ($_POST["do"] != 2) echo 'checked="true"'; ?> > Vorschau<br />
 <?php if ($_POST["do"] == 2) echo '<input type="radio" name="do" value="1" checked="true"> Senden<br />'; ?>
 <br />

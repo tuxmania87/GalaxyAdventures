@@ -45,7 +45,7 @@ if ($_GET["modus"] == 2 && $to->besitzer->id != $_SESSION["Id"])
 
 if ($_POST["do"] == 1) {
     $uber = array();
-    for($i=0;$i<sizeof($from->frachtraum->fracht);$i++) {
+    for($i=0;$i<count($from->frachtraum->fracht);$i++) {
         $uber[] = (isset($_POST["p".$i])? (int) $_POST["p".$i]: 0 );
     }
     $from->beamen(1, $uber, $to);
@@ -53,7 +53,7 @@ if ($_POST["do"] == 1) {
 
 if ($_POST["do"] == 4) {
     $uber = array();
-    for($i=0;$i<sizeof($from->frachtraum->fracht);$i++) {
+    for($i=0;$i<count($from->frachtraum->fracht);$i++) {
         $uber[] = (isset($_POST["p".$i])? (int) $_POST["p".$i]: 0 );
     }
     $from->beamen(4, $uber, $to);
@@ -61,7 +61,7 @@ if ($_POST["do"] == 4) {
 
 if ($_POST["do"] == 2) {
     $uber = array();
-    for($i=0;$i<sizeof($from->frachtraum->fracht);$i++) {
+    for($i=0;$i<count($from->frachtraum->fracht);$i++) {
         $uber[] = (isset($_POST["p".$i])? (int) $_POST["p".$i]: 0 );
     }
     $to->beamen(2, $uber, $from);
@@ -69,7 +69,7 @@ if ($_POST["do"] == 2) {
 
 if ($_POST["do"] == 3) {
     $uber = array();
-    for($i=0;$i<sizeof($from->frachtraum->fracht);$i++) {
+    for($i=0;$i<count($from->frachtraum->fracht);$i++) {
         $uber[] = (isset($_POST["p".$i])? (int) $_POST["p".$i]: 0 );
     }
     $to->beamen(3, $uber, $from);
@@ -82,7 +82,7 @@ if ($_GET["modus"] == 1) {
     echo '<form action="beam.php?modus=1&from=', $fromsplit[0] == 'S' ? 'S-' : 'P-', $from->id, '&to=', $tosplit[0] == 'S' ? 'S-' : 'P-', $to->id, '" method="post"><table class="invitetable" style="text-align:center;">';
     echo '<tr><th>Material</th><th>#</th><th></th><th>', $from->name, '</th><th></th><th>', $to->name, '</th></tr>';
 
-    for ($i = 0; $i < sizeof($from->frachtraum->fracht); $i++)
+    for ($i = 0; $i < count($from->frachtraum->fracht); $i++)
         if ($from->frachtraum->fracht[$i]->anzahl > 0) {
             echo '<tr><th>', $from->frachtraum->fracht[$i]->name, '</th><td>'.$from->frachtraum->fracht[$i]->anzahl;
             echo $from->frachtraum->fracht[$i]->max >=0?'/'.$from->frachtraum->fracht[$i]->max :'';
@@ -100,7 +100,7 @@ if ($_GET["modus"] == 4) {
     echo '<form action="beam.php?modus=4&from=', $fromsplit[0] == 'S' ? 'S-' : 'P-', $from->id, '&to=', $tosplit[0] == 'S' ? 'S-' : 'P-', $to->id, '" method="post"><table class="bordered">';
     echo '<tr><td></td><td></td><td>', $from->name, '</td><td></td><td>Warenkonto</td></tr>';
 
-    for ($i = 0; $i < sizeof($from->frachtraum->fracht); $i++)
+    for ($i = 0; $i < count($from->frachtraum->fracht); $i++)
         if ($from->frachtraum->fracht[$i]->anzahl > 0)
             echo '<tr><td>', $from->frachtraum->fracht[$i]->name, '</td><td><img src="images/misc/', $from->frachtraum->fracht[$i]->bild, '" border="0" /></td><td><input type="text" size="6" name="p'.$i.'">  (', $from->frachtraum->fracht[$i]->anzahl, ')</td><td>--></td><td>', $konto->frachtraum->fracht[$i]->anzahl, '</td></tr>';
 
@@ -116,7 +116,7 @@ if ($_GET["modus"] == 2) {
     echo '<h3>Transfer</h3>Energie: ', $to->energie, '<br />';
     echo '<form action="beam.php?modus=2&to=', $tosplit[0] == 'S' ? 'S-' : 'P-', $to->id, '&from=', $fromsplit[0] == 'S' ? 'S-' : 'P-', $from->id, '" method="post"><table class="invitetable" style="text-align:center;">';
     echo '<tr><th>Material</th><th>', $to->name, '</th><th></th><th></th><th>', $from->name, '</th></tr>';
-    for ($i = 0; $i < sizeof($from->frachtraum->fracht); $i++)
+    for ($i = 0; $i < count($from->frachtraum->fracht); $i++)
         if ($from->frachtraum->fracht[$i]->anzahl > 0)
             echo '<tr><th>'.$from->frachtraum->fracht[$i]->name.'</th><td>'.$to->frachtraum->fracht[$i]->anzahl.'</td><td><img src="images/misc/'.$from->frachtraum->fracht[$i]->bild.'" border="0" /></td><td><--</td><td><input type="text" size="6" name="p'.$i.'"></td><td>'.$from->frachtraum->fracht[$i]->anzahl.'</td></tr>';
 
@@ -133,7 +133,7 @@ if ($_GET["modus"] == 3) {
     echo '<h3>Transfer</h3>Energie: ', $to->energie, '<br />';
     echo '<form action="beam.php?modus=3&to=', $tosplit[0] == 'S' ? 'S-' : 'P-', $to->id, '&from=', $fromsplit[0] == 'S' ? 'S-' : 'P-', $from->id, '" method="post"><table class="bordered">';
     echo '<tr><td></td><td></td><td>', $to->name, '</td><td></td><td>Warenkonto</td></tr>';
-    for ($i = 0; $i < sizeof($to->frachtraum->fracht); $i++)
+    for ($i = 0; $i < count($to->frachtraum->fracht); $i++)
         if ($konto->frachtraum->fracht[$i]->anzahl > 0)
             echo '<tr><td>'.$konto->frachtraum->fracht[$i]->name.'</td><td><img src="images/misc/'.$konto->frachtraum->fracht[$i]->bild.'" border="0" /></td><td>', $to->frachtraum->fracht[$i]->anzahl, '</td><td><--</td><td><input type="text" size="6" name="p'.$i.'">  (', $konto->frachtraum->fracht[$i]->anzahl, ')</td></tr>';
 

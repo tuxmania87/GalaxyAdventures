@@ -80,7 +80,7 @@ $tipvar = mysqli_query($verbindung, "SELECT * FROM tip");
 while ($tipp = mysqli_fetch_array($tipvar)) {
     $tipa[] = $tipp["text"];
 }
-$randvar = rand(0, (sizeof($tipa) - 1));
+$randvar = rand(0, (count($tipa) - 1));
 //echo 'Tipps: ',$tipa[$randvar],'<br />';
 
 

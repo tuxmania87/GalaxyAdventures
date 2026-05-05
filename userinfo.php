@@ -33,7 +33,7 @@ $shipsum = new Frachtraum('', 'dummy');
 $q = mysqli_query($verbindung, "select id from schiffe where typ='s' and besitzer=".$id);
 while ($r = mysqli_fetch_array($q)) {
     $t_ship = new Schiffe($r['id']);
-    for ($i = 0; $i < sizeof($t_ship->frachtraum->fracht); ++$i) {
+    for ($i = 0; $i < count($t_ship->frachtraum->fracht); ++$i) {
         $shipsum->fracht[$i + 1]->anzahl += $t_ship->frachtraum->fracht[$i]->anzahl;
     }
 }
@@ -42,7 +42,7 @@ $planetsum = new Frachtraum('', 'dummy');
 $q = mysqli_query($verbindung, 'select id from planeten where besitzer='.$id);
 while ($r = mysqli_fetch_array($q)) {
     $t_ship = new Planeten($r['id']);
-    for ($i = 0; $i < sizeof($t_ship->frachtraum->fracht); ++$i) {
+    for ($i = 0; $i < count($t_ship->frachtraum->fracht); ++$i) {
         $planetsum->fracht[$i + 1]->anzahl += $t_ship->frachtraum->fracht[$i]->anzahl;
     }
 }
@@ -52,7 +52,7 @@ echo '<h3>Wirtschafts Punkte</h3>';
 echo '<table class="invitetable" style="text-align:center;"><tr><th>Material</th><th>&nbsp;</th><th>auf Schiffen</th><th>auf Planeten</th><th>Summe</th><th>Wichtung</th><th>ZeilenSumme</th></tr>';
 
 $gesamt = 0;
-for ($i = 1; $i < sizeof($shipsum->fracht); ++$i) {
+for ($i = 1; $i < count($shipsum->fracht); ++$i) {
     if ($id == $_SESSION['Id'] || $_SESSION['Id'] < 10) {
         echo '<tr><td>', $shipsum->fracht[$i]->name, '</td><td><img src="images/misc/'.$shipsum->fracht[$i]->bild.'" border="0" /></td><td>', $shipsum->fracht[$i]->anzahl, '</td><td>', $planetsum->fracht[$i]->anzahl, '</td><td>', $shipsum->fracht[$i]->anzahl + $planetsum->fracht[$i]->anzahl, '</td><td><span style="color:yellow;">*', $shipsum->fracht[$i]->wichtung, '</span></td><td><span style="color:green;font-weight:bold;">', ($shipsum->fracht[$i]->anzahl + $planetsum->fracht[$i]->anzahl) * $shipsum->fracht[$i]->wichtung.'</span></td></tr>';
     }
@@ -81,7 +81,7 @@ while ($row = mysqli_fetch_array($abfrage)) {
 $list = Bauplan_Gebaude::getCompleteListe();
 
 $gesamt2 = 0;
-for ($i = 0; $i < sizeof($list); ++$i) {
+for ($i = 0; $i < count($list); ++$i) {
     if ($id == $_SESSION['Id'] || $_SESSION['Id'] < 10) {
         echo '<tr><td>', $list[$i]->name, '</td><td>', $pr[$i], '</td><td><span style="color:yellow;">', $list[$i]->wichtung, '</td><td><span style="color:green;font-weight:bold;">', $pr[$i] * $list[$i]->wichtung, '</span></td></tr>';
     }

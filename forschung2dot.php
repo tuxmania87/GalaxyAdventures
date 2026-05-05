@@ -12,7 +12,7 @@ while($r= mysqli_fetch_array($q)) {
 $q = mysqli_query($verbindung, "select * from forschung");
 while($r= mysqli_fetch_array($q)) {
 	$a = explode("/",$r["pre"]);
-	for($i=0;$i<sizeof($a);$i++) {
+	for($i=0;$i<count($a);$i++) {
 		if(ctype_digit($a[$i]))
 			echo $a[$i]." -> ".$r["id"]."\n";
 	}

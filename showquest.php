@@ -10,9 +10,9 @@ $verbindung = get_verbindung();
 
 // questpruefeung : Sammeln ( Typ 2)
 
-echo "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION['Id']."' AND quests.id=erfolge.qid AND quests.typ=2 AND erledigt='0' LIMIT 1";
+echo "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".intval(\$_SESSION['Id'])."' AND quests.id=erfolge.qid AND quests.typ=2 AND erledigt='0' LIMIT 1";
 
-$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION['Id']."' AND quests.id=erfolge.qid AND quests.typ='2' AND erledigt='0' LIMIT 1");
+$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".intval(\$_SESSION['Id'])."' AND quests.id=erfolge.qid AND quests.typ='2' AND erledigt='0' LIMIT 1");
 while ($row = mysqli_fetch_assoc($abfrage)) {
     $max = $row['max'];
     $saveid = $row['id'];
@@ -35,7 +35,7 @@ if ($saveid > 0) {
         $ship_id = $row['id'];
 
         $t_s = new Schiffe($ship_id);
-        for ($i = 0; $i < sizeof($t_s->frachtraum->fracht); ++$i) {
+        for ($i = 0; $i < count($t_s->frachtraum->fracht); ++$i) {
             if (strtolower($t_s->frachtraum->fracht[$i]->name) == $art) {
                 $testsum += $t_s->frachtraum->fracht[$i]->anzahl;
             }
@@ -47,7 +47,7 @@ if ($saveid > 0) {
         $planet_id = $row['id'];
 
         $t_s = new Planeten($planet_id);
-        for ($i = 0; $i < sizeof($t_s->frachtraum->fracht); ++$i) {
+        for ($i = 0; $i < count($t_s->frachtraum->fracht); ++$i) {
             if (strtolower($t_s->frachtraum->fracht[$i]->name) == $art) {
                 $testsum += $t_s->frachtraum->fracht[$i]->anzahl;
             }
@@ -73,7 +73,7 @@ unset($art);
 unset($anzahl);
 
 // questpruefeung : Buildings ( Typ 4)
-$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION['Id']."' AND quests.id=erfolge.qid AND quests.typ=4 AND erledigt='0'");
+$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".intval(\$_SESSION['Id'])."' AND quests.id=erfolge.qid AND quests.typ=4 AND erledigt='0'");
 while ($row = mysqli_fetch_assoc($abfrage)) {
     $menge = $row['max'];
     $saveid = $row['id'];
@@ -83,7 +83,7 @@ while ($row = mysqli_fetch_assoc($abfrage)) {
 if ($saveid > 0) {
     $bcount = 0;
     $sumfeld = [];
-    $abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE besitzer='".$_SESSION['Id']."'");
+    $abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE besitzer='".intval(\$_SESSION['Id'])."'");
     while ($row = mysqli_fetch_array($abfrage)) {
         $gefunden = false;
         $planet = new Planeten($row['id']);
@@ -96,7 +96,7 @@ if ($saveid > 0) {
         $sumfeld[] = $gefunden ? '1' : '0';
     }
     $count = 0;
-    for ($i = 0; $i < sizeof($sumfeld); ++$i) {
+    for ($i = 0; $i < count($sumfeld); ++$i) {
         ++$count;
     }
     // mysqli_query("UPDATE erfolge SET anzahl='$count' WHERE id='$saveid'");
@@ -112,7 +112,7 @@ unset($art);
 unset($anzahl);
 
 // questpruefeung : Items ( Typ 6)
-$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".$_SESSION['Id']."' AND quests.id=erfolge.qid AND quests.typ='4' AND erledigt='0'");
+$abfrage = mysqli_query($verbindung, "SELECT erfolge.anzahl,quests.zusatz,quests.max,erfolge.id FROM erfolge,quests WHERE uid='".intval(\$_SESSION['Id'])."' AND quests.id=erfolge.qid AND quests.typ='4' AND erledigt='0'");
 while ($row = mysqli_fetch_assoc($abfrage)) {
     $menge = $row['max'];
     $saveid = $row['id'];
@@ -122,7 +122,7 @@ while ($row = mysqli_fetch_assoc($abfrage)) {
 if ($saveid > 0) {
     $bcount = 0;
     $sumfeld = [];
-    $abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE besitzer='".$_SESSION['Id']."'");
+    $abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE besitzer='".intval(\$_SESSION['Id'])."'");
     while ($row = mysqli_fetch_array($abfrage)) {
         $gefunden = false;
         $planet = new Planeten($row['id']);
@@ -135,7 +135,7 @@ if ($saveid > 0) {
         $sumfeld[] = $gefunden ? '1' : '0';
     }
     $count = 0;
-    for ($i = 0; $i < sizeof($sumfeld); ++$i) {
+    for ($i = 0; $i < count($sumfeld); ++$i) {
         ++$count;
     }
     // mysqli_query("UPDATE erfolge SET anzahl='$count' WHERE id='$saveid'");
@@ -382,13 +382,13 @@ echo '<h3><a href="quest.php?sid=0">Link: prim&auml;re Level Quests</a></h3><br 
 // OFFENE QUESTS
 echo '<div class="smallbox"><h3>offene Quests</h3>';
 
-$abfrage = mysqli_query($verbindung, "SELECT erfolge.id,quests.titel FROM erfolge,quests WHERE uid='".$_SESSION['Id']."' AND erledigt='0' AND erfolge.qid=quests.id");
+$abfrage = mysqli_query($verbindung, "SELECT erfolge.id,quests.titel FROM erfolge,quests WHERE uid='".intval(\$_SESSION['Id'])."' AND erledigt='0' AND erfolge.qid=quests.id");
 while ($row = mysqli_fetch_assoc($abfrage)) {
     echo '<a href="questdetail.php?id=', $row['id'], '&width=400" class="thickbox" title="Quest">- ', $row['titel'], '</a><br />';
 }
 echo '</div><br /><div class="smallbox"><h3>erledigte Quests </h3> ';
 
-$abfrage = mysqli_query($verbindung, "SELECT erfolge.id,quests.titel FROM erfolge,quests WHERE uid='".$_SESSION['Id']."' AND erledigt='1' AND erfolge.qid=quests.id");
+$abfrage = mysqli_query($verbindung, "SELECT erfolge.id,quests.titel FROM erfolge,quests WHERE uid='".intval(\$_SESSION['Id'])."' AND erledigt='1' AND erfolge.qid=quests.id");
 if (mysqli_num_rows($abfrage) > 0) {
     echo ' <span style="color:yellow;font-weight:bold;">  ACHTUNG: Quests m&uuml;ssen noch abgegeben werden!</span><br />';
 }

@@ -19,14 +19,14 @@ if ($_GET["to"] == 'Allianz' || $_GET["to"] == 'allianz' || $_POST["empfaenger"]
 
 if (isset($_GET["to"]) && !$behandelt) {
     $anfeld = explode(",", $_GET["to"]);
-    for ($i = 0; $i < sizeof($anfeld); $i++) {
+    for ($i = 0; $i < count($anfeld); $i++) {
         if (!ctype_digit($anfeld[$i]) && $_GET["to"] != '-3')
             die("Empf&auml;nger enth&auml;llt Buchstaben oder Sonderzeichen");
     }
 }
 if (isset($_POST["empfaenger"]) && !$behandelt) {
     $anfeld = explode(",", $_POST["empfaenger"]);
-    for ($i = 0; $i < sizeof($anfeld); $i++) {
+    for ($i = 0; $i < count($anfeld); $i++) {
         if (!ctype_digit($anfeld[$i]) && $_POST["empfaenger"] != '-3')
             die("Empf&auml;nger enth&auml;llt Buchstaben oder Sonderzeichen");
     }
@@ -64,7 +64,7 @@ VALUES ('$ttid', '$absender', '$betreff', '$inhalt', '$datum', '1', '1'
 
 
 if ($_POST["send"] == 1 && $_POST["empfaenger"] != '-3') {
-    for ($i = 0; $i < sizeof($anfeld); $i++) {
+    for ($i = 0; $i < count($anfeld); $i++) {
         $datum = date("Y-m-d H:i:s");
         $empfaenger = $anfeld[$i];
         $absender = $account->id;
@@ -106,14 +106,14 @@ if ($anfeld[0] == '')
     echo '<tr><th>Empf&auml;nger (ID)</th><td><input type="text" name="empfaenger" />   <a href="newmail.php?to=Allianz">an Allianz</a></td></tr>';
 if ($anfeld[0] != '')
     echo '<tr><th>Empf&auml;nger</th><td>', $an->nickname;
-for ($i = 1; $i < sizeof($anfeld); $i++) {
+for ($i = 1; $i < count($anfeld); $i++) {
     $anx = new Account($anfeld[$i]);
     echo ',', $anx->nickname;
 }
 echo '</td></tr>';
-if (sizeof($anfeld) >= 1 && $_POST["empfaenger"] != '-3') {
+if (count($anfeld) >= 1 && $_POST["empfaenger"] != '-3') {
     echo '<input type="hidden" name="empfaenger" value="', $an->id;
-    for ($i = 1; $i < sizeof($anfeld); $i++) {
+    for ($i = 1; $i < count($anfeld); $i++) {
         $anx = new Account($anfeld[$i]);
         echo ',', $anx->id;
     }

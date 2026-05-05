@@ -22,35 +22,35 @@ if(($_GET["x"])=='' || $_GET["y"]=='')
 if(ctype_digit($_GET["del"]) && $_GET["del"]>0) {
 	$schiffgefunen=false;
 	$planetengefunden=false;
-	$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer!=2 AND system='".$_GET["del"]."'");
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer!=2 AND system='".intval($_GET["del"])."'");
 	while($row=mysqli_fetch_array($abfrage))
 	$schiffgefunden=true;
-	$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer!=2 AND system='".$_GET["del"]."'");
+	$abfrage=mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer!=2 AND system='".intval($_GET["del"])."'");
 	while($row=mysqli_fetch_array($abfrage))
 	$schiffgefunden=true;
 	if($schiffgefunden) echo "Hinweis: Es sind noch schiffe im System. Es kann nicht gel&ouml;scht werden!";
 	if($planetgefunden) echo "Hinweis: Es sind noch besidelte planeten im System. Es kann nicht gel&ouml;scht werden!";
 	if(!$schiffgefunden && !$planetgefunden) {
-				mysqli_query($verbindung, "DELETE FROM weltraum WHERE system='".$_GET["del"]."'") or die(mysqli_error($verbindung));
-				mysqli_query($verbindung, "DELETE FROM schiffe WHERE system='".$_GET["del"]."'");
-				mysqli_query($verbindung, "DELETE FROM planeten WHERE system='".$_GET["del"]."'");
-				mysqli_query($verbindung, "DELETE FROM systeme WHERE id='".$_GET["del"]."'");
+				mysqli_query($verbindung, "DELETE FROM weltraum WHERE system='".intval($_GET["del"])."'") or die(mysqli_error($verbindung));
+				mysqli_query($verbindung, "DELETE FROM schiffe WHERE system='".intval($_GET["del"])."'");
+				mysqli_query($verbindung, "DELETE FROM planeten WHERE system='".intval($_GET["del"])."'");
+				mysqli_query($verbindung, "DELETE FROM systeme WHERE id='".intval($_GET["del"])."'");
 				}
 	}
 
 if(ctype_digit($_GET["dx"]) && $_GET["dx"]>-25 && ctype_digit($_GET["dy"]) && $_GET["dy"]>-25)
 	{		//loeschen
-	mysqli_query($verbindung, "DELETE FROM planeten WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='0'");
-	mysqli_query($verbindung, "DELETE FROM weltraum WHERE x='".$_GET["dx"]."' AND y='".$_GET["dy"]."' AND system='0'");
+	mysqli_query($verbindung, "DELETE FROM planeten WHERE x='".intval($_GET["dx"])."' AND y='".intval($_GET["dy"])."' AND system='0'");
+	mysqli_query($verbindung, "DELETE FROM weltraum WHERE x='".intval($_GET["dx"])."' AND y='".intval($_GET["dy"])."' AND system='0'");
 	}
 
 
 if(ctype_digit($_GET["rx"]) && $_GET["rx"]>-25 && ctype_digit($_GET["ry"]) && $_GET["ry"]>-25 && $_POST["operation"]>=0 && isset($_POST["operation"]))
 	{
 	$systeme=array("bblaublau","bblaugelb","bblauorange","bblaurot","bblauschwarz","bblauweiss","blau","blaubig","blaublau","brotblau","brotgelb","brotorange","brotrot","brotschwarz","brotweiss","gelb","gelbblau","gelbgelb","gelbweiss","orange","orangegelb","orangeorange","orangeweiss","rot","rotbig","rotblau","rotgelb","rotorange","rotrot","rotweiss","weiss","weissblau");
-	$bildinsert=$systeme[$_POST["operation"]];
+	$bildinsert=$systeme[mysqli_real_escape_string($verbindung, $_POST["operation"])];
 		$lastid=checkforlastid("systeme")+1; 
-		mysqli_query($verbindung, "INSERT INTO systeme (id,x,y,name,bild) VALUES ('$lastid','".$_GET["rx"]."','".$_GET["ry"]."','".$_POST["sysname"]."','".$bildinsert.".jpg')") or die(mysqli_error($verbindung));
+		mysqli_query($verbindung, "INSERT INTO systeme (id,x,y,name,bild) VALUES ('$lastid','".intval($_GET["rx"])."','".intval($_GET["ry"])."','".mysqli_real_escape_string($verbindung, $_POST["sysname"])."','".$bildinsert.".jpg')") or die(mysqli_error($verbindung));
 	}
 
 	
@@ -75,26 +75,26 @@ if(ctype_digit($_GET["sx"]) && $_GET["sx"]>-25 && ctype_digit($_GET["sy"]) && $_
 	default: $dovar=-1; break;
 	}
 	switch ($dovar) {
-	case 0: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','d','0')"); break;
-		case 1: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','dk','0')"); break;
-		case 2: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','e','0')"); break;
-		case 3: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','ek','0')"); break;
-		case 4: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','x','0')"); break;
-		case 5: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','b','0')"); break;
-		case 6: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','g','0')"); break;
-		case 7: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','p','0')"); break;
-		case 8: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','radio','0')"); break;
-		case 9: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','metrion','0')"); break;
-		case 10: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".$_GET["sx"]."','".$_GET["sy"]."','lim','0')"); break;
+	case 0: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','d','0')"); break;
+		case 1: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','dk','0')"); break;
+		case 2: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','e','0')"); break;
+		case 3: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','ek','0')"); break;
+		case 4: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','x','0')"); break;
+		case 5: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','b','0')"); break;
+		case 6: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','g','0')"); break;
+		case 7: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','p','0')"); break;
+		case 8: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','radio','0')"); break;
+		case 9: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','metrion','0')"); break;
+		case 10: mysqli_query($verbindung, "INSERT INTO weltraum (x,y,typ,system) VALUES ('".intval($_GET["sx"])."','".intval($_GET["sy"])."','lim','0')"); break;
 		default: echo 'not yet implemented!'; break;
 	}
 	}
 	if($klasse=='S') {
 	//	0			1			2			3				4			5
 	$systeme=array("bblaublau","bblaugelb","bblauorange","bblaurot","bblauschwarz","bblauweiss","blau","blaubig","blaublau","brotblau","brotgelb","brotorange","brotrot","brotschwarz","brotweiss","gelb","gelbblau","gelbgelb","gelbweiss","orange","orangegelb","orangeorange","orangeweiss","rot","rotbig","rotblau","rotgelb","rotorange","rotrot","rotweiss","weiss","weissblau");
-	for($i=0;$i<sizeof($bild);$i++)
+	for($i=0;$i<count($bild);$i++)
 	echo '<a href="editspace2.php?x=',$_GET["x"],'&y=',$_GET["y"],'&rx=',$_GET["sx"],'&ry=',$_GET["sy"],'&o=',$i,'"><img height="16px" width="16px" src="',$bild[$i],'" border="0" /></a><br />';
-	for($i=0;$i<sizeof($systeme);$i++)
+	for($i=0;$i<count($systeme);$i++)
 		{
 		echo '<form method="post" action="editspace2.php?pinsel=',$_GET["pinsel"],'&x=',$_GET["x"],'&y=',$_GET["y"],'&rx=',$_GET["sx"],'&ry=',$_GET["sy"],'"><input type="hidden" name="operation" value="',$i,'">';
 		echo '<img height="16px" width="16px" src="',$systeme[$i],'.jpg" border="0" /> Name des Systems: <input type="text" name="sysname" /> <input type="submit" value="erstellen" /></form>';

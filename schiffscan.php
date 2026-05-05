@@ -22,7 +22,7 @@ if (!$betray) {
         echo '<h2>Schiffsscan</h2>';
         echo '<h3>Lagerraum</h3>';
         echo '<table class="invitetable">';
-        for ($i = 0; $i < sizeof($target->frachtraum->fracht); $i++)
+        for ($i = 0; $i < count($target->frachtraum->fracht); $i++)
             if ($target->frachtraum->fracht[$i]->anzahl > 0)
                 echo '<tr><th>',$target->frachtraum->fracht[$i]->name, '</th><td><img src="images/misc/', $target->frachtraum->fracht[$i]->bild, '" border="0" /></td><td>', $target->frachtraum->fracht[$i]->anzahl, '</td></tr>';
         echo '</table>';

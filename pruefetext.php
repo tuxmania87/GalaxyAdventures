@@ -163,7 +163,6 @@ function interpretiereCode($trennzeichen1, $trennzeichen2, $text, &$offenetags)
 
         $name = $row['nickname'];
 
-        // mysql_close($db);
 
         $text = $name;
 
@@ -173,7 +172,6 @@ function interpretiereCode($trennzeichen1, $trennzeichen2, $text, &$offenetags)
     if (substr($text, 0, 5) == 'link:') {
         $spielerid = substr($text, 5, strlen($text) - 5);
 
-        // mysql_close($db);
 
         if (strpos($spielerid, 'http://') === false) {
             $spielerid = 'http://'.$spielerid;
@@ -193,7 +191,6 @@ function interpretiereCode($trennzeichen1, $trennzeichen2, $text, &$offenetags)
 
         $name = $row['name'];
 
-        // mysql_close($db);
 
         $text = $name;
 

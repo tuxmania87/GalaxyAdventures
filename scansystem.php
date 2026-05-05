@@ -17,7 +17,7 @@ if (!ctype_digit($systemid)) {
 $system = new System($systemid);
 
 $check = false;
-$abfrage = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE `system`=0 AND x='".$system->x."' AND y='".$system->y."' AND besitzer='".$_SESSION['Id']."'");
+$abfrage = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE `system`=0 AND x='".$system->x."' AND y='".$system->y."' AND besitzer='".intval(\$_SESSION['Id'])."'");
 while ($row = mysqli_fetch_array($abfrage)) {
     $check = true;
 }
@@ -28,7 +28,7 @@ if (!$check) {
 
 // QUestabfrage
 
-$abfrage = mysqli_query($verbindung, "SELECT erfolge.id FROM erfolge,quests WHERE erfolge.qid=quests.id AND erfolge.uid='".$_SESSION['Id']."' AND erfolge.erledigt=0 AND quests.zusatz='$systemid'");
+$abfrage = mysqli_query($verbindung, "SELECT erfolge.id FROM erfolge,quests WHERE erfolge.qid=quests.id AND erfolge.uid='".intval(\$_SESSION['Id'])."' AND erfolge.erledigt=0 AND quests.zusatz='$systemid'");
 while ($row = mysqli_fetch_assoc($abfrage)) {
     mysqli_query($verbindung, "UPDATE erfolge SET erledigt=1 WHERE erledigt=0 AND id='".$row['id']."'") or exit($verbindung->error);
     echo '<a href="showquest.php">Quest erledigt!</a><br />';
@@ -44,7 +44,7 @@ while ($row = mysqli_fetch_array($abfrage)) {
 }
 echo '<h3>Scan vom ',$system->name,'-System</h3>';
 echo '<br />besiedelte Planeten: ',$count,'<br />Gefundene Spezies: ';
-for ($i = 0; $i < sizeof($planet); ++$i) {
+for ($i = 0; $i < count($planet); ++$i) {
     $x = new Account($planet[$i]);
     echo $x->nickname.',';
 }
@@ -58,7 +58,7 @@ while ($row = mysqli_fetch_array($abfrage)) {
 }
 
 echo '<br /><br />gefunden Schiffe: ',$count,'<br />Schiffssignaturen: ';
-for ($i = 0; $i < sizeof($schiff); ++$i) {
+for ($i = 0; $i < count($schiff); ++$i) {
     $x = new Account($schiff[$i]);
     echo $x->nickname.',';
 }

@@ -65,7 +65,7 @@ if ($kat == 2) {
     $weiter = true;
     while ($weiter) {
         $weiter = false;
-        for ($i = 0; $i < sizeof($idfeld) - 1; ++$i) {
+        for ($i = 0; $i < count($idfeld) - 1; ++$i) {
             if ($army[$i] < $army[$i + 1]) {
                 tausche($army[$i], $army[$i + 1]);
                 tausche($idfeld[$i], $idfeld[$i + 1]);
@@ -74,7 +74,7 @@ if ($kat == 2) {
         }
     }
     echo '<br /><h3>Milit&auml;rische Kraft</h3><table class="invitetable" style="text-align:center;"><tr><th>#</th><th>Spieler</th><th>Punkte</th></tr>';
-    for ($i = 0; $i < sizeof($idfeld); ++$i) {
+    for ($i = 0; $i < count($idfeld); ++$i) {
         $tusr = new Account($idfeld[$i]);
         echo '<tr><td>',$i + 1,'</td><td><a href="userinfo.php?id=',$idfeld[$i],'">',$tusr->nickname,'</a></td><td>', $army[$i],'</td></tr>';
     }

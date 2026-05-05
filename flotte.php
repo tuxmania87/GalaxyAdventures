@@ -41,7 +41,7 @@ if ($fid == 0) {
 
     $prufbool = true;
     $deutbool = false;
-    for ($i = 0; $i < sizeof($schiffe); $i++) {
+    for ($i = 0; $i < count($schiffe); $i++) {
         $pruf = new Schiffe($schiffe[$i]);
         if ($pruf->besitzer->id != '2')
             $prufbool = false;
@@ -73,7 +73,7 @@ if ($fid == 0) {
                  */
 //HINSCHIESSEN
                 echo "<h3>Angriff</h3>";
-                for ($i = 0; $i < sizeof($schiffe); $i++) {
+                for ($i = 0; $i < count($schiffe); $i++) {
                     $schiff = new Schiffe($schiffe[$i]);
                     $schiff->feuern($enemy, 1);
                 }
@@ -96,14 +96,14 @@ if ($fid == 0) {
 
                 echo "<br /><h3>Gegenangriff</h3>";
 //PLANETN ballern ZURUECL
-                for ($i = 0; $i < sizeof($enemyfp); $i++) {
+                for ($i = 0; $i < count($enemyfp); $i++) {
                     $x = 0;
                     $abort = false;
                     $planet = new Planeten($enemyfp[$i]);
                     $aua = new Schiffe($schiffe[$x]);
                     while ($aua->besitzer->id == 2 && !$abort) {
                         $x++;
-                        if ($x >= sizeof($schiffe))
+                        if ($x >= count($schiffe))
                             $abort = true;
                         $aua = new Schiffe($schiffe[$x]);
                     }
@@ -113,14 +113,14 @@ if ($fid == 0) {
 
 
 //SCHIFFE BALLERN zuruecl
-                for ($i = 0; $i < sizeof($enemyf); $i++) {
+                for ($i = 0; $i < count($enemyf); $i++) {
                     $x = 0;
                     $abort = false;
                     $schiff = new Schiffe($enemyf[$i]);
                     $aua = new Schiffe($schiffe[$x]);
                     while ($aua->besitzer->id == 2 && !$abort) {
                         $x++;
-                        if ($x >= sizeof($schiffe))
+                        if ($x >= count($schiffe))
                             $abort = true;
                         $aua = new Schiffe($schiffe[$x]);
                     }
@@ -155,7 +155,7 @@ if ($fid == 0) {
             if ($testschiff->besitzer->id == $_SESSION["Id"]) {
                 mysqli_query($verbindung, "UPDATE schiffe SET flotte='0' WHERE id='$delid'");
                 $neufeld = array();
-                for ($i = 0; $i < sizeof($schiffe); $i++)
+                for ($i = 0; $i < count($schiffe); $i++)
                     if ($schiffe[$i] != $delid)
                         $neufeld[] = $schiffe[$i];
                 $schiffe = $neufeld;
@@ -165,7 +165,7 @@ if ($fid == 0) {
 
 //<form action="flotte.php?fid=2" method="post"><td><input type="hidden" name="do" value="31"><input type="hidden" name="delid" value="8"><input type="submit" value="entfernen"></td></form>
 
-        if (sizeof($schiffe) == 0) {
+        if (count($schiffe) == 0) {
             mysqli_query($verbindung, "DELETE FROM flotte WHERE id='" . $fid . "'");
             mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='$fid'");
             die("Flotte existiert nicht (mehr).");
@@ -173,7 +173,7 @@ if ($fid == 0) {
 //ende schiff entfernen
 
         if ($_GET["do"] == 3)  // Schilde aktivieren
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $schiff = new Schiffe($schiffe[$i]);
                 if ($schiff->energie > 0 && $schiff->schilde > 0 && $schiff->schildstatus == 0) {
                     $schiff->energie--;
@@ -183,7 +183,7 @@ if ($fid == 0) {
             }
 
         if ($_GET["do"] == 4)  // Schilde deaktivieren
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $schiff = new Schiffe($schiffe[$i]);
                 $schiff->schildstatus = 0;
                 mysqli_query($verbindung, "UPDATE schiffe SET schildstatus='0' WHERE id='" . $schiff->id . "'");
@@ -194,7 +194,7 @@ if ($fid == 0) {
         if ($_GET["do"] == 2 || $_POST["do"] == 2) {//navigieren
             $direction = $_GET["dir"];
             $navbool = true;
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 //var_dump($schiffe[$i]); echo '<br />';
                 $schiff = new Schiffe($schiffe[$i]);
                 $foo = $schiff->navigieren($direction, true, 1);
@@ -202,7 +202,7 @@ if ($fid == 0) {
                     $navbool = false;
             }
             if ($navbool) {
-                for ($i = 0; $i < sizeof($schiffe); $i++) {
+                for ($i = 0; $i < count($schiffe); $i++) {
                     $schiff = new Schiffe($schiffe[$i]);
                     $foo = $schiff->navigieren($direction, true, 0);
                     //echo $schiff->fehler[$foo];
@@ -216,17 +216,17 @@ if ($fid == 0) {
 
         if ($_GET["do"] == 5) { // energie aufteilen
             $gesamtE = 0;
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $sch = new Schiffe($schiffe[$i]);
                 $gesamtE+=$sch->energie;
             }
             echo "Gesamtenergie: " . $gesamtE;
-            $mengeS = floor($gesamtE / sizeof($schiffe));
-            echo '. Teile jedem Schiff ', $mengeS, ' Energie zu. Restenergie: ', $gesamtE - (sizeof($schiffe) * $mengeS), '<br />';
+            $mengeS = floor($gesamtE / count($schiffe));
+            echo '. Teile jedem Schiff ', $mengeS, ' Energie zu. Restenergie: ', $gesamtE - (count($schiffe) * $mengeS), '<br />';
 //ueberschreitung?
             $overflow = false;
             $neuMenge = 0;
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $sch = new Schiffe($schiffe[$i]);
                 if ($sch->maxenergie < $mengeS) {
                     $neuMenge = $sch->maxenergie;
@@ -237,13 +237,13 @@ if ($fid == 0) {
             }
 
 //verteilen
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 mysqli_query($verbindung, "UPDATE schiffe SET energie='" . $mengeS . "' WHERE id='" . $schiffe[$i] . "'");
                 $gesamtE-=$mengeS;
             }
             echo 'Restenergie: ', $gesamtE, '<br />';
             $i = 0;
-            while ($gesamtE > 0 && $i < sizeof($schiffe)) {
+            while ($gesamtE > 0 && $i < count($schiffe)) {
                 $sch = new Schiffe($schiffe[$i]);
                 $puffer = $sch->maxenergie - $sch->energie;
                 if ($puffer > $gesamtE) {
@@ -261,7 +261,7 @@ if ($fid == 0) {
         }  //ende e aufteile
 //Alarmstufen
         if ($_GET["do"][0] == 6) {
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $sch = new Schiffe($schiffe[$i]);
                 if ($_GET["do"] == '6g')
                     $sch->alarmstufe = 'green';
@@ -275,7 +275,7 @@ if ($fid == 0) {
 //ende alarmstufen	
 //deut einsaugen 7 (8) 
         if ($_POST["do"] == 7) {
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $sch = new Schiffe($schiffe[$i]);
                 if ($sch->skill->deuterium == 1 && $sch->energie > 0) {
                     $deutanzahl = $_POST["deutanzahl"];
@@ -287,7 +287,7 @@ if ($fid == 0) {
 //endedeut
 //deut einsaugen (8) 
         if ($_POST["do"] == 8) {
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $sch = new Schiffe($schiffe[$i]);
                 if ($sch->skill->deuterium == 1 && $sch->energie > 0) {
                     $deutanzahl = $_POST["deutanzahl"];
@@ -299,7 +299,7 @@ if ($fid == 0) {
 //endedeut
 //deut einsaugen 9 (10) 
         if ($_POST["do"] == 9) {
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $sch = new Schiffe($schiffe[$i]);
                 if ($sch->skill->erz == 1 && $sch->energie > 0) {
                     $deutanzahl = $_POST["erzanzahl"];
@@ -311,7 +311,7 @@ if ($fid == 0) {
 //endedeut
 //deut einsaugen 910) 
         if ($_POST["do"] == 10) {
-            for ($i = 0; $i < sizeof($schiffe); $i++) {
+            for ($i = 0; $i < count($schiffe); $i++) {
                 $sch = new Schiffe($schiffe[$i]);
                 if ($sch->skill->erz == 1 && $sch->energie > 0) {
                     $deutanzahl = $_POST["erzanzahl"];
@@ -327,7 +327,7 @@ if ($fid == 0) {
 
         if ($_GET["do"] == 20)   //flotte loeschen
             if ($schiff->besitzer->id == $_SESSION["Id"]) {
-                mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='" . $fid . "' AND besitzer='" . $_SESSION["Id"] . "'");
+                mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='" . $fid . "' AND besitzer='" . intval(\$_SESSION["Id"]) . "'");
                 mysqli_query($verbindung, "DELETE FROM flotte WHERE id='" . $fid . "'");
                 die("zur <a href=\"flotte.php?fid=0\">Flotten&uuml;bersicht</a>");
             }
@@ -546,7 +546,7 @@ if ($fid == 0) {
 
         $string1 = "";
 
-        for ($i = 0; $i < sizeof($schiffe); $i++) {
+        for ($i = 0; $i < count($schiffe); $i++) {
             $schiff = new Schiffe($schiffe[$i]);
             $string1.=" AND id!=" . $schiffe[$i];
 
@@ -557,13 +557,13 @@ if ($fid == 0) {
         echo 'Alarmstufe:<br />';
 //alarmfeld
         $alarmfeld = array();
-        for ($i = 0; $i < sizeof($schiffe); $i++) {
+        for ($i = 0; $i < count($schiffe); $i++) {
             $sch = new Schiffe($schiffe[$i]);
             $alarmfeld[] = $sch->alarmstufe;
         }
         $alarmcheck = false;
         $alarmstufe = $alarmfeld[0];
-        for ($i = 0; $i < sizeof($alarmfeld); $i++)
+        for ($i = 0; $i < count($alarmfeld); $i++)
             if ($alarmfeld[$i] != $alarmstufe)
                 $alarmcheck = true;
 
@@ -597,7 +597,7 @@ if ($fid == 0) {
             $nebel = true;
 
 //deutbool
-        for ($po = 0; $po < sizeof($schiffe); $po++) {
+        for ($po = 0; $po < count($schiffe); $po++) {
             $pruf = new Schiffe($schiffe[$po]);
             if ($pruf->skill->deuterium == 1)
                 $deutbool = true;

@@ -17,7 +17,7 @@ if(isset($_POST[$tmp])) { $check=true; $schiffe[]=$_POST[$tmp]; }
 if(!$check) echo 'Mindestens 1 Schiff geh&ouml;hrt in eine Flotte!'; else {
 
 $error=false;
-for($i=0;$i<sizeof($schiffe);$i++) {
+for($i=0;$i<count($schiffe);$i++) {
 $test=new Schiffe($schiffe[$i]); 
 if($i==0) { $x=$test->position->x; $y=$test->position->y; $orbit=$test->position->orbit; $system=$test->position->system->id; }
 if($i>0) if($x!=$test->position->x || $y!=$test->position->y || $orbit!=$test->position->orbit || $system!=$test->position->system->id) $error=true;
@@ -28,7 +28,7 @@ else {
 $lastid=checkforlastid('flotte')+1;
 $fname=pruefetext($_POST["flottenname"]);
 mysqli_query($verbindung, "INSERT INTO flotte (id,name,besitzer) VALUES ('$lastid','$fname','$id')");
-for($i=0;$i<sizeof($schiffe);$i++) {
+for($i=0;$i<count($schiffe);$i++) {
 $tid=$schiffe[$i];
 mysqli_query($verbindung, "UPDATE schiffe SET flotte='$lastid' WHERE id='$tid'") OR die(mysqli_error($verbindung));
 echo '<META HTTP-EQUIV="Refresh" CONTENT="0;URL=flotte.php?fid=0">';

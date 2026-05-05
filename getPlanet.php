@@ -38,13 +38,13 @@ if (!$checked) {
 
     $wiesen = [];
 
-    for ($i = 0; $i < sizeof($planetx->feld); ++$i) {
+    for ($i = 0; $i < count($planetx->feld); ++$i) {
         if ($planetx->feld[$i]->untergrund->id == 2) {
             $wiesen[] = $i;
         }
     }
 
-    $index = rand(0, sizeof($wiesen));
+    $index = rand(0, count($wiesen));
 
     $planetx->feld[$index]->bau = new Bauplan_Gebaude('18');
     $planetx->feld[$index]->aktiv = 1;

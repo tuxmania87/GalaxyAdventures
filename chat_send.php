@@ -9,7 +9,7 @@ $verbindung = get_verbindung();
 $hash = $_GET['hash'];
 $sesid = $_SESSION['Id'] == '' || $_SESSION['Id'] == 0 ? $_SESSION['nick'] : $_SESSION['Id'];
 mysqli_query($verbindung, "INSERT INTO chat (zeit,nachricht,ip,uid) VALUES ('".date('Y-m-d H:i:s')."','$hash','".$_SERVER['REMOTE_ADDR']."','".$sesid."')") or exit($verbindung->error);
-mysqli_query($verbindung, "UPDATE account SET aktion='".date('Y-m-d H:i:s')."' WHERE id='".$_SESSION['Id']."'");
+mysqli_query($verbindung, "UPDATE account SET aktion='".date('Y-m-d H:i:s')."' WHERE id='".intval(\$_SESSION['Id'])."'");
 
 // HASH abfrage
 if (substr($hash, 0, 5) == '!seen') {

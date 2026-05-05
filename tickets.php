@@ -23,7 +23,7 @@ if(isset($_POST["ptitel"])) {
 echo '<h2>Ticket&uuml;bersicht</h2>
 	  <h3>offene Tickets</h3>';
 
-$q = mysqli_query($verbindung, "SELECT * FROM tickets WHERE cr = ".$_SESSION["Id"]." AND status = 1 ORDER BY id DESC");
+$q = mysqli_query($verbindung, "SELECT * FROM tickets WHERE cr = ".intval(\$_SESSION["Id"])." AND status = 1 ORDER BY id DESC");
 while($r = mysqli_fetch_array($q)) {
 		$ticket = new Ticket($r["id"]);
 		echo  '<a href="ticket.php?id='.$ticket->id.'">'.$ticket->titel.' ( '.$ticket->statusArr[$ticket->status].')</a><br />';
@@ -34,7 +34,7 @@ if(mysqli_num_rows($q) == 0) {
 
 echo '<br /><h3>erledigte Tickets</h3>';
 
-$q = mysqli_query($verbindung, "SELECT * FROM tickets WHERE cr = ".$_SESSION["Id"]." AND status = 0 ORDER BY id DESC");
+$q = mysqli_query($verbindung, "SELECT * FROM tickets WHERE cr = ".intval(\$_SESSION["Id"])." AND status = 0 ORDER BY id DESC");
 while($r = mysqli_fetch_array($q)) {
 		$ticket = new Ticket($r["id"]);
 		echo  '<a href="ticket.php?id='.$ticket->id.'">'.$ticket->titel.' ( '.$ticket->statusArr[$ticket->status].')</a><br />';
@@ -45,7 +45,7 @@ if(mysqli_num_rows($q) == 0) {
 
 echo '<br /><h3>Tickets in Arbeit</h3>';
 
-$q = mysqli_query($verbindung, "SELECT * FROM tickets WHERE cr = ".$_SESSION["Id"]." AND status > 1 ORDER BY id DESC");
+$q = mysqli_query($verbindung, "SELECT * FROM tickets WHERE cr = ".intval(\$_SESSION["Id"])." AND status > 1 ORDER BY id DESC");
 while($r = mysqli_fetch_array($q)) {
 	$ticket = new Ticket($r["id"]);
 		echo  '<a href="ticket.php?id='.$ticket->id.'">'.$ticket->titel.' ( '.$ticket->statusArr[$ticket->status].')</a><br />';

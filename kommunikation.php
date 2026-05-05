@@ -18,11 +18,11 @@ if ($betray) {
     $id = $_SESSION['Id'];
 
     if (isset($_GET['accept']) && ctype_digit($_GET['accept'])) {
-        mysqli_query($verbindung, 'update channelabo set status=1 where status=2 and cid='.$_GET['accept'].' and uid='.$id);
+        mysqli_query($verbindung, 'update channelabo set status=1 where status=2 and cid='.intval($_GET['accept']).' and uid='.$id);
     }
 
     if (isset($_GET['decline']) && ctype_digit($_GET['decline'])) {
-        mysqli_query($verbindung, 'delete from channelabo where status=2 and cid='.$_GET['accept'].' and uid='.$id);
+        mysqli_query($verbindung, 'delete from channelabo where status=2 and cid='.intval($_GET['accept']).' and uid='.$id);
     }
 
     ?><h3>Kommunikation</h3>
@@ -47,7 +47,7 @@ if ($betray) {
     $but->printme();
     echo '<br /><br />';
 
-    $q = mysqli_query($verbindung, 'select cid from channelabo where status=2 and uid='.$_SESSION['Id']);
+    $q = mysqli_query($verbindung, 'select cid from channelabo where status=2 and uid='.intval($_SESSION['Id']));
 
     if (mysqli_num_rows($q) > 0) {
         echo '<table class="invitetable">';
@@ -78,7 +78,7 @@ if ($betray) {
 
     $list = Channel::getList();
 
-    for ($i = 0; $i < sizeof($list); ++$i) {
+    for ($i = 0; $i < count($list); ++$i) {
         $q = mysqli_query($verbindung, 'select id from kn where channel='.$list[$i]->id);
         $anzahl = mysqli_num_rows($q);
 

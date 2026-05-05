@@ -7,7 +7,7 @@ mysqli_query($verbindung, "OPTIMIZE TABLE `account` , `allianz` , `erforscht` , 
 //letze Aktion
 $action=date("Y-m-d H:i:s");
 $selfid=$_SESSION["Id"];
-if($_SESSION["Id"]>0) mysqli_query($verbindung, "UPDATE account SET aktion='$action' WHERE id='$selfid'");
+if(intval(\$_SESSION["Id"])>0) mysqli_query($verbindung, "UPDATE account SET aktion='$action' WHERE id='$selfid'");
 
 function isonline($aktion) {
 $tmpvar1=$aktion[0].$aktion[1].$aktion[2].$aktion[3].$aktion[4].$aktion[5].$aktion[6].$aktion[7].$aktion[8].$aktion[9];

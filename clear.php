@@ -15,7 +15,7 @@ for ($i = 1; $i <= $lastid; $i++) {
         mysqli_query($verbindung, "UPDATE schiffe SET torpedo='0-0',name='noname',energie=20,maxenergie=20,rohstoffa=0,rohstoffb=0,rohstoffc=0,rohstoffd=0,deuterium=0,tritanium=0,isochips=0,antimaterie=0,dili=0,schilde=0,maxschilde=0,laser=0,lager=500 WHERE besitzer='$i' AND typ='m'") or die(mysqli_error($verbindung));
     }
 }
-for ($i = 0; $i < sizeof($non); $i++) {
+for ($i = 0; $i < count($non); $i++) {
     $ooo = $non[$i];
     $abfragevar = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE besitzer='$ooo' AND typ='m'");
     while ($abfrage = mysqli_fetch_array($abfragevar)) {
