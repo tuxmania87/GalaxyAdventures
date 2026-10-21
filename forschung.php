@@ -33,7 +33,7 @@ if (isset($_GET['dorid']) && ctype_digit($_GET['dorid'])) {
     if ($cando && ($planet->frachtraum->fracht[4]->anzahl >= $todo->kosten) && mysqli_num_rows($q) == 0) {
         $planet->frachtraum->fracht[4]->anzahl -= $todo->kosten;
         $planet->frachtraum->save();
-        mysqli_query($verbindung, "insert into mapforschung (uid,fid,hash,status) values ('".intval(\$_SESSION['Id'])."','".$todo->id."','".$pid.'/'.$fid."','".($todo->dauer + 1)."')");
+        mysqli_query($verbindung, "insert into mapforschung (uid,fid,hash,status) values ('".intval($_SESSION['Id'])."','".$todo->id."','".$pid.'/'.$fid."','".($todo->dauer + 1)."')");
         echo '<span class="success">'.$todo->name.' wird erforscht</span>';
         echo '<meta http-equiv="refresh" content="1; URL=forschung.php?pid='.$pid.'&fid='.$fid.'">';
         exit;
