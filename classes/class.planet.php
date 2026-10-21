@@ -26,11 +26,12 @@ class Planeten extends Rohling
     public function __construct($nid)
     {
         $verbindung = get_verbindung();
-        if (!ctype_digit($nid)) {
+        if (!ctype_digit((string)$nid) || (int)$nid <= 0) {
             echo 'Fehler: ID(', $nid, ') ist ung&uuml;ltig!<br />';
 
             return -1;
         }
+        $nid = (int)$nid;
         $abfrage = mysqli_query($verbindung, "SELECT * FROM planeten WHERE id='$nid'");
         while ($row = mysqli_fetch_array($abfrage)) {
             $this->id = $nid;
