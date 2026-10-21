@@ -49,7 +49,7 @@ class Frachtraum
     public function __construct($sid, $typ)
     {
         $verbindung = get_verbindung();
-        if (ctype_digit($sid) || $typ == 'dummy') {
+        if (ctype_digit((string)$sid) || $typ == 'dummy') {
             if ($typ == 'schiff') {
                 $abfrage = mysqli_query($verbindung, "SELECT maxfrachtraum,lager,frachtraum FROM schiffe s, bauplan b WHERE s.id='$sid' and s.klasse = b.klasse");
             }
@@ -718,9 +718,9 @@ class Bauplan_Schiffe
     public function __construct($id)
     {
         $verbindung = get_verbindung();
-        if (ctype_digit($id)) {
+        if (ctype_digit((string)$id)) {
             $this->id = $id;
-            $q = mysqli_query($verbindung, 'select * from bauplan where id ='.$id);
+            $q = mysqli_query($verbindung, 'select * from bauplan where id =' . (int)$id);
         } else {
             $this->klasse = $id;
             $q = mysqli_query($verbindung, "select * from bauplan where klasse ='".$id."'");
@@ -874,11 +874,12 @@ class Schiffe extends Rohling
     public function __construct($nid)
     {
         $verbindung = get_verbindung();
-        if (!ctype_digit($nid)) {
+        if (!ctype_digit((string)$nid) || (int)$nid <= 0) {
             echo 'Fehler: ID (', $nid, ') ist ung&uuml;ltig!<br />';
 
             return -1;
         }
+        $nid = (int)$nid;
         $abfrage = mysqli_query($verbindung, "SELECT * FROM schiffe WHERE id='$nid' LIMIT 1");
         while ($row = mysqli_fetch_array($abfrage)) {
             $this->id = $nid;
@@ -1453,7 +1454,7 @@ class Schiffe extends Rohling
 
         $cur_field = new Weltraum($this->position->x, $this->position->y, $this->position->system->id, $this->position->system->id > 0);
 
-        if (!ctype_digit($anzahl)) {
+        if (!ctype_digit((string)$anzahl)) {
             $anzahl = $this->energie;
         }
         switch ($was) {

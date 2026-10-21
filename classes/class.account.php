@@ -232,7 +232,7 @@ class Ticket
 
             return;
         }
-        if (ctype_digit($i) && $i > 0) {
+        if (ctype_digit((string)$i) && $i > 0) {
             // init stuff
             $this->id = $i;
             $q = mysqli_query($verbindung, 'SELECT * FROM tickets WHERE id = '.$this->id);
