@@ -127,9 +127,14 @@ class Planetenfeld
 
     public function __construct($id)
     {
+        $this->id = (int)$id;
+        if ($this->id <= 0) {
+            $this->name = 'Unbekannt';
+            $this->bild = 'leer.png';
+            return;
+        }
         $verbindung = get_verbindung();
-        $this->id = $id;
-        $q = mysqli_query($verbindung, 'select * from planetenfelder where id ='.$id);
+        $q = mysqli_query($verbindung, 'select * from planetenfelder where id =' . $this->id);
         while ($r = mysqli_fetch_array($q)) {
             $this->name = $r['name'];
             $this->bild = $r['bild'];
@@ -180,8 +185,11 @@ class Bauplan_Gebaude
 
     public function __construct($id)
     {
+        if ((int)$id <= 0) {
+            return; // kein Gebäude — $this->id bleibt 0
+        }
         $verbindung = get_verbindung();
-        $q = mysqli_query($verbindung, 'select * from gebaude where id='.$id) or exit(mysqli_error($verbindung));
+        $q = mysqli_query($verbindung, 'select * from gebaude where id=' . (int)$id) or exit(mysqli_error($verbindung));
         while ($r = mysqli_fetch_array($q)) {
             $this->id = $id;
             $this->name = $r['name'];
@@ -271,17 +279,24 @@ class Gebaude
         $verbindung = get_verbindung();
         $this->fid = $fid;
         $this->id = $pid;
-        $q = mysqli_query($verbindung, 'select feld'.$fid.' from planet2 where pid ='.$pid);
-        $rawdata = [];
+        $q = mysqli_query($verbindung, 'select feld'.$fid.' from planet2 where id ='.$pid);
+        // Format in DB: "gebaeude_id/untergrund_id/bauzeit/hull/aktiv"
+        // Leere Felder (z.B. "/6///") bedeuten: kein Gebäude, Untergrund=6, Rest=Defaults
+        $rawdata = [0 => '0', 1 => '0', 2 => '0', 3 => '50', 4 => '0'];
         while ($r = mysqli_fetch_array($q)) {
-            $rawdata = explode('/', $r['feld'.$fid]);
+            $parts = explode('/', $r['feld'.$fid]);
+            foreach ($parts as $i => $v) {
+                if (isset($rawdata[$i]) && $v !== '') {
+                    $rawdata[$i] = $v;
+                }
+            }
         }
 
-        $this->untergrund = new Planetenfeld($rawdata[1]);
-        $this->bau = new Bauplan_Gebaude($rawdata[0]);
-        $this->rest_bauzeit = $rawdata[2];
-        $this->hull = $rawdata[3];
-        $this->aktiv = $rawdata[4];
+        $this->untergrund = new Planetenfeld($rawdata[1] !== '' ? $rawdata[1] : '0');
+        $this->bau = new Bauplan_Gebaude($rawdata[0] !== '' ? $rawdata[0] : '0');
+        $this->rest_bauzeit = (int)$rawdata[2];
+        $this->hull = (int)$rawdata[3];
+        $this->aktiv = (int)$rawdata[4];
 
         $this->name = ($this->bau->id == null ? $this->untergrund->name : $this->bau->name);
 
@@ -304,7 +319,7 @@ class Gebaude
     {
         $verbindung = get_verbindung();
         $dbstring = $this->bau->id.'/'.$this->untergrund->id.'/'.$this->rest_bauzeit.'/'.$this->hull.'/'.$this->aktiv;
-        mysqli_query($verbindung, 'update planet2 set feld'.$this->fid."='".$dbstring."' where pid =".$this->id);
+        mysqli_query($verbindung, 'update planet2 set feld'.$this->fid."='".$dbstring."' where id =".$this->id);
     }
 }
 
