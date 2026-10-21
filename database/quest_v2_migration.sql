@@ -73,11 +73,16 @@ CREATE TABLE IF NOT EXISTS `player_quest_steps` (
     `fortschritt`   INT          NOT NULL DEFAULT 0,
     `max`           INT          NOT NULL DEFAULT 1,   -- wird beim Annehmen aus quest_steps.parameter befüllt
     `erledigt`      TINYINT(1)   NOT NULL DEFAULT 0,
+    `meta`          JSON         NULL DEFAULT NULL,    -- trigger-spezifische Zusatzdaten (z.B. bereits gezählte System-IDs)
     PRIMARY KEY (`id`),
     KEY `idx_pq_id` (`player_quest_id`),
     CONSTRAINT `fk_pqs_pq` FOREIGN KEY (`player_quest_id`) REFERENCES `player_quests` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_pqs_step` FOREIGN KEY (`step_id`) REFERENCES `quest_steps` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- meta-Spalte nachrüsten falls Tabelle schon existiert (idempotent)
+ALTER TABLE `player_quest_steps`
+    ADD COLUMN IF NOT EXISTS `meta` JSON NULL DEFAULT NULL AFTER `erledigt`;
 
 -- -----------------------------------------------------------------------
 -- Beispiel-Daten: Eine einfache Quest-Kette (3 Quests)

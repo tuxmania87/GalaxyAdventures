@@ -567,13 +567,14 @@ class QuestEngine
 
     // --------------------------------------------------------
     //  Event: System wurde gescannt
+    //  $system_id — ID des gescannten Systems (verhindert Doppelzählung)
     // --------------------------------------------------------
-    public static function onScan(int $uid): void
+    public static function onScan(int $uid, int $system_id): void
     {
         $verbindung = get_verbindung();
 
         $q = mysqli_query($verbindung,
-            "SELECT pqs.id, pqs.fortschritt, pqs.max
+            "SELECT pqs.id, pqs.fortschritt, pqs.max, pqs.meta
                FROM player_quest_steps pqs
                JOIN quest_steps qs ON qs.id = pqs.step_id
                JOIN player_quests pq ON pq.id = pqs.player_quest_id
@@ -584,11 +585,26 @@ class QuestEngine
         );
 
         while ($row = mysqli_fetch_assoc($q)) {
+            // Bereits gezählte Systeme aus meta laden
+            $meta        = json_decode($row['meta'] ?? '{}', true) ?: [];
+            $gezaehlt    = $meta['systeme'] ?? [];
+
+            // Dieses System schon gezählt? Überspringen.
+            if (in_array($system_id, $gezaehlt, true)) {
+                continue;
+            }
+
+            // System als gezählt markieren und Fortschritt erhöhen
+            $gezaehlt[] = $system_id;
+            $meta['systeme'] = $gezaehlt;
+            $metaJson = mysqli_real_escape_string($verbindung, json_encode($meta));
+
             $neu  = min((int)$row['fortschritt'] + 1, (int)$row['max']);
             $done = $neu >= (int)$row['max'] ? 1 : 0;
+
             mysqli_query($verbindung,
                 "UPDATE player_quest_steps
-                    SET fortschritt = $neu, erledigt = $done
+                    SET fortschritt = $neu, erledigt = $done, meta = '$metaJson'
                   WHERE id = " . intval($row['id'])
             );
         }

@@ -34,7 +34,7 @@ while ($row = mysqli_fetch_assoc($abfrage)) {
 }
 
 // Quest Engine v2 — scan_systems Trigger
-QuestEngine::onScan((int)$_SESSION['Id']);
+QuestEngine::onScan((int)$_SESSION['Id'], (int)$systemid);
 
 // SCAN..
 $count = 0;
