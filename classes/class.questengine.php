@@ -61,38 +61,54 @@ class KillShipsTrigger implements QuestTriggerInterface
 // ------------------------------------------------------------
 //  Trigger: Rohstoff sammeln
 //  Parameter: {"rohstoff": "erz", "menge": 500}
+//
+//  frachtraum ist ein VARCHAR im Format "val1/val2/val3/..."
+//  positionsbasiert nach res.id (1-basiert → Index id-1).
+//  res.name enthält den Rohstoff-Namen (Kleinschreibung).
 // ------------------------------------------------------------
 class CollectResourceTrigger implements QuestTriggerInterface
 {
     public function getProgress(int $uid, array $params): int
     {
         $verbindung = get_verbindung();
-        $rohstoff   = $params['rohstoff'] ?? '';
+        $rohstoff   = strtolower(trim($params['rohstoff'] ?? ''));
         $menge      = (int)($params['menge'] ?? 0);
 
         if ($rohstoff === '' || $menge <= 0) {
             return 0;
         }
 
-        // Rohstoffe in allen Schiffen des Spielers summieren
-        // Frachtraum-Felder aus der schiffe-Tabelle
-        $allowed = ['erz', 'deuterium', 'titan', 'silizium', 'antimaterie',
-                    'nahrung', 'wasser', 'stahl', 'kristall'];
-        if (!in_array($rohstoff, $allowed, true)) {
-            return 0;
+        // Position des Rohstoffs aus der res-Tabelle ermitteln (id ist 1-basiert)
+        $rn = mysqli_real_escape_string($verbindung, $rohstoff);
+        $resQ = mysqli_query($verbindung,
+            "SELECT id FROM res WHERE LOWER(name) = '$rn' LIMIT 1"
+        );
+        if (!$resQ || mysqli_num_rows($resQ) === 0) {
+            return 0; // Unbekannter Rohstoff
+        }
+        $resRow = mysqli_fetch_assoc($resQ);
+        $idx = (int)$resRow['id'] - 1; // 0-basierter Index im slash-String
+
+        // frachtraum aller Schiffe des Spielers summieren
+        $total = 0;
+        $sq = mysqli_query($verbindung,
+            "SELECT frachtraum FROM schiffe WHERE besitzer = " . intval($uid)
+        );
+        while ($row = mysqli_fetch_assoc($sq)) {
+            $parts = explode('/', $row['frachtraum']);
+            $total += (int)($parts[$idx] ?? 0);
         }
 
-        $col    = mysqli_real_escape_string($verbindung, $rohstoff);
-        $q = mysqli_query($verbindung,
-            "SELECT SUM(f.`$col`) AS gesamt
-               FROM schiffe s
-               JOIN frachtraum f ON f.sid = s.id
-              WHERE s.besitzer = " . intval($uid)
+        // Auch Konto-Lager prüfen (Heimatplanet-Vorrat)
+        $kq = mysqli_query($verbindung,
+            "SELECT frachtraum FROM konto WHERE besitzer = " . intval($uid) . " LIMIT 1"
         );
-        $row = mysqli_fetch_assoc($q);
-        $aktuell = (int)($row['gesamt'] ?? 0);
+        if ($kq && $kr = mysqli_fetch_assoc($kq)) {
+            $parts  = explode('/', $kr['frachtraum']);
+            $total += (int)($parts[$idx] ?? 0);
+        }
 
-        return min($aktuell, $menge); // max = menge, nie überschreiten
+        return min($total, $menge);
     }
 
     public function getMax(array $params): int
