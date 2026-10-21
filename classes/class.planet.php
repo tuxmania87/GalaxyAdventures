@@ -271,7 +271,7 @@ class Gebaude
         $verbindung = get_verbindung();
         $this->fid = $fid;
         $this->id = $pid;
-        $q = mysqli_query($verbindung, 'select feld'.$fid.' from planet2 where id ='.$pid);
+        $q = mysqli_query($verbindung, 'select feld'.$fid.' from planet2 where pid ='.$pid);
         $rawdata = [];
         while ($r = mysqli_fetch_array($q)) {
             $rawdata = explode('/', $r['feld'.$fid]);
@@ -304,7 +304,7 @@ class Gebaude
     {
         $verbindung = get_verbindung();
         $dbstring = $this->bau->id.'/'.$this->untergrund->id.'/'.$this->rest_bauzeit.'/'.$this->hull.'/'.$this->aktiv;
-        mysqli_query($verbindung, 'update planet2 set feld'.$this->fid."='".$dbstring."' where id =".$this->id);
+        mysqli_query($verbindung, 'update planet2 set feld'.$this->fid."='".$dbstring."' where pid =".$this->id);
     }
 }
 

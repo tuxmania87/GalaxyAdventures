@@ -5,17 +5,16 @@ $stunde = date('H');
 include 'head.php';
 include 'navlogged.php';
 include 'klassen.php';
+include_once 'auth.php';
+
 $verbindung = get_verbindung();
-$pid = $_GET['pid'];
 $photprod = 0;
 $quantprod = 0;
-$pid = $_GET['pid'];
-if (ctype_digit($pid)) {
-    $planet = new Planeten($pid);
-}
-include_once 'auth.php';
+
 requireLogin();
 $pid = requireIntParam('pid');
+$planet = new Planeten($pid);
+
 $validTypes = ['m', 'l', 'i', 'z', 'mm', 'lm', 'om'];
 if (!in_array($planet->typ, $validTypes)) exit('Fehler: Unbekannter Planetentyp.');
 requireOwnership($planet->besitzer->id, 'Planet');
