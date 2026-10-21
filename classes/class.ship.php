@@ -1144,7 +1144,7 @@ class Schiffe extends Rohling
                 $randx = rand($this->position->x - 10, $this->position->x + 10);
                 $randy = rand($this->position->y - 10, $this->position->y + 10);
 
-                mysqli_query($verbindung, "insert into schiffe (energie,hull,warpkern,frachtraum,name,x,y,typ,system,klasse,besitzer) values ('".$t_fracht->maxenergie."','".$t_fracht->maxhull."','".$t_fracht->maxwarpkern."','".$this->frachtraum->dump()."','verlorene Fracht','".$randx."','".$randy."','s','".$this->position->system->id."','".$t_fracht->klasse."','2')") or exit($verbindung->error);
+                mysqli_query($verbindung, "insert into schiffe (energie,hull,warpkern,frachtraum,name,x,y,typ,`system`,klasse,besitzer) values ('".$t_fracht->maxenergie."','".$t_fracht->maxhull."','".$t_fracht->maxwarpkern."','".$this->frachtraum->dump()."','verlorene Fracht','".$randx."','".$randy."','s','".$this->position->system->id."','".$t_fracht->klasse."','2')") or exit($verbindung->error);
             }
         }
         mysqli_query($verbindung, "UPDATE schiffe SET dock=0 WHERE dock='$this->id'");
