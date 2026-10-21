@@ -560,33 +560,25 @@ class QuestEngine
     {
         $verbindung = get_verbindung();
 
-        $sql = "SELECT pqs.id, pqs.fortschritt, pqs.max
+        $q = mysqli_query($verbindung,
+            "SELECT pqs.id, pqs.fortschritt, pqs.max
                FROM player_quest_steps pqs
                JOIN quest_steps qs ON qs.id = pqs.step_id
                JOIN player_quests pq ON pq.id = pqs.player_quest_id
               WHERE pq.uid = " . intval($uid) . "
                 AND pq.status = 'active'
                 AND qs.trigger_typ = 'scan_systems'
-                AND pqs.erledigt = 0";
-
-        $q = mysqli_query($verbindung, $sql);
-
-        if ($q === false) {
-            error_log('QuestEngine::onScan() SQL-Fehler: ' . mysqli_error($verbindung) . ' | SQL: ' . $sql);
-            return;
-        }
+                AND pqs.erledigt = 0"
+        );
 
         while ($row = mysqli_fetch_assoc($q)) {
             $neu  = min((int)$row['fortschritt'] + 1, (int)$row['max']);
             $done = $neu >= (int)$row['max'] ? 1 : 0;
-            $upd  = mysqli_query($verbindung,
+            mysqli_query($verbindung,
                 "UPDATE player_quest_steps
                     SET fortschritt = $neu, erledigt = $done
                   WHERE id = " . intval($row['id'])
             );
-            if ($upd === false) {
-                error_log('QuestEngine::onScan() UPDATE-Fehler: ' . mysqli_error($verbindung));
-            }
         }
     }
 
