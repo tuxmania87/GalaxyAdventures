@@ -1,135 +1,192 @@
 <?php
+include 'head.php';
+include 'navlogged.php';
+include 'klassen.php';
 
-include("head.php");
-include("navlogged.php");
-include("klassen.php");
-
-
-$id = $_SESSION["Id"];
-
+$id  = (int)$_SESSION['Id'];
 $verbindung = get_verbindung();
 
-$check = false;
-$ii = mysqli_query($verbindung, "SELECT * FROM konto WHERE besitzer='$id'");
-while ($row = mysqli_fetch_array($ii))
-    $check = true;
-if (!$check)
+// Konto anlegen falls noch nicht vorhanden
+$ii = mysqli_query($verbindung, "SELECT id FROM konto WHERE besitzer='$id' LIMIT 1");
+if (!$ii || !mysqli_fetch_array($ii)) {
     mysqli_query($verbindung, "INSERT INTO konto (besitzer) VALUES ('$id')");
+}
 
 $account = new Account($id);
 
-$checkmail = false;
-$postquery2 = mysqli_query($verbindung, "SELECT * FROM mail WHERE empfaenger='$id' AND neu=1 AND del=0"); //id einsetzen
-while ($account2 = mysqli_fetch_array($postquery2))    //Abfrage der accountdaten
-    $checkmail = true;
+// Notifikationen
+$checkmail    = (bool)mysqli_num_rows(mysqli_query($verbindung, "SELECT id FROM mail WHERE empfaenger='$id' AND neu=1 AND del=0 LIMIT 1"));
+$checkvertrag = (bool)mysqli_num_rows(mysqli_query($verbindung, "SELECT id FROM vertrag WHERE partner='$id' AND valid=0 LIMIT 1"));
 
-/* $checklog=false;
-  $logquery2=mysqli_query($verbindung, "SELECT * FROM logbuch WHERE wen='$id' AND neu=1"); //id einsetzen
-  while($account3=mysqli_fetch_array($logquery2)) 			//Abfrage der accountdaten
-  $checklog=true;
- */
-$checkvertrag = false;
-$logquery2 = mysqli_query($verbindung, "SELECT * FROM vertrag WHERE partner='$id' AND valid=0"); //id einsetzen
-while ($account3 = mysqli_fetch_array($logquery2))    //Abfrage der accountdaten
-    $checkvertrag = true;
+// Heimatplanet vorhanden?
+$hasHomePlanet = (bool)mysqli_num_rows(mysqli_query($verbindung, "SELECT id FROM planeten WHERE besitzer='$id' AND typ='m' LIMIT 1"));
 
-echo 'Willkommen ' . $account->nickname . '. ';
-echo ' ( Stufe: ', $account->level, ' ),<br /><br />';
-
-
-if ($checkmail)
-    echo '<a href="mail.php"><div><table><tr><td><img src="mail32.png" border="0" /></td><td>Du hast <span style="color:green">neue</span> Nachrichten!</td></tr></table></div></a>';
-//log
-if ($checklog)
-    echo '<a href="logbuch.php"><div><table><tr><td><img src="log32.png" border="0" /></td><td>Du hast <span style="color:green">neue</span> Logbucheintr&auml;ge!</td></tr></table></div></a>';
-//vertrag
-if ($checkvertrag)
-    echo '<a href="vertrag.php"><div><table><tr><td><img src="vertrag32.png" border="0" /></td><td>Du hast <span style="color:green">neue</span> Vertragsvorschl&auml;ge!</td></tr></table></div></a>';
-
-//ENDE BETA HINEWEIS
-if ($account->chat == 1) {
-    echo '<div id="chatid" style="border:2px solid #FFFFFF;width:900px;"></div>';
-    echo '<br /><form name="form1" onsubmit="return false;"><div style="border:2px solid #FFFFFF;width:900px;"><input type="text" name="sendchatform" id="sendchatform" size="80" onkeydown="kdown(event);" />&nbsp;';
-
-    $bu = new Button("chat_history.php", "Verlauf");
-    $bu->printme();
-    echo '</div></form>';
-    $bu = new Button("option.php", "Chat ausblenden");
-    $bu->printme();
-    echo '<br /><br />';
+// Tick-Info + Online-Zähler
+$tickRow      = null;
+$onlineCount  = 0;
+$tm = mysqli_query($verbindung, "SELECT `start`, `end`, (`end`-`start`) AS dauer, status FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)");
+if ($tm && $r = mysqli_fetch_assoc($tm)) {
+    $tickRow = $r;
 }
-else
-    echo '<a href="option.php">Chat einblenden</a><br /><br />';
-echo '<h3>wichtige Links</h3>';
-$bu=new Button("gacode.htm", "GA-Code (Textformatierung)");
-$bu->printme(); echo '<br />';
-$bu=new Button("quest.php?sid=0", "Quests");
-$bu->printme(); echo '<br />';
-$bu=new Button("forum/", "Forum");
-$bu->printme(); echo '<br />';
-$bu=new Button("bugs/", "Bugs melden");
-$bu->printme(); echo '<br />';
-$bu=new Button("logbuch.php", "Logbuch");
-$bu->printme(); echo '<br />';
-
-//TIP
-$tipa = array();
-$tipvar = mysqli_query($verbindung, "SELECT * FROM tip");
-while ($tipp = mysqli_fetch_array($tipvar)) {
-    $tipa[] = $tipp["text"];
+$isonlinevar = mysqli_query($verbindung, "SELECT aktion FROM account");
+while ($checkonline = mysqli_fetch_array($isonlinevar)) {
+    if (isonline($checkonline['aktion'])) $onlineCount++;
 }
-$randvar = rand(0, (count($tipa) - 1));
-//echo 'Tipps: ',$tipa[$randvar],'<br />';
 
-
-if (!(strpos($account->nickname, "Kolonist") === false))
-    echo '<br /><span style="color:red;font-weight:bold;">Achtung!</span> Du heisst immernoch Kolonist im Spiel. Es wird empfohlen dich <a href="option.php">umzubennenen</a>, da Kolonist der Standardname ist !';
-
-
-echo '<br /><br />';
-$checked = false;
-$abfrage = mysqli_query($verbindung, "SELECT * FROM `planeten` WHERE besitzer='$id' AND typ='m'");
-while ($planet = mysqli_fetch_array($abfrage)) {
-    $checked = true;
-}
-if (!$checked) {
-    echo '<span style="color:red;font-weight:bold;">Achtung!</span> Du besitzt keinen Planeten! Bitte einen der folgenden w&auml;hlen!<br />';
-    echo '<table class="invitetable" style="text-align:center;"><tr><th>Display</th><td>Name<th>System</th><th>Koordinaten des Systems</th></tr>';
-    $abfrage = mysqli_query($verbindung, "SELECT planeten.id FROM planeten,systeme WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='2'");
-    while ($planet = mysqli_fetch_array($abfrage)) {
-        $newpl = new Planeten($planet[0]);
-        echo '<tr><td><a href="getPlanet.php?pid=', $newpl->id, '"><img src="images/misc/', $newpl->bild, '" border="0" /></a></td><td>noname (', $newpl->id, ')</td><td>', $newpl->position->system->name, '</td><td>', $newpl->position->system->x, '/', $newpl->position->system->y, '</td></tr>';
-    }
-    echo '</table>';
-}
-//TICK
-$tm = mysqli_query($verbindung, "SELECT `start`, `end`, (`end`-`start`) as dauer FROM `ticklog` WHERE id=(SELECT max(id) FROM `ticklog`)") or die($verbindung->error);
-while ($tm2 = mysqli_fetch_array($tm)) {
-    $onlinecounter = 0;
-    $isonlinevar = mysqli_query($verbindung, "SELECT * FROM account");
-    while ($checkonline = mysqli_fetch_array($isonlinevar))
-        if (isonline($checkonline["aktion"]))
-            $onlinecounter++;
-    if ($onlinecounter == 1)
-        echo 'Es ist gerade <a href="player.php">1 Spieler</a> online!<br />';
-    if ($onlinecounter > 1)
-        echo 'Es sind gerade <a href="player.php">', $onlinecounter, ' Spieler</a> online!<br />';
-
-    echo 'Dabei seit ', $account->mitglied, ' Ticks!<br />';
-    echo '<br /><font color="yellow"><b>permanenter Hinweis</b></font>: Solltest du Opfer von permanenten Diebst&auml;hlen werden ( sogenanntes Farming ) wende dich bitte an das <a href="forum/">Forum - Gerichtshof </a> und bringe den permanenten Diebstahl zur Anzeige!<br />';
-    echo '<br />';
-    if ($account->level <= 3)
-        echo '<span style="color:yellow;font-weight:bold;">Hinweis:</span> Ich empfehle dir das <a href="wiki/index.php/Tutorial">Tutorial</a> und das <a href="wiki/">Wiki</a> durchzulesen<br /><span style="color:yellow;font-weight:bold;">Hinweis:</span> Du bist die ersten 3 Level gesch&uuml;tzt, du kannst nich angegriffen werden, kannst keine Rohstoffe klauen, kannst nicht beklaut werden und nicht angreifen.<br />';
-    if ($account->level <= 2)
-        echo '<span style="color:yellow;font-weight:bold;">Hinweis:</span> Die ersten 2 Level haben Geb&auml;ude keine Bauzeit. Sie sind also sofort verf&uuml;gbar!<br />';
-    echo '<br />';
-    if ($tm2["status"] == 1)
-        echo 'Tick l&auml;uft gerade .... Bitte warten!';
-    else
-        echo 'Letzer Tick ausgeführt am : ', gerdatum($tm2["start"]), ' (Dauer: ', $tm2["dauer"], ' Sekunden)';
-}
-//TICK
-
-
-include("foot.php");
+// Zufallstipp
+$tips = [];
+$tipvar = mysqli_query($verbindung, "SELECT text FROM tip");
+while ($tipp = mysqli_fetch_array($tipvar)) { $tips[] = $tipp['text']; }
+$randomTip = count($tips) > 0 ? $tips[array_rand($tips)] : '';
 ?>
+
+<h1 class="page-title">◈ Übersicht</h1>
+
+<!-- ── Notifikationen ───────────────────────────────────────────── -->
+<?php if ($checkmail || $checkvertrag): ?>
+<div style="display:flex; flex-wrap:wrap; gap:var(--sp-sm); margin-bottom:var(--sp-lg);">
+  <?php if ($checkmail): ?>
+  <a href="mail.php" class="btn btn-primary" style="gap:var(--sp-sm);">
+    ✉️ Neue Nachrichten
+  </a>
+  <?php endif; ?>
+  <?php if ($checkvertrag): ?>
+  <a href="vertrag.php" class="btn btn-gold">
+    📜 Neue Vertragsvorschläge
+  </a>
+  <?php endif; ?>
+</div>
+<?php endif; ?>
+
+<!-- ── Warnungen ────────────────────────────────────────────────── -->
+<?php if (strpos($account->nickname, 'Kolonist') !== false): ?>
+<div class="alert alert-warning">
+  ⚠️ Du heißt noch <strong>Kolonist</strong>. Bitte <a href="option.php">umbenennen</a> — das ist der Standardname.
+</div>
+<?php endif; ?>
+
+<?php if ($account->level <= 3): ?>
+<div class="alert alert-info">
+  🛡️ Du bist in den ersten 3 Leveln geschützt — kein Angriff, kein Diebstahl möglich.
+  <?php if ($account->level <= 2): ?>&nbsp; Gebäude haben noch <strong>keine Bauzeit</strong>.<?php endif; ?>
+  &nbsp;<a href="wiki/index.php/Tutorial">Tutorial</a> · <a href="wiki/">Wiki</a>
+</div>
+<?php endif; ?>
+
+<!-- ── Chat ─────────────────────────────────────────────────────── -->
+<?php if ($account->chat == 1): ?>
+<div class="card mb-md">
+  <div class="card-header">
+    <span class="card-title">💬 Chat</span>
+    <a href="option.php" class="btn btn-sm text-muted">ausblenden</a>
+  </div>
+  <div id="chatid"></div>
+  <form name="form1" onsubmit="sendchat(); return false;" style="margin-top:var(--sp-sm);">
+    <div class="chat-input-row">
+      <input type="text" id="sendchatform" name="sendchatform"
+             placeholder="Nachricht eingeben …" onkeydown="kdown(event);">
+      <a href="chat_history.php" class="btn btn-sm">Verlauf</a>
+    </div>
+  </form>
+</div>
+<?php else: ?>
+<p><a href="option.php">Chat einblenden</a></p>
+<?php endif; ?>
+
+<!-- ── Zwei Spalten: Status + Links ─────────────────────────────── -->
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-md); margin-bottom:var(--sp-lg);">
+
+  <!-- Status-Card -->
+  <div class="card">
+    <div class="card-title" style="margin-bottom:var(--sp-sm);">📡 Spielstatus</div>
+    <table style="width:auto; font-size:var(--fs-sm);">
+      <tr>
+        <td class="text-muted" style="padding-right:var(--sp-md);">Stufe</td>
+        <td class="text-primary text-bold"><?= $account->level ?></td>
+      </tr>
+      <tr>
+        <td class="text-muted">Dabei seit</td>
+        <td><?= $account->mitglied ?> Ticks</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Online</td>
+        <td>
+          <a href="player.php" class="text-success"><?= $onlineCount ?> Spieler</a>
+        </td>
+      </tr>
+      <?php if ($tickRow): ?>
+      <tr>
+        <td class="text-muted">Letzter Tick</td>
+        <td class="text-mono" style="font-size:var(--fs-xs);">
+          <?php if ($tickRow['status'] == 1): ?>
+            <span class="text-warning">⏳ Tick läuft …</span>
+          <?php else: ?>
+            <?= gerdatum($tickRow['start']) ?>
+            <span class="text-muted">(<?= $tickRow['dauer'] ?>s)</span>
+          <?php endif; ?>
+        </td>
+      </tr>
+      <?php endif; ?>
+    </table>
+  </div>
+
+  <!-- Links-Card -->
+  <div class="card">
+    <div class="card-title" style="margin-bottom:var(--sp-sm);">🔗 Wichtige Links</div>
+    <div style="display:flex; flex-direction:column; gap:var(--sp-xs);">
+      <a href="quest_v2.php">📋 Quests</a>
+      <a href="logbuch.php">📒 Logbuch</a>
+      <a href="forum/">💬 Forum</a>
+      <a href="bugs/">🐛 Bugs melden</a>
+      <a href="wiki/">📖 Wiki / Tutorial</a>
+      <a href="gacode.htm">✏️ GA-Code (Textformatierung)</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Kein Heimatplanet → Auswahl ───────────────────────────────── -->
+<?php if (!$hasHomePlanet): ?>
+<div class="alert alert-danger">
+  ⚠️ Du besitzt noch keinen Heimatplaneten! Wähle einen aus der Liste:
+</div>
+<table class="ga-table" style="max-width:700px;">
+  <thead>
+    <tr><th>Display</th><th>Name</th><th>System</th><th>Koordinaten</th></tr>
+  </thead>
+  <tbody>
+  <?php
+    $abfrage = mysqli_query($verbindung,
+        "SELECT planeten.id FROM planeten,systeme
+          WHERE planeten.system=systeme.id
+            AND systeme.x>=1000 AND systeme.y>=1000
+            AND planeten.besitzer='2'"
+    );
+    while ($planet = mysqli_fetch_array($abfrage)):
+        $newpl = new Planeten($planet[0]);
+  ?>
+    <tr>
+      <td><a href="getPlanet.php?pid=<?= $newpl->id ?>"><img src="images/misc/<?= $newpl->bild ?>" style="display:block;"></a></td>
+      <td>noname (<?= $newpl->id ?>)</td>
+      <td><?= $newpl->position->system->name ?></td>
+      <td class="coords"><?= $newpl->position->system->x ?>/<?= $newpl->position->system->y ?></td>
+    </tr>
+  <?php endwhile; ?>
+  </tbody>
+</table>
+<?php endif; ?>
+
+<!-- ── Zufallstipp ──────────────────────────────────────────────── -->
+<?php if ($randomTip): ?>
+<div class="alert alert-info" style="margin-top:var(--sp-lg); font-size:var(--fs-sm);">
+  💡 <strong>Tipp:</strong> <?= $randomTip ?>
+</div>
+<?php endif; ?>
+
+<!-- ── Farming-Hinweis ──────────────────────────────────────────── -->
+<p class="text-muted text-xs" style="margin-top:var(--sp-lg);">
+  Solltest du Opfer von permanenten Diebstählen werden (sogenanntes Farming),
+  wende dich an das <a href="forum/">Forum – Gerichtshof</a>.
+</p>
+
+<?php include 'foot.php'; ?>
