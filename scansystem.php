@@ -26,13 +26,15 @@ if (!$check) {
     exit('FEHLER');
 }
 
-// QUestabfrage
-
+// Quest Engine v1 (alt) — Einzelsystem-Quests
 $abfrage = mysqli_query($verbindung, "SELECT erfolge.id FROM erfolge,quests WHERE erfolge.qid=quests.id AND erfolge.uid='".intval($_SESSION['Id'])."' AND erfolge.erledigt=0 AND quests.zusatz='$systemid'");
 while ($row = mysqli_fetch_assoc($abfrage)) {
     mysqli_query($verbindung, "UPDATE erfolge SET erledigt=1 WHERE erledigt=0 AND id='".$row['id']."'") or exit($verbindung->error);
     echo '<a href="showquest.php">Quest erledigt!</a><br />';
 }
+
+// Quest Engine v2 — scan_systems Trigger
+QuestEngine::onScan((int)$_SESSION['Id']);
 
 // SCAN..
 $count = 0;
