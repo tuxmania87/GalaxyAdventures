@@ -2,34 +2,103 @@
 include 'head.php';
 include 'navlogged.php';
 include 'klassen.php';
-
 include_once 'auth.php';
 $userId = requireLogin();
-{
-    if ($_POST['do'] == 5 && ctype_digit($_GET['pid'])) {  // Selbstzerst�rung
-        $pid = $_GET['pid'];
-        $pl = new Planeten($pid);
-        if ($pl->besitzer->id != $_SESSION['Id']) {
-            echo 'Du versuchst einen fremden Planeten zu zerst&ouml;ren!';
-        } else {
-            mysqli_query($verbindung, "UPDATE planeten SET besitzer=13 WHERE id='$pid'");
-            include 'clear_lite.php';
-            echo 'Planet wurde freigegeben';
-        }
-    }
 
-    ?>
-    <h3>Planetenauswahl</h3>
-    <table class="liste"><tr><th>Display</th><th>Name</th><th>Sektor</th><th>System</th><th>Energie</th><th>Schilde</th><th>Lagerkapazit&auml;t</th></tr>
-        <?php
-        $id = $_SESSION['Id'];
-    $abfrage = mysqli_query($verbindung, "SELECT * FROM `planeten` WHERE besitzer='$id'");
-    while ($planet = mysqli_fetch_array($abfrage)) {
-        $planet = new Planeten($planet['id']);
-        echo '<tr><td><a href="planet.php?pid=', $planet->id, '"><img src="images/misc/', $planet->bild, '" border="0"></a></td><td>', $planet->name, '(', $planet->id, ')</td><td>', $planet->position->x, '/', $planet->position->y, '</td><td>', $planet->position->system->name, '-System (', $planet->position->system->id, ') ', $planet->position->system->x, '/', $planet->position->system->y, ' </td><td>', $planet->energie, '/', $planet->maxenergie, '</td><td>', $planet->schilde, '/', $planet->maxschilde, '</td><td>', floor(($planet->frachtraum->gesamt() / $planet->frachtraum->max) * 100), ' %</td></tr>';
-        // die("test");
+// Selbstzerstörung eines Planeten
+if (!empty($_POST['do']) && (int)$_POST['do'] === 5 && ctype_digit($_GET['pid'] ?? '')) {
+    $pid = (int)$_GET['pid'];
+    $pl  = new Planeten($pid);
+    if ((int)$pl->besitzer->id !== (int)$_SESSION['Id']) {
+        echo '<div class="alert alert-danger">⛔ Du versuchst, einen fremden Planeten zu zerstören!</div>';
+    } else {
+        mysqli_query($verbindung, "UPDATE planeten SET besitzer=13 WHERE id='$pid'");
+        include 'clear_lite.php';
+        echo '<div class="alert alert-warning">🗑️ Planet wurde freigegeben.</div>';
     }
-    echo '</table>';
 }
-include 'foot.php';
 ?>
+
+<h1 class="page-title">🌍 Meine Kolonien</h1>
+
+<?php
+$id      = (int)$_SESSION['Id'];
+$abfrage = mysqli_query($verbindung, "SELECT id FROM planeten WHERE besitzer='$id'");
+$planets = [];
+while ($row = mysqli_fetch_assoc($abfrage)) {
+    $planets[] = new Planeten($row['id']);
+}
+
+if (count($planets) === 0): ?>
+  <div class="alert alert-info">Du besitzt noch keine Kolonien.</div>
+<?php else: ?>
+
+<table class="ga-table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Sektor</th>
+      <th>System</th>
+      <th>Energie</th>
+      <th>Schilde</th>
+      <th>Lager</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($planets as $p):
+    $lager_pct = $p->frachtraum->max > 0
+        ? floor(($p->frachtraum->gesamt() / $p->frachtraum->max) * 100)
+        : 0;
+    $energie_pct = $p->maxenergie > 0
+        ? floor(($p->energie / $p->maxenergie) * 100)
+        : 0;
+    $schilde_pct = $p->maxschilde > 0
+        ? floor(($p->schilde / $p->maxschilde) * 100)
+        : 0;
+  ?>
+    <tr>
+      <td style="width:48px; text-align:center;">
+        <a href="planet.php?pid=<?= $p->id ?>">
+          <img src="images/misc/<?= htmlspecialchars($p->bild) ?>" alt="Planet" style="display:block;">
+        </a>
+      </td>
+      <td>
+        <a href="planet.php?pid=<?= $p->id ?>" class="text-primary">
+          <?= htmlspecialchars($p->name) ?>
+        </a>
+        <span class="text-muted text-xs">(#<?= $p->id ?>)</span>
+      </td>
+      <td class="text-mono text-sm"><?= $p->position->x ?>/<?= $p->position->y ?></td>
+      <td class="text-sm">
+        <?= htmlspecialchars($p->position->system->name) ?>-System
+        <span class="text-muted text-xs">(<?= $p->position->system->x ?>/<?= $p->position->system->y ?>)</span>
+      </td>
+      <td>
+        <div class="progress" style="width:80px; margin-bottom:2px;">
+          <div class="progress-bar <?= $energie_pct < 30 ? 'progress-bar-danger' : 'progress-bar-success' ?>"
+               style="width:<?= $energie_pct ?>%;"></div>
+        </div>
+        <span class="text-xs text-muted"><?= $p->energie ?>/<?= $p->maxenergie ?></span>
+      </td>
+      <td>
+        <div class="progress" style="width:80px; margin-bottom:2px;">
+          <div class="progress-bar <?= $schilde_pct < 30 ? 'progress-bar-danger' : 'progress-bar-primary' ?>"
+               style="width:<?= $schilde_pct ?>%;"></div>
+        </div>
+        <span class="text-xs text-muted"><?= $p->schilde ?>/<?= $p->maxschilde ?></span>
+      </td>
+      <td>
+        <div class="progress" style="width:80px; margin-bottom:2px;">
+          <div class="progress-bar <?= $lager_pct > 85 ? 'progress-bar-danger' : 'progress-bar-primary' ?>"
+               style="width:<?= $lager_pct ?>%;"></div>
+        </div>
+        <span class="text-xs text-muted"><?= $lager_pct ?> %</span>
+      </td>
+    </tr>
+  <?php endforeach; ?>
+  </tbody>
+</table>
+<?php endif; ?>
+
+<?php include 'foot.php'; ?>

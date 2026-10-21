@@ -203,6 +203,16 @@ if (isset($_GET['pid']) && ctype_digit($_GET['pid'])) {
     $t->frachtraum->save();
     mysqli_query($verbindung, "UPDATE planeten SET energie='".$old->maxenergie."',maxenergie='".$old->maxenergie."',name='".$old->name."',heimat=1,besitzer='".intval($_SESSION['Id'])."' WHERE id='".$t->id."'");
     $old->sprengen();
+
+    // Quest Engine v2 — onFlyTo Trigger
+    include_once 'classes/class.questengine.php';
+    QuestEngine::onFlyTo(
+        (int)$_SESSION['Id'],
+        (int)$t->position->x,
+        (int)$t->position->y,
+        (int)$t->position->system->id
+    );
+
     echo '<meta http-equiv="refresh" content="0;url=main.php">';
 }
 
