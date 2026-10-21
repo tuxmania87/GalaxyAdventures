@@ -28,7 +28,7 @@ class Channel
     {
         $l = [];
         $verbindung = get_verbindung();
-        $q = mysqli_query($verbindung, "select id from channel where public=1 or id in (select cid from channelabo where status=1 and uid='".session_id()."') or   founder = ".intval(\$_SESSION['Id']).'            order by id') or exit(mysqli_error($verbindung));
+        $q = mysqli_query($verbindung, "select id from channel where public=1 or id in (select cid from channelabo where status=1 and uid='".session_id()."') or   founder = ".intval($_SESSION['Id']).'            order by id') or exit(mysqli_error($verbindung));
         while ($r = mysqli_fetch_array($q)) {
             $dummy = new Channel($r['id']);
             $l[] = $dummy;
