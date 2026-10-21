@@ -46,10 +46,9 @@ class KillShipsTrigger implements QuestTriggerInterface
 {
     public function getProgress(int $uid, array $params): int
     {
-        // Fortschritt kommt aus player_quest_steps.fortschritt —
-        // wird von aussen erhöht (z.B. in combat.php via QuestEngine::onKill)
-        // Hier gibt es keinen "scan"-Modus, daher 0 als Fallback
-        return 0;
+        // Event-getrieben (onKill) — Fortschritt liegt in player_quest_steps.
+        // Rückgabe von -1 signalisiert checkQuest(), diesen Schritt zu überspringen.
+        return -1;
     }
 
     public function getMax(array $params): int
@@ -168,8 +167,9 @@ class ScanSystemsTrigger implements QuestTriggerInterface
 {
     public function getProgress(int $uid, array $params): int
     {
-        // Event-getrieben — Fortschritt liegt in player_quest_steps
-        return 0;
+        // Event-getrieben — Fortschritt liegt in player_quest_steps.
+        // Rückgabe von -1 signalisiert checkQuest(), diesen Schritt zu überspringen.
+        return -1;
     }
 
     public function getMax(array $params): int
@@ -188,9 +188,9 @@ class FlyToTrigger implements QuestTriggerInterface
 {
     public function getProgress(int $uid, array $params): int
     {
-        // Event-getrieben — wird gesetzt wenn ein Schiff des Spielers
-        // die Zielkoordinaten betritt
-        return 0;
+        // Event-getrieben (onFlyTo) — Fortschritt liegt in player_quest_steps.
+        // Rückgabe von -1 signalisiert checkQuest(), diesen Schritt zu überspringen.
+        return -1;
     }
 
     public function getMax(array $params): int
@@ -209,7 +209,9 @@ class DeliverItemTrigger implements QuestTriggerInterface
 {
     public function getProgress(int $uid, array $params): int
     {
-        return 0;
+        // Event-getrieben — Fortschritt liegt in player_quest_steps.
+        // Rückgabe von -1 signalisiert checkQuest(), diesen Schritt zu überspringen.
+        return -1;
     }
 
     public function getMax(array $params): int
@@ -374,7 +376,17 @@ class QuestEngine
 
             if ($trigger !== null) {
                 $progress = $trigger->getProgress($uid, $params);
-                $max      = (int)$step['max'];
+
+                // -1 = event-getriebener Trigger (onKill, onScan, onFlyTo …)
+                // Fortschritt liegt bereits korrekt in player_quest_steps — nicht überschreiben!
+                if ($progress === -1) {
+                    if ((int)$step['fortschritt'] < (int)$step['max']) {
+                        $allDone = false;
+                    }
+                    continue;
+                }
+
+                $max = (int)$step['max'];
 
                 mysqli_query($verbindung,
                     "UPDATE player_quest_steps
