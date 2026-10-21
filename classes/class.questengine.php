@@ -517,25 +517,45 @@ class QuestEngine
             if ($heimat) {
                 foreach ($schiffe as $klasse) {
                     $klasse = mysqli_real_escape_string($verbindung, $klasse);
-                    $lastid = checkforlastid('schiffe') + 1;
+                    // Bauplan laden um Startwerte zu ermitteln
+                    $bpQ = mysqli_query($verbindung,
+                        "SELECT maxenergie, maxhull, maxschilde, maxwarpkern,
+                                maxfrachtraum, lager, bild, klasse, typ
+                           FROM bauplan WHERE klasse = '$klasse' LIMIT 1"
+                    );
+                    if (!$bpQ || mysqli_num_rows($bpQ) === 0) continue;
+                    $bp = mysqli_fetch_assoc($bpQ);
+
+                    // Schiff mit korrekten schiffe-Spalten anlegen
                     mysqli_query($verbindung,
                         "INSERT INTO schiffe
                             (name, x, y, `system`, besitzer,
-                             energie, maxenergie, energieoutput, maxwarpkern,
-                             schilde, maxschilde, hull, maxhull, bild, klasse, typ,
-                             lager, deuterium)
-                         SELECT 'Geschenk', '{$heimat['x']}', '{$heimat['y']}', '{$heimat['system']}',
-                                " . intval($uid) . ",
-                                maxenergie, maxenergie, energieoutput, maxwarpkern,
-                                maxschilde, maxschilde, maxhull, maxhull, bild, klasse, typ,
-                                lager, 40
-                           FROM bauplan WHERE klasse = '$klasse'"
+                             energie, warpkern, schilde, hull,
+                             frachtraum, klasse, typ, lager)
+                         VALUES (
+                            'Geschenk',
+                            '" . (int)$heimat['x'] . "',
+                            '" . (int)$heimat['y'] . "',
+                            '" . (int)$heimat['system'] . "',
+                            " . intval($uid) . ",
+                            " . (int)$bp['maxenergie'] . ",
+                            " . (int)$bp['maxwarpkern'] . ",
+                            " . (int)$bp['maxschilde'] . ",
+                            " . (int)$bp['maxhull'] . ",
+                            '" . mysqli_real_escape_string($verbindung, $bp['maxfrachtraum']) . "',
+                            '" . mysqli_real_escape_string($verbindung, $bp['klasse']) . "',
+                            '" . mysqli_real_escape_string($verbindung, $bp['typ']) . "',
+                            " . (int)$bp['lager'] . "
+                         )"
                     );
-                    mysqli_query($verbindung,
-                        "INSERT INTO schiffsmodule (sid, a1, a2, d1, d2, c1, c2)
-                         SELECT '$lastid', a1, a2, d1, d2, c1, c2
-                           FROM bauplan WHERE klasse = '$klasse'"
-                    );
+                    $lastid = (int)mysqli_insert_id($verbindung);
+                    if ($lastid > 0) {
+                        mysqli_query($verbindung,
+                            "INSERT INTO schiffsmodule (sid, a1, a2, d1, d2, c1, c2)
+                             SELECT '$lastid', a1, a2, d1, d2, c1, c2
+                               FROM bauplan WHERE klasse = '$klasse'"
+                        );
+                    }
                 }
             }
         }
