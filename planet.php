@@ -231,9 +231,9 @@ echo '</td></tr></table>';
 $datum = date('Y-m-d H:i:s');
 $betreff = "Aushilfe bei deinem Planeten: $planet->name ($planet->id)";
 $inhalt = "Hallo\n\nDa du noch neu in dieser Galaxis bist und wir bemerkt haben, dass du dringend Energie ben&ouml;tigst haben wir mit einem unserer Helferschiffen deinen Planeten wieder mit Energie beladen!\nAdmiral Miller - von der <b><font color=\"white\">F&ouml;deration</font></b>";
-if ($planet->besitzer->mitglied <= 1 && $planet->energie == 0) {
+if ($planet->besitzer->mitglied <= 1 && $planet->energie == 0 && $planet->besitzer->id > 0) {
     echo '<br /><br /><span style="color:red;">Achtung!! Du hast keine Energie mehr. Achte darauf unbedingt <b>Solaranlangen</b> auf W&uuml;sten zu bauen um Energie zu produzieren!</span><br /><span style="color:yellow;font-weight:bold;">Hinweis:</span>Du hast neue <a href="mail.php">Nachrichten</a>';
-    mysqli_query($verbindung, "INSERT INTO mail (datum,empfaenger,absender,neu,betreff,inhalt) VALUES ('$datum','".$planet->besitzer->id."','5','1','$betreff','$inhalt')");
+    mysqli_query($verbindung, "INSERT INTO mail (datum,empfaenger,absender,neu,betreff,inhalt) VALUES ('$datum','".intval($planet->besitzer->id)."','5','1','".mysqli_real_escape_string($verbindung, $betreff)."','".mysqli_real_escape_string($verbindung, $inhalt)."')");
     $planet->energie = $planet->maxenergie;
     mysqli_query($verbindung, 'UPDATE planeten SET energie = '.$planet->energie.' WHERE id = '.$planet->id);
 }

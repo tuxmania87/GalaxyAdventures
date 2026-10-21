@@ -102,8 +102,8 @@ class Account
     public function __construct($nid)
     {
         $verbindung = get_verbindung();
-        if (ctype_digit($nid)) {
-            $abfrage = mysqli_query($verbindung, "SELECT * FROM account WHERE id='$nid'");
+        if (ctype_digit((string)$nid) && $nid > 0) {
+            $abfrage = mysqli_query($verbindung, "SELECT * FROM account WHERE id='".intval($nid)."'");
             while ($row = mysqli_fetch_array($abfrage)) {
                 $this->id = $nid;
                 $this->login = $row['login'];
