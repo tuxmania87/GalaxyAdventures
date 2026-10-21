@@ -638,6 +638,18 @@ class Rohling
                     }
                     // ********
 
+                    // Quest Engine v2 — kill_ships Trigger
+                    // NPC-Schiffe (besitzer=2) haben rasse=''. Rasse aus der Klasse ableiten.
+                    if ((int)$ziel->besitzer->id === 2) {
+                        $npc_rasse = QuestEngine::rasseVonKlasse($ziel->klasse);
+                    } else {
+                        $npc_rasse = strtolower((string)($ziel->besitzer->rasse ?? ''));
+                    }
+                    QuestEngine::onKill(
+                        (int)$this->besitzer->id,
+                        $npc_rasse
+                    );
+
                     $ziel->zerstoerung();
                 }
                 // echo "<br />";

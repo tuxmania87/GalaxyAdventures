@@ -562,6 +562,29 @@ class QuestEngine
     }
 
     // --------------------------------------------------------
+    //  Hilfsfunktion: NPC-Schiffsklasse → Rasse
+    //  NPC-Schiffe haben besitzer=2 und rasse=''. Die Rasse wird
+    //  aus der Klasse des Schiffes abgeleitet.
+    // --------------------------------------------------------
+    public static function rasseVonKlasse(string $klasse): string
+    {
+        $map = [
+            'bird of prey'  => 'klingon',
+            'vorposten'     => 'klingon',
+            'war bird'      => 'romulan',
+            'warbird'       => 'romulan',
+            'd\'deridex'    => 'romulan',
+            'galor'         => 'cardassian',
+            'hideki'        => 'cardassian',
+            'cube'          => 'borg',
+            'sphere'        => 'borg',
+            'marauder'      => 'ferengi',
+            'd\'kora'       => 'ferengi',
+        ];
+        return $map[strtolower(trim($klasse))] ?? '';
+    }
+
+    // --------------------------------------------------------
     //  Event: Schiff wurde zerstört (vom Spieler $uid)
     //  Aufruf z.B. in combat.php nach dem Kampf
     // --------------------------------------------------------
