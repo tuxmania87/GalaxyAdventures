@@ -36,7 +36,7 @@ if ($_POST["do"] == 1) {
     changeit($text);
 
     if ($id > 0) {
-        mysqli_query($verbindung, "UPDATE kn SET datum='$datum',autor='" . intval(\$_SESSION["Id"]) . "',text='$text',channel='$channel' WHERE id='$pid'") or die(mysqli_error($verbindung));
+        mysqli_query($verbindung, "UPDATE kn SET datum='$datum',autor='" . intval($_SESSION["Id"]) . "',text='$text',channel='$channel' WHERE id='$pid'") or die(mysqli_error($verbindung));
         echo '<meta http-equiv="Refresh" CONTENT="0;URL=knread.php?channel=', $channel, '">';
     } else
         echo 'nicht eingeloggt';

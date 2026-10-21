@@ -318,7 +318,7 @@ if ($fid == 0) {
 
         if ($_GET["do"] == 20)   //flotte loeschen
             if ($schiff->besitzer->id == $_SESSION["Id"]) {
-                mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='" . $fid . "' AND besitzer='" . intval(\$_SESSION["Id"]) . "'");
+                mysqli_query($verbindung, "UPDATE schiffe SET flotte=0 WHERE flotte='" . $fid . "' AND besitzer='" . intval($_SESSION["Id"]) . "'");
                 mysqli_query($verbindung, "DELETE FROM flotte WHERE id='" . $fid . "'");
                 die("zur <a href=\"flotte.php?fid=0\">Flotten&uuml;bersicht</a>");
             }

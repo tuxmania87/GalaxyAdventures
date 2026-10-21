@@ -40,8 +40,8 @@ $planetc=$planetc[0];
 $mondc=$mondc[0];
 
 //Mondbegrenzung
-$mond1 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=38 AND E.uid='".intval(\$_SESSION["Id"])."'")) >= 1 ? true: false ;
-$mond2 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=40 AND E.uid='".intval(\$_SESSION["Id"])."'")) >= 1 ? true: false ;
+$mond1 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=38 AND E.uid='".intval($_SESSION["Id"])."'")) >= 1 ? true: false ;
+$mond2 = mysqli_num_rows(mysqli_query($verbindung, "SELECT * FROM erfolge E,quests Q WHERE Q.id=E.qid AND E.erledigt=2 AND E.qid=40 AND E.uid='".intval($_SESSION["Id"])."'")) >= 1 ? true: false ;
 
 $grenzemond = $mond1?1:0 + $mond2?1:0;
 

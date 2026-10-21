@@ -31,7 +31,7 @@ if ($_SESSION['Id'] > 900) exit('Kein Zugriff.');
         $k = new Bauplan_Schiffe($oid);
 
         for ($i = 0; $i < $an; ++$i) {
-            mysqli_query($verbindung, "insert into schiffe (besitzer,x,y,system,klasse,typ,hull,warpkern,name) values ('".intval(\$_SESSION['Id'])."','".$ox."','".$oy."','".$osys."','".$k->klasse."','s','".$k->maxhull."','".$k->maxwarpkern."','noname')") or exit($verbindung->error);
+            mysqli_query($verbindung, "insert into schiffe (besitzer,x,y,system,klasse,typ,hull,warpkern,name) values ('".intval($_SESSION['Id'])."','".$ox."','".$oy."','".$osys."','".$k->klasse."','s','".$k->maxhull."','".$k->maxwarpkern."','noname')") or exit($verbindung->error);
         }
     }
 

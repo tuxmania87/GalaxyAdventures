@@ -15,7 +15,7 @@ while ($tm2 = mysqli_fetch_array($tm)) {
 // endetest
 session_start();
 $beta = 0;
-$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".intval(\$_SESSION['Id'])."'");
+$tm = mysqli_query($verbindung, "SELECT beta FROM account WHERE id='".intval($_SESSION['Id'])."'");
 $tm = mysqli_fetch_array($tm);
 $beta = $tm[0];
 
@@ -27,12 +27,12 @@ while ($tm2 = mysqli_fetch_array($tm)) {
     }
 }
 
-$ich_temp = mysqli_query($verbindung, "SELECT level FROM account WHERE id='".intval(\$_SESSION['Id'])."'");
+$ich_temp = mysqli_query($verbindung, "SELECT level FROM account WHERE id='".intval($_SESSION['Id'])."'");
 $ich_temp = mysqli_fetch_array($ich_temp);
 $ich_temp = $ich_temp[0];
 
 if ($ich_temp >= 4) {
-    $tm = mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".intval(\$_SESSION['Id'])."'") or exit($verbindung->error);
+    $tm = mysqli_query($verbindung, "SELECT * FROM systeme,planeten WHERE planeten.system=systeme.id AND systeme.x>=1000 AND systeme.y>=1000 AND planeten.besitzer='".intval($_SESSION['Id'])."'") or exit($verbindung->error);
     while ($tm2 = mysqli_fetch_array($tm)) {
         header('Location: move.php');
         exit;
